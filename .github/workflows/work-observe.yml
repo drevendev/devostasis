@@ -1,0 +1,126 @@
+name: Devostasis work observation
+
+on:
+  workflow_call:
+    inputs:
+      devostasis-ref:
+        type: string
+        default: v0.3.0
+      policy-path:
+        type: string
+        default: .devostasis/work-policy.json
+      max-requests:
+        type: number
+        default: 100
+      max-pages:
+        type: number
+        default: 10
+      seconds:
+        type: number
+        default: 120
+      history-runner:
+        description: Optional label of a protected self-hosted runner with a private durable volume
+        type: string
+        default: ""
+      history-store:
+        type: string
+        default: /var/lib/devostasis-work
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  checks: read
+
+concurrency:
+  group: work-observation-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install released companion
+        env:
+          DEVOSTASIS_REF: ${{ inputs.devostasis-ref }}
+        run: python -m pip install "git+https://github.com/drevendev/Devostasis.git@${DEVOSTASIS_REF}"
+      - name: Collect and publish a bounded scope
+        env:
+          DEVOSTASIS_GITHUB_TOKEN: ${{ github.token }}
+          POLICY: ${{ inputs.policy-path }}
+          REPOSITORY: ${{ github.repository }}
+          CURRENT_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          IS_CANONICAL: ${{ !github.event.pull_request && github.ref_name == github.event.repository.default_branch }}
+          MAX_REQUESTS: ${{ inputs.max-requests }}
+          MAX_PAGES: ${{ inputs.max-pages }}
+          SECONDS_BUDGET: ${{ inputs.seconds }}
+        run: |
+          mkdir -p work-output
+          context=CANDIDATE
+          if [ "$IS_CANONICAL" = "true" ]; then context=CANONICAL; fi
+          python -m devostasis work run --repo "$REPOSITORY" --policy "$POLICY" \
+            --context "$context" --revision "$CURRENT_REVISION" --store work-output/history \
+            --max-requests "$MAX_REQUESTS" --max-pages "$MAX_PAGES" --seconds "$SECONDS_BUDGET" \
+            > work-output/result.json 2> work-output/failure.txt
+          python - <<'PY'
+          import json, os, pathlib, subprocess, sys
+          result = json.loads(pathlib.Path('work-output/result.json').read_text())
+          bundle = pathlib.Path(result['path'])
+          subprocess.run([sys.executable, '-m', 'devostasis', 'work', 'verify', '--bundle', str(bundle)], check=True)
+          subprocess.run([sys.executable, '-m', 'devostasis', 'work', 'slice', '--bundle', str(bundle), '--limit', '20', '--output', 'work-output/slice.json'], check=True)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as stream:
+              stream.write((bundle / 'report.md').read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: devostasis-work-${{ github.run_id }}
+          path: work-output/
+          retention-days: 30
+          if-no-files-found: warn
+
+  history:
+    needs: observe
+    if: ${{ inputs.history-runner != '' && !github.event.pull_request && github.ref_name == github.event.repository.default_branch && github.ref_protected }}
+    continue-on-error: true
+    runs-on: [self-hosted, "${{ inputs.history-runner }}"]
+    concurrency:
+      group: canonical-work-history-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install released verifier
+        env:
+          DEVOSTASIS_REF: ${{ inputs.devostasis-ref }}
+        run: python -m pip install "git+https://github.com/drevendev/Devostasis.git@${DEVOSTASIS_REF}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: devostasis-work-${{ github.run_id }}
+          path: canonical-input
+      - name: Verify identity and append to protected history
+        env:
+          HISTORY_STORE: ${{ inputs.history-store }}
+          EXPECTED_PROJECT: ${{ github.repository_id }}
+          EXPECTED_REVISION: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import os, pathlib
+          from devostasis.workscope.bundle import publish, read, verify
+          bundles = list(pathlib.Path('canonical-input/history/work').glob('*/bundles/*'))
+          if len(bundles) != 1:
+              raise ValueError('expected one verified run bundle')
+          bundle = bundles[0]
+          subject = verify(bundle)['scope.json']['subject']
+          if subject['provider'] != 'github' or subject['endpoint'] != 'https://api.github.com' or subject['project_id'] != os.environ['EXPECTED_PROJECT'] or subject['revision'] != os.environ['EXPECTED_REVISION'] or subject['context'] != 'CANONICAL':
+              raise ValueError('canonical history binding mismatch')
+          print(publish(os.environ['HISTORY_STORE'], read(bundle)))
+          PY

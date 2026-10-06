@@ -10,9 +10,13 @@ one to its source unit and acceptance status.
 OBSERVATION_CONTRACT_VERSION = "RAW-OBS-V0"
 
 # Seven-Vital taxonomy: accepted PV-VITALS-V1-002 (units PV-VIT-010/012).
-# Per-Vital rule versions (``rule_id`` in the snapshot) carry the calibration
-# repairs adopted on top of it: flow.bands.v1 (PV-FLOW-EMPTY-QUEUE-001,
-# PV-FLOW-MERGE-LATENCY-001) and pulse.bands.v1 (PV-PULSE-REQUIRED-LOWER-BOUND-001).
+# Per-Vital rule versions (``rule_id`` in the snapshot) carry the repairs
+# adopted on top of it: flow.bands.v1 (PV-FLOW-EMPTY-QUEUE-001,
+# PV-FLOW-MERGE-LATENCY-001), pulse.bands.v1 (PV-PULSE-REQUIRED-LOWER-BOUND-001),
+# clutter.bands.v1 (PV-CLUTTER-INCOMPLETE-001), and since 0.2.0
+# direction.bands.v2 (PV-REV-DIRECTION-CLOSED-TARGET-001, PV-DIRECTION-INCOMPLETE-001),
+# horizon.bands.v2 (PV-HORIZON-PARTIAL-001), debt.bands.v2 (PV-DEBT-PARTIAL-001)
+# and integrity.bands.v1+ci-unit-004+hist-002 (PV-HIST-002); vitals.md lists them.
 VITALS_CONTRACT_VERSION = "PV-VITALS-V1-002"
 
 # Integrity revision/verification semantics: accepted PV-CI-UNIT-004 (PV-VIT-011).

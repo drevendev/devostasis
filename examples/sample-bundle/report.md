@@ -2,13 +2,13 @@
 
 - Observed at: 2026-09-05T12:00:00Z
 - Comparison: BASELINE
-- Bundle: `45f84cc2652cb5d80e3b7edb689fa4b7973a5c5c76db2b5cfb2df06e8a2ec6c6`
+- Bundle: `422f6c269728988da2808817b5e72db3f3df97a330fb91c52f3f53e6ee76554c`
 - Contracts: vitals PV-VITALS-V1-002, observations RAW-OBS-V0, policy devostasis.policy.v1
 
 ```text
 Horizon     ████████░░    84  EXTENDED
 Clutter     █░░░░░░░░░    10  LIGHT
-Direction   █████░░░░░    50  MIXED
+Direction   ██████░░░░    60  MIXED
 Flow        █░░░░░░░░░    10  MOVING
 Integrity   ██████░░░░    62  FLAKY
 Debt        █░░░░░░░░░    11  PRESENT
@@ -24,7 +24,7 @@ Demand levels come from mapping `devostasis-default-1` (devostasis.demand.v2); i
 | Order | Vital | Level | Band | Gauge |
 | --- | --- | --- | --- | --- |
 | 1 | Integrity | HIGH | FLAKY | 62 |
-| 2 | Direction | MEDIUM | MIXED | 50 |
+| 2 | Direction | MEDIUM | MIXED | 60 |
 | 3 | Debt | MEDIUM | PRESENT | 11 |
 | 4 | Clutter | LOW | LIGHT | 10 |
 | 5 | Flow | LOW | MOVING | 10 |
@@ -37,7 +37,7 @@ Demand levels come from mapping `devostasis-default-1` (devostasis.demand.v2); i
 | --- | --- | --- | --- | --- | --- |
 | Horizon | 84 | EXTENDED | AVAILABLE | EXACT | 1 open planning targets, 1 with a future boundary, 1 reaching beyond 28 days. |
 | Clutter | 10 | LIGHT | AVAILABLE | EXACT | 1 stale work items out of 5 tracked open items; 1 stale non-default branches. |
-| Direction | 50 | MIXED | AVAILABLE | EXACT | 5 of 10 active change requests are explicitly linked to an open planning target. |
+| Direction | 60 | MIXED | AVAILABLE | EXACT | 6 of 10 active change requests are explicitly linked to a declared target, open or closed. |
 | Flow | 10 | MOVING | AVAILABLE | EXACT | 2 open change requests; 8 merged in 28 days; oldest open for 3 days; median time to merge 20h 0m. |
 | Integrity | 62 | FLAKY | AVAILABLE | EXACT | 1 of 8 decisive revisions failed verification in 14 days; latest decisive verdict is VERIFY_PASS. |
 | Debt | 11 | PRESENT | AVAILABLE | EXACT | 1 open registered debt items under mapping version example-1. |
@@ -47,7 +47,7 @@ Demand levels come from mapping `devostasis-default-1` (devostasis.demand.v2); i
 
 _Is future work explicitly declared, and does any declaration reach beyond 28 days?_
 
-- Evaluation: AVAILABLE; rule `horizon.bands.v1`
+- Evaluation: AVAILABLE; rule `horizon.bands.v2`
 - Gauge (declared future work): ████████░░ 84
 - Shares signals with: HORIZON_DIRECTION_PLANNING
 
@@ -78,19 +78,20 @@ _How much unresolved stale residue is observable?_
 
 _Is active change work explicitly traceable to declared targets?_
 
-- Evaluation: AVAILABLE; rule `direction.bands.v1.1`
-- Gauge (traceability share): █████░░░░░ 50
+- Evaluation: AVAILABLE; rule `direction.bands.v2`
+- Gauge (traceability share): ██████░░░░ 60
 - Shares signals with: HORIZON_DIRECTION_PLANNING, DIRECTION_PULSE_ACTIVITY
 
 | Metric | Value |
 | --- | --- |
 | active_change_count_28d | 10 |
 | capability | SUPPORTED |
-| linked_active_change_count_28d | 5 |
-| unlinked_active_change_count_28d | 5 |
-
-Diagnostics:
-- `ALL_LINKS_TO_SINGLE_TARGET`
+| linkage_rule | PV-REV-DIRECTION-CLOSED-TARGET-001 |
+| linked_active_change_count_28d | 6 |
+| linked_to_open_target_count_28d | 5 |
+| missing_target_reference_count_28d | 0 |
+| unlinked_active_change_count_28d | 4 |
+| unresolved_active_change_count_28d | 0 |
 
 ### Flow: MOVING
 
@@ -112,7 +113,7 @@ _What is the state and friction of the current change-request queue?_
 
 _What does automated verification say about recent immutable revisions?_
 
-- Evaluation: AVAILABLE; rule `integrity.bands.v1+ci-unit-004`
+- Evaluation: AVAILABLE; rule `integrity.bands.v1+ci-unit-004+hist-002`
 - Gauge (verification stability): ██████░░░░ 62
 - Shares signals with: INTEGRITY_ONLY
 
@@ -121,15 +122,18 @@ _What does automated verification say about recent immutable revisions?_
 | decisive_count_14d | 8 |
 | failed_count_14d | 1 |
 | failure_ratio_14d | 0.13 (1/8) |
+| history_rule | PV-HIST-002 |
 | revisions_in_window | 8 |
+| revisions_with_history | 8 |
 | revisions_with_verification | 8 |
 | sample_strength | ESTABLISHED |
+| unknown_history_count_14d | 0 |
 
 ### Debt: PRESENT
 
 _How much explicitly registered maintenance obligation is unresolved?_
 
-- Evaluation: AVAILABLE; rule `debt.bands.v1.1`
+- Evaluation: AVAILABLE; rule `debt.bands.v2`
 - Gauge (registered debt): █░░░░░░░░░ 11
 - Shares signals with: DEBT_CLUTTER_MAINTENANCE
 
@@ -216,5 +220,5 @@ Releases:
 - Artifact contract: devostasis.bundle.v2; bundle identity: PV-BUNDLE-ID-002; renderer: devostasis.render.v4; gauges: devostasis.gauge.v1; demand: devostasis.demand.v2
 - Effective config digest: `sha256:cc472c9ad93f6721ecc9a3fc14f3067ccc85af33c2acceb4489982a44eb370ac` (config version `example-1`)
 - Adapters: github devostasis.github.v1
-- Observations digest: `sha256:8be202ed47fbf0fc95288df179037b061e02192f6a48f6507b6cab5eaad0ce98`
+- Observations digest: `sha256:78603834c2e4cb90798cc144488c5b9e8d99407908269572a622ed13f1e58b33`
 - Generated deterministically from the machine bundle without any language model.

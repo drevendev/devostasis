@@ -1,0 +1,22 @@
+# Copy into an adopter's .github/workflows directory after v0.3.0 is released.
+name: Work scope
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  checks: read
+jobs:
+  observe:
+    uses: drevendev/Devostasis/.github/workflows/work-observe.yml@v0.3.0
+    with:
+      policy-path: .devostasis/work-policy.json
+# This observer is deliberately not a required merge check. Artifacts are
+# immutable run snapshots with explicit expiry, not a durable canonical store.
+# For durable history use the separate protected history job documented below.

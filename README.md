@@ -14,6 +14,33 @@ The name is *development* plus *homeostasis*: the goal is a stable, honest
 reading of where a project actually stands, so that people and autonomous
 development systems can react to it.
 
+The latest published tag is **v0.1.9**. This checkout prepares **0.3.0**,
+including the pending 0.2.0 adoption fixes; neither increment is released yet.
+Use the checkout installation below to try the new companion before its tag
+is published. See [ROADMAP.md](ROADMAP.md) for release gates and next steps.
+
+The **0.3.0 Evidence to Action** companion adds five bounded work queues:
+`review`, `finish_merge`, `implement_issue`, `research`, `analyze_code`.
+It binds tasks to exact revisions, explicit consumer priorities, dependencies,
+read budgets and acceptance; verifies immutable scope bundles offline; and
+rechecks selected source state before execution. Optional SARIF, JUnit,
+Cobertura and performance reports provide scoped analysis triggers. Collectors
+read GitHub and GitLab; unknown capabilities remain explicit. See the
+[adopter walkthrough](docs/work-scopes.md),
+[consumer contract](docs/spec/work-scope.md) and
+[frozen example](examples/work/bundle/report.md).
+
+```sh
+devostasis work policy --actor YOUR_LOGIN --output policy.json
+devostasis work run --repo OWNER/REPO --policy policy.json --store /private/work-history
+devostasis work verify --bundle examples/work/bundle
+devostasis work slice --bundle examples/work/bundle --at 2026-10-02T12:00:00Z --limit 2
+```
+
+Configure the consumer policy's required checks and criteria before use.
+Queues propose work; they grant no merge/deploy permission and execute no
+repository instructions. Seven Vitals keep their own contracts and ordering.
+
 ## Why this exists
 
 Repository dashboards usually fail in one of four ways:
@@ -46,8 +73,10 @@ Devostasis is built against those failures:
   configuration or provider access.
 - **Anti-gaming rules are part of the contract.** A revision that failed
   verification keeps its failure in the history window even if a retry later
-  passes. A zero queue is not "good flow". Full milestone linkage is a fact,
-  not a compliment.
+  passes, and even after the provider stops showing the failed attempt: the
+  history is carried from one bundle to the next. Closing the target a change
+  delivered does not un-link the change. A zero queue is not "good flow".
+  Full milestone linkage is a fact, not a compliment.
 
 ## The seven Vitals
 
@@ -152,8 +181,16 @@ comes first is the consumer's policy, and no accepted contract defines it.
 
 Requires Python 3.12 or newer. The runtime uses the standard library only.
 
+For this unreleased checkout:
+
 ```bash
-pip install git+https://github.com/drevendev/devostasis@v0.1.9
+pip install -e .
+```
+
+After the 0.3.0 release tag is published:
+
+```bash
+pip install git+https://github.com/drevendev/devostasis@v0.3.0
 ```
 
 Observe one repository (a GitHub token is read from `DEVOSTASIS_GITHUB_TOKEN`,
@@ -212,7 +249,7 @@ permissions:
 
 jobs:
   vitals:
-    uses: drevendev/devostasis/.github/workflows/observe-self.yml@v0.1.9
+    uses: drevendev/devostasis/.github/workflows/observe-self.yml@v0.3.0
   decide:
     needs: vitals
     runs-on: ubuntu-latest
@@ -265,13 +302,18 @@ A complete synthetic bundle is checked in under
 
 ## Status
 
-Version 0.1.x is the minimum viable engine: GitHub only, seven Vitals,
-immutable bundles, a filesystem history store with a fleet index, a Markdown
-report, the demand interface, gauges, the accepted band ordering and an
-executable conformance vector format. The [ROADMAP](ROADMAP.md) lists what is
-deliberately deferred (a GitLab adapter, additional instruments such as test
-state, coverage and deployments, an HTML renderer, a calibration corpus) and
-which accepted research judgements are still waiting to be adopted. The
+The published 0.1.9 engine supplies seven Vitals, GitHub observation,
+immutable bundles, filesystem history, fleet data, Markdown reports, demand,
+gauges, accepted band ordering and executable conformance vectors. The
+pending 0.2.0 adoption adds the accepted Vital repairs and durable Integrity
+history; this 0.3.0 branch adds the separate Evidence to Action companion.
+Its GitLab work collector does not yet implement the core GitLab Vital
+adapter or the accepted Instruments carrier.
+
+Phase A is closed. Phase B has five of seven items implemented on this
+branch; complete executable conformance (B1) and an outside adopter (B7)
+remain open. The [ROADMAP](ROADMAP.md) names the release sequence,
+compatibility/audit obligations and external-adoption gates. The
 [CHANGELOG](CHANGELOG.md) records every contract and policy version change.
 
 ## Provenance

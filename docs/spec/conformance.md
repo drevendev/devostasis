@@ -40,7 +40,8 @@ citation resolves; both directions are a test (`test_spec_drift.py`).
 
 ## Integrity: the newest revision and the sample (PV-REV-INTEGRITY-UNKNOWN-001, PV-REV-TEST-003, PV-REV-TEST-VECTORS-002)
 
-Rule `integrity.bands.v1+ci-unit-004`, adopted in 0.1.9. The six cases of the
+Rule `integrity.bands.v1+ci-unit-004`, adopted in 0.1.9; since 0.2.0 the same
+cases hold under `integrity.bands.v1+ci-unit-004+hist-002`. The six cases of the
 accepted judgement on issue #13 are executable; two of them start at the
 provider-native normalization, because their subject is that `startup_failure`
 and an unsupported conclusion reach the Vital as `UNKNOWN`.
@@ -57,8 +58,43 @@ and an unsupported conclusion reach the Vital as `UNKNOWN`.
 | sample strength | one to three decisive revisions are SPARSE with `CI_SPARSE_SAMPLE`; four are ESTABLISHED | `test_sparse_samples_declare_their_strength_and_established_ones_do_not_carry_the_diagnostic` |
 | unresolved newest revision | over every history, a newest revision still being verified yields FAILING exactly where the established FAILING predicate already holds and no band elsewhere; the superset this rule version first carried, which could omit the band it emitted, is gone (#12 finding 3, PV-INTEGRITY-TOTALITY-001) | `test_an_unresolved_newest_revision_never_emits_a_band_its_history_does_not_already_prove`, `test_current_unresolved_is_unknown_unless_failing_is_already_established`, `test_a_newest_revision_with_one_workflow_passed_and_one_running_is_already_counted_and_still_unresolved` |
 | verdict vocabulary | a current verdict outside the canonical vocabulary is read as UNKNOWN, never as a non-decisive state an older pass speaks for | `test_a_verdict_outside_the_vocabulary_fails_closed_instead_of_falling_back_to_an_older_pass` |
-| record consistency | a record whose contribution contradicts its own history state is a defect, not a pass | `test_a_record_whose_contribution_contradicts_its_history_is_a_defect_not_a_pass` |
+| record consistency | a record whose contribution contradicts its own history state, or that names no revision, is a defect, not a pass | `test_a_record_whose_contribution_contradicts_its_history_is_a_defect_not_a_pass`, `test_a_record_without_its_revision_identity_is_a_defect_not_a_crash` |
 | unusable series | an unusable required series is UNKNOWN even beside a positive `ci.configured = false` (precedence A of PV-INTEGRITY-TOTALITY-001) | `test_an_unusable_series_is_unknown_even_beside_a_positive_not_configured` |
+
+## Integrity: durable revision history (PV-HIST-002)
+
+Rule `integrity.bands.v1+ci-unit-004+hist-002`, adopted in 0.2.0 (target B3).
+The reconciliation cases state the carried history as the observation a build
+adds (`ci.revision_history_carried`) and are vectors; the cases about the
+chain, which bundle is the source and what a lost one means, need a history
+store and are tests.
+
+| Case | Meaning | Test |
+| --- | --- | --- |
+| HIST-01 | a revision a prior bundle proved failing stays FAILURE_OBSERVED when the provider now shows the same revision passing; the current verdict is PASS | `vector:HIST-01` |
+| HIST-02 | a revision the prior bundle recorded PASS_ONLY_OBSERVED becomes FAILURE_OBSERVED when a failure of it is newly observed, and stays there | `vector:HIST-02` |
+| HIST-03 | a prior failure plus any number of same-revision retries that passed is one failed contribution, whatever the number or order of the retries | `vector:HIST-03` |
+| HIST-04 | a failed revision and a newer passing revision are two samples while both are in the window | `vector:HIST-04` |
+| HIST-05 | a failure the provider no longer exposes stays historical evidence while its revision is in the window | `vector:HIST-05` |
+| HIST-06 | without durable history a parent-level pass cannot prove the earlier attempts: UNKNOWN_HISTORY, no favorable PASS_ONLY reconstruction | `vector:HIST-06`, `test_parent_level_provenance_is_diagnosed_and_a_favorable_one_is_unknown_history` |
+| HIST-07 | complete attempt-level current evidence with no unresolved prior gap proves PASS_ONLY_OBSERVED | `vector:HIST-07` |
+| HIST-08 | a required predecessor that is missing or unverifiable is a HISTORY_GAP: nothing is carried through it | `test_hist_20_and_hist_08_a_lost_predecessor_is_a_gap_and_nothing_older_is_carried` |
+| HIST-09 | the same failure in durable history and in the current enumeration is one failed contribution, never two | `vector:HIST-09` |
+| HIST-10 | a revision whose durable failure has aged beyond the 14-day window no longer contributes | `vector:HIST-10` |
+| HIST-11 | equivalent failure histories on the Actions and the check-suite surfaces, in any enumeration order, give the identical record and result | `vector:HIST-11` |
+| HIST-12 | an unrelated rule or configuration change keeps the durable Integrity history | `test_hist_12_an_unrelated_vital_rule_change_keeps_the_durable_history` |
+| HIST-13 | carried history of the older lineage is replayed from the attempts it kept, never copied from the state it derived: its failure stays, its parent-level pass is unknown | `vector:HIST-13`, `test_hist_13_the_first_bundle_after_an_older_version_replays_its_revision_records` |
+| HIST-14 | a history-semantics change with an accepted deterministic migration records the migration | not executable: no migration has been accepted, so the mechanism accepts none and a foreign lineage takes the HIST-15 path |
+| HIST-15 | carried history of a lineage with neither replay nor an accepted migration leaves the revisions it names unknown, until complete current evidence repairs them | `vector:HIST-15` |
+| HIST-16 | a prior bundle's current verdict is never inherited: the revision the provider no longer shows keeps its history and speaks for nothing current | `vector:HIST-16` |
+| HIST-17 | the same current observation over different durable histories is different canonical evidence and a different bundle | `test_hist_17_different_durable_history_is_different_canonical_evidence` |
+| HIST-18 | history of another immutable project at the same locator is never carried | `test_hist_18_another_project_at_the_same_locator_is_never_carried` |
+| HIST-19 | a prior UNKNOWN_HISTORY does not heal because the provider now shows a pass that is complete only for what is visible | `vector:HIST-19`, `test_hist_19_complete_evidence_repairs_an_unknown_history` (the nearby repair) |
+| HIST-20 | B1 pass, B2 same-revision failure, B3 pass again: B3 carries from B2 and keeps the failure; with B2 lost it is a gap, never a fallback to B1 | `test_hist_20_the_immediate_predecessor_carries_a_failure_an_older_bundle_did_not_see`, `test_hist_20_and_hist_08_a_lost_predecessor_is_a_gap_and_nothing_older_is_carried` |
+| parent-level failure | an observed failure is proven on any surface; only favorable parent-level evidence is unknown | `test_a_parent_level_failure_is_still_a_proven_failure` |
+| continuity | the history crosses a bundle whose verification evidence was unusable | `test_the_durable_history_crosses_a_bundle_whose_verification_evidence_was_unusable` |
+| source is the predecessor | a build refuses observations that carry history from another bundle, leaves the caller's set untouched, and `verify` names a source that is not the previous bundle | `test_a_build_refuses_observations_that_carry_history_from_another_predecessor`, `test_a_build_leaves_the_callers_observation_set_as_it_was`, `test_verify_names_carried_history_that_is_not_from_the_previous_bundle`, `test_every_stored_bundle_verifies_with_its_carried_history` |
+| corrupt carried history | carried history that is not its lineage's shape fails closed | `test_carried_history_that_is_not_its_lineages_shape_fails_closed` |
 
 ## Integrity: totality (PV-INTEGRITY-TOTALITY-001)
 
@@ -123,6 +159,145 @@ identifier. Cases 13 to 16 are the accepted answer to issue #26.
 | CLU-PARTIAL-TRUST-07 | a count derived from a capped enumeration carries its proof, and the saved and reloaded evidence reaches the same decision | `test_clu_partial_trust_07_derived_and_saved_evidence_reach_the_same_decision`, `test_a_derived_count_proves_its_subset_only_when_partial_and_only_as_a_count` |
 | CLU-PARTIAL-TRUST-08 | complete AVAILABLE/FRESH evidence and the optional UNAVAILABLE path are unchanged | `test_clu_partial_trust_08_complete_and_optional_unavailable_evidence_are_unchanged` |
 | invariant band under unclassified branches | when the work items alone reach the band the full unclassified count reaches, the band is DEGRADED and EXACT (section 5 of the contract) | `test_clutter_unclassified_branches_that_the_work_items_already_reach_are_an_invariant_band` |
+
+## Direction: state-neutral and incomplete linkage (PV-REV-DIRECTION-CLOSED-TARGET-001, PV-DIRECTION-INCOMPLETE-001)
+
+Rule `direction.bands.v2`, adopted in 0.2.0 as one Direction rule version for
+both repairs. The cases are transcribed from the judgement's and the
+contract's required fixtures. A case about how one change request's evidence
+becomes LINKED, UNLINKED or UNRESOLVED states the change-request and target
+inventories and runs the derivation (`given.derive`); a case about the
+completion rule states N, L, U and R. PV-REV-DIRECTION-INCOMPLETE-001 narrowed
+DIR-CLOSED-04's "unlinked or unresolved": a positively missing target is
+UNLINKED (DIR-CLOSED-04, DIR-INCOMPLETE-07), an unresolvable one UNRESOLVED
+(DIR-INCOMPLETE-08, -09).
+
+| Case | Meaning | Test |
+| --- | --- | --- |
+| DIR-CLOSED-01 | an active change request with an explicit link to an open target is linked | `vector:DIR-CLOSED-01` |
+| DIR-CLOSED-02 | the same change request and target id stay linked when the target moves from open to closed; the linkage share is unchanged | `vector:DIR-CLOSED-02`, `test_change_request_aggregates` |
+| DIR-CLOSED-03 | a link to a closed target is linked when the target identity resolves authoritatively | `vector:DIR-CLOSED-03`, `test_a_closed_register_target_is_still_a_resolved_reference` |
+| DIR-CLOSED-04 | a reference to a target the complete register positively lacks is unlinked with the missing-reference diagnostic; linkage is never fabricated | `vector:DIR-CLOSED-04` |
+| DIR-CLOSED-05 | closing a target cannot by itself worsen the Direction band | `vector:DIR-CLOSED-05` |
+| DIR-CLOSED-06 | reopening a target cannot by itself improve the Direction band | `vector:DIR-CLOSED-06` |
+| DIR-CLOSED-07 | Horizon's open-target counts still exclude the closed target a change request stays linked to, so the two Vitals may diverge | `vector:DIR-CLOSED-07` |
+| DIR-CLOSED-08 | every active change request linked to one closed target is FULLY_LINKED with the single-target diagnostic: traceability, not alignment | `vector:DIR-CLOSED-08` |
+| DIR-CLOSED-09 | adopting the repair changes the Direction rule id: the first comparison across it is INCOMPARABLE for Direction alone, while an unaffected Vital still compares | `vector:DIR-CLOSED-09` |
+
+| Case | Meaning | Test |
+| --- | --- | --- |
+| DIR-INCOMPLETE-01 | N=5, L=0, U=3, R=2: every completion k in {0,1,2} is SCATTERED | `vector:DIR-INCOMPLETE-01` |
+| DIR-INCOMPLETE-02 | N=5, L=3, U=1, R=1: every completion k in {3,4} is MIXED | `vector:DIR-INCOMPLETE-02` |
+| DIR-INCOMPLETE-03 | N=4, L=2, U=0, R=2: completions reach MIXED and FULLY_LINKED, so no band | `vector:DIR-INCOMPLETE-03` |
+| DIR-INCOMPLETE-04 | N=5, L=1, U=1, R=3: completions reach SCATTERED and MIXED, so no band | `vector:DIR-INCOMPLETE-04` |
+| DIR-INCOMPLETE-05 | N=1, L=0, U=0, R=1: completions reach SCATTERED and FULLY_LINKED; never DEGRADED FULLY_LINKED | `vector:DIR-INCOMPLETE-05` |
+| DIR-INCOMPLETE-06 | a marker to an authoritatively resolved closed target is LINKED; closing or reopening the target alone does not change the linkage | `vector:DIR-INCOMPLETE-06` |
+| DIR-INCOMPLETE-07 | a marker to T that a complete authoritative lookup proves absent is UNLINKED: N=1, L=0, U=1, R=0 is exactly SCATTERED with the missing-reference diagnostic | `vector:DIR-INCOMPLETE-07`, `test_a_reference_the_complete_register_lacks_is_missing_and_one_the_register_could_not_answer_is_unknown` |
+| DIR-INCOMPLETE-08 | a marker to T while the target list is PARTIAL and T is not in the observed subset, with no direct lookup, is UNRESOLVED: no band | `vector:DIR-INCOMPLETE-08` |
+| DIR-INCOMPLETE-09 | a marker whose target resolution is unavailable, forbidden, unknown, errored or stale is UNRESOLVED, never LINKED by fallback | `vector:DIR-INCOMPLETE-09`, `test_unreadable_linkage_evidence_is_unresolved_not_unlinked_and_not_a_failed_project`, `test_a_milestone_without_a_number_is_unresolved_linkage_not_a_failed_project` |
+| DIR-INCOMPLETE-10 | a PARTIAL global target enumeration does not degrade Direction when every referenced target is resolved on its own | `vector:DIR-INCOMPLETE-10` |
+| DIR-INCOMPLETE-11 | partial link evidence leaves two change requests unresolved, but N/L/U/R forces SCATTERED for every completion | `vector:DIR-INCOMPLETE-11` |
+| DIR-INCOMPLETE-12 | partial link evidence admits MIXED and FULLY_LINKED, so no band | `vector:DIR-INCOMPLETE-12` |
+| DIR-INCOMPLETE-13 | linkage capability that is neither positively present nor absent is UNKNOWN with no band | `vector:DIR-INCOMPLETE-13` |
+| DIR-INCOMPLETE-14 | an active-change inventory that is PARTIAL leaves N unproven: UNKNOWN with no band | `vector:DIR-INCOMPLETE-14` |
+| DIR-INCOMPLETE-15 | reversed and reshuffled enumeration, page boundaries, marker order and target order leave L/U/R, the reachable bands, the status, the band and the diagnostics unchanged | `vector:DIR-INCOMPLETE-15` |
+| DIR-INCOMPLETE-16 | several active change requests all linked to one authoritatively resolved closed target, with complete evidence, are exactly FULLY_LINKED: neutral, no concentration threshold | `vector:DIR-INCOMPLETE-16` |
+| readable link dominates | a resolved reference links a change request even when another of its linkage fields is unreadable | `test_a_readable_link_is_not_undone_by_an_unreadable_field` |
+| contradictory counts | `L + U + R != N` is refused before classification, and the command line reports it as an input error | `vector:HOR-PARTIAL-15` (the Horizon analogue), `test_observations_whose_counts_contradict_each_other_are_an_input_error` |
+
+## Target marker syntax (PV-AUDIT-TARGET-MARKER-SYNTAX-001)
+
+The audit's regressions `LINK-MARKER-01..08` reached this repository only as
+the categories its handoff names; the tests below cover each category and do
+not claim the individual case texts.
+
+| Category | Meaning | Test |
+| --- | --- | --- |
+| exact marker | a standalone marker links, at the start of the text, after a newline, a space, a tab or punctuation | `test_an_exact_marker_links_wherever_it_stands_alone` |
+| embedded prefix | `NotTarget:`, `SubTarget:`, `PreTarget:` and any marker glued to a preceding word character link nothing | `test_a_marker_embedded_in_a_larger_token_links_nothing`, `test_a_marker_ending_in_a_word_character_needs_a_boundary_after_it_too` |
+| custom marker | a configured marker replaces the default and is matched exactly | `test_a_custom_marker_replaces_the_default_and_is_matched_exactly` |
+| multiple markers | several markers keep their order and link each target once | `test_several_markers_keep_their_order_and_link_each_target_once` |
+| prose without the marker | a lowercase, pluralised or paraphrased marker links nothing | `test_prose_without_the_configured_marker_links_nothing` |
+| end to end | under file planning only the standalone marker becomes a reference, and Direction counts only it | `test_embedded_markers_do_not_link_end_to_end` |
+
+## Horizon: partial enumeration (PV-HORIZON-PARTIAL-001)
+
+Rule `horizon.bands.v2`, adopted in 0.2.0. The sixteen cases of the accepted
+contract, stated as target inventories and derived, so the counts, their
+observed-subset proof and the capability a returned target proves are executed
+where they are made. HOR-PARTIAL-15 states the contradictory counts directly
+and expects their refusal (`expect.rejected`).
+
+| Case | Meaning | Test |
+| --- | --- | --- |
+| HOR-PARTIAL-01 | capability present, complete and fresh, zero open targets: exactly UNDECLARED (the positive-zero control) | `vector:HOR-PARTIAL-01` |
+| HOR-PARTIAL-02 | complete and fresh, one open target with no future boundary: exactly DECLARED | `vector:HOR-PARTIAL-02` |
+| HOR-PARTIAL-03 | complete and fresh, an open target exactly 28 days out and none later: exactly VISIBLE; the frame is unchanged | `vector:HOR-PARTIAL-03` |
+| HOR-PARTIAL-04 | complete and fresh, an open target strictly beyond 28 days: exactly EXTENDED | `vector:HOR-PARTIAL-04` |
+| HOR-PARTIAL-05 | explicit targets positively unsupported and no planning register configured: exactly UNDECLARED, a descriptive state, not missing evidence | `vector:HOR-PARTIAL-05` |
+| HOR-PARTIAL-06 | capability unknown, forbidden, errored, stale, unavailable or an unresolved partial: UNKNOWN, never UNDECLARED by default | `vector:HOR-PARTIAL-06` |
+| HOR-PARTIAL-07 | PH0: a partial enumeration returned no open target, so every band is reachable: UNKNOWN, never UNDECLARED | `vector:HOR-PARTIAL-07` |
+| HOR-PARTIAL-08 | PH1: returned open targets without a future boundary reach DECLARED, VISIBLE and EXTENDED: UNKNOWN, DECLARED is never a representative | `vector:HOR-PARTIAL-08` |
+| HOR-PARTIAL-09 | PH2: a returned open target within or exactly at 28 days reaches VISIBLE and EXTENDED: UNKNOWN, VISIBLE is never a bound | `vector:HOR-PARTIAL-09` |
+| HOR-PARTIAL-10 | PH3: a returned open target strictly beyond 28 days forces EXTENDED in every completion: DEGRADED / EXTENDED / EXACT | `vector:HOR-PARTIAL-10` |
+| HOR-PARTIAL-11 | a returned closed target beyond 28 days and an open target without a boundary: the closed one forces nothing, PH1, UNKNOWN | `vector:HOR-PARTIAL-11` |
+| HOR-PARTIAL-12 | only closed returned targets, one beyond 28 days: PH0, UNKNOWN, never UNDECLARED or EXTENDED | `vector:HOR-PARTIAL-12` |
+| HOR-PARTIAL-13 | the same PH3 evidence in reversed order, other page boundaries and an equivalent provider-neutral record shape: identical DEGRADED / EXTENDED / EXACT | `vector:HOR-PARTIAL-13` |
+| HOR-PARTIAL-14 | the same PH2 subset under record and page permutations: identical UNKNOWN, pagination order cannot manufacture exactness | `vector:HOR-PARTIAL-14` |
+| HOR-PARTIAL-15 | a derived tuple no target population can produce (beyond above future, future above open) fails validation before evaluation, never UNKNOWN or DEGRADED compensation | `vector:HOR-PARTIAL-15` |
+| HOR-PARTIAL-16 | PH3 is the direct proof: whatever else the returned subset holds, and whatever the omitted records are, the observed open target beyond 28 days keeps every completion EXTENDED | `vector:HOR-PARTIAL-16` |
+
+## Debt: partial register (PV-DEBT-PARTIAL-001)
+
+Rule `debt.bands.v2`, adopted in 0.2.0 together with the observed-subset proof
+issue #39 asked Debt to require: a PARTIAL open count is a lower bound only
+when its coverage says so.
+
+| Case | Meaning | Test |
+| --- | --- | --- |
+| DEBT-PARTIAL-01 | a partial enumeration with no confirmed open item cannot manufacture CLEAR | `vector:DEBT-PARTIAL-01` |
+| DEBT-PARTIAL-02 | a returned subset of closed debt items only is still not CLEAR: the closed count is a diagnostic, omitted open items stay possible | `vector:DEBT-PARTIAL-02` |
+| DEBT-PARTIAL-03 | one confirmed open item forces PRESENT: DEGRADED / PRESENT / EXACT with the partial receipt retained | `vector:DEBT-PARTIAL-03` |
+| DEBT-PARTIAL-04 | thirty-seven confirmed open items remain PRESENT, never ACCUMULATED or any quantitative severity | `vector:DEBT-PARTIAL-04` |
+| DEBT-PARTIAL-05 | the size of the omitted tail cannot erase a confirmed open item: two different partial receipts give the same band | `vector:DEBT-PARTIAL-05` |
+| DEBT-PARTIAL-06 | provider naming, item order, page order and page boundaries do not change the normalized result | `vector:DEBT-PARTIAL-06` |
+| DEBT-PARTIAL-07 | positively absent debt authority stays exactly UNINSTRUMENTED; the repair does not turn positive absence into UNKNOWN | `vector:DEBT-PARTIAL-07` |
+| DEBT-PARTIAL-08 | uncertain mapping authority is never inferred from a partial payload that happens to hold an apparent open debt record | `vector:DEBT-PARTIAL-08` |
+| DEBT-PARTIAL-09 | a complete, fresh positive zero remains exactly CLEAR | `vector:DEBT-PARTIAL-09` |
+| DEBT-PARTIAL-10 | a complete, fresh positive open count remains exactly PRESENT | `vector:DEBT-PARTIAL-10` |
+| DEBT-PARTIAL-11 | a partial zero stays UNKNOWN beside one hundred closed items: closed history cannot prove current open emptiness | `vector:DEBT-PARTIAL-11` |
+| DEBT-PARTIAL-12 | a forced PRESENT under partial acquisition stays visibly DEGRADED, never AVAILABLE, with the acquisition machine-visible | `vector:DEBT-PARTIAL-12` |
+| DEBT-PARTIAL-13 | a stale positive count is not a confirmed current open item: UNKNOWN, as before the repair | `vector:DEBT-PARTIAL-13` |
+| DEBT-PARTIAL-14 | one confirmed current open item survives other returned or tail records that stay unresolved under the partial receipt | `vector:DEBT-PARTIAL-14` |
+| DEBT-PARTIAL-15 | a versioned project-local quantitative policy does not replace the canonical core under partial positive evidence | `vector:DEBT-PARTIAL-15` |
+| DEBT-PARTIAL-16 | a project-local policy cannot turn a partial zero into any canonical conclusion | `vector:DEBT-PARTIAL-16` |
+| subset proof | a PARTIAL open count whose coverage is missing, not a subset, an estimate, contradictory or malformed is no lower bound, and Debt is UNKNOWN (issue #39) | `test_a_partial_debt_count_without_the_subset_proof_is_not_a_lower_bound` |
+| PD1 in the tests | a confirmed open item under partial acquisition is DEGRADED / PRESENT / EXACT, a stale one proves nothing | `test_partial_register_with_observed_items_is_degraded_present`, `test_a_stale_partial_register_proves_nothing_about_now` |
+
+## T9: the decision-equivalence reconciliation (PV-TEST-004, PV-T9-GEN-003)
+
+`PV-REV-TEST-004` accepted the final T9 reconciliation with zero
+`CONTRACT_GAP` terminals: each of the nine gap identifiers of `PV-T9-GEN-002`
+maps to one deterministic accepted obligation. 0.2.0 adopts the last of the
+repairs those obligations come from, so the implementation side of T9 is a
+finite generator over the acquisition tokens and the regions each family
+names, which evaluates every cell and holds it to the accepted table
+(`tests/conformance/test_t9_reconciliation.py`, about 1,270 cells). The T9v2
+cell-key serialization itself is the research process's to deliver as
+vectors.
+
+| Gap identifier | Accepted obligation | Test |
+| --- | --- | --- |
+| T9-GAP-HORIZON-PARTIAL-BOUND-001 | PH0..PH2 `UNKNOWN`, PH3 `DEGRADED / EXTENDED / EXACT` (PV-HORIZON-PARTIAL-001) | `test_t9_gap_horizon_partial_bound_001` |
+| T9-GAP-CLUTTER-UNAVAILABLE-COMPONENT-001, T9-GAP-CLUTTER-PARTIAL-FORCED-BOUND-001 | a confirmed floor from positive facts only, never `CLEAN` under incomplete coverage (PV-CLUTTER-INCOMPLETE-001) | `test_t9_gap_clutter_unavailable_component_and_partial_forced_bound` |
+| T9-GAP-DIRECTION-PARTIAL-LINKAGE-001 | the completion set over k in L..L+R (PV-DIRECTION-INCOMPLETE-001) | `test_t9_gap_direction_partial_linkage_001` |
+| T9-GAP-DIRECTION-UNRESOLVED-TARGET-001 | resolved identity LINKED open or closed, positive absence UNLINKED, the rest UNRESOLVED | `test_t9_gap_direction_unresolved_target_001` |
+| T9-GAP-INTEGRITY-UNRESOLVED-BAND-001 | `DEGRADED / FAILING / EXACT` only over an established FAILING history, else `UNKNOWN` (PV-INTEGRITY-TOTALITY-001) | `test_t9_gap_integrity_unresolved_band_001` |
+| T9-GAP-INTEGRITY-PARTIAL-SUPERSET-001 | the false gap: a PARTIAL required series is `UNKNOWN`, no `possible_bands` (PV-REV-TEST-003) | `test_t9_gap_integrity_partial_superset_001` |
+| T9-GAP-INTEGRITY-UNCONFIGURED-RECENT-001 | `UNINSTRUMENTED` with the non-decisive history kept visible | `test_t9_gap_integrity_unconfigured_recent_001` |
+| T9-GAP-DEBT-PARTIAL-BOUND-001 | confirmed open `DEGRADED / PRESENT / EXACT`, none confirmed `UNKNOWN` (PV-DEBT-PARTIAL-001) | `test_t9_gap_debt_partial_bound_001` |
+| section 4 precedence | unknown history outranks every conservative branch | `test_t9_section_4_unknown_history_outranks_the_unresolved_failing_branch` |
+| finiteness | nine identifiers, none without cells | `test_t9_generator_covers_every_family` |
 
 ## Activity coverage (PV-REV-ACTIVITY-COVERAGE-001)
 
@@ -346,6 +521,17 @@ accepted case.
 | gauges establish no order | a gauge that moved inside a band is UNCHANGED | `test_a_gauge_that_moved_inside_one_band_is_not_a_direction` |
 | ordered bands are emittable | every ordered band is one its Vital emits, and the unordered ones are exactly the descriptive and evidence states | `test_every_ordered_band_is_a_band_its_vital_can_emit`, `test_the_bands_left_unordered_are_exactly_the_descriptive_and_evidence_states` |
 
+## Carried-history admission (implementation regressions)
+
+These regressions enforce the accepted predecessor and immutable-revision
+requirements without assigning new research case identifiers.
+
+| Boundary | Meaning | Test |
+| --- | --- | --- |
+| carrier content | edited records, attempts, lineage or provenance cannot replace the verified predecessor's history, even with its correct bundle id | `test_a_build_refuses_changed_history_even_when_it_names_the_right_predecessor` |
+| exact rebuild | an unchanged admitted carrier reproduces all bundle members and keeps the recorded failure | `test_a_build_accepts_an_unchanged_carrier_and_reproduces_the_same_bundle` |
+| duplicate revision | neither current nor replayable carried lineage can overwrite a failure with a second record for the same revision | `test_duplicate_carried_revisions_cannot_overwrite_a_recorded_failure` |
+
 ## The vector runner (target B1)
 
 | Case | Meaning | Test |
@@ -357,11 +543,14 @@ accepted case.
 | corpus | every vector in the corpus runs, and every declared kind is exercised | `test_conformance_vector`, `test_every_kind_the_format_declares_is_exercised_by_the_corpus` |
 | variants | one case over several evidence shapes passes only when every shape does, and a failure names the shape | `test_variants_hold_every_evidence_shape_to_the_one_expectation` |
 | ci kind | provider-native outcomes are normalized before Integrity sees them; a provider without a normalization is rejected | `test_the_ci_kind_normalizes_provider_native_outcomes_before_integrity_sees_them` |
+| derive | a vital case over inventories runs the derivation first, under the two settings it reads, and no others | `test_derive_runs_the_derivation_before_the_vital_is_evaluated`, `test_derive_names_only_the_settings_the_derivation_reads` |
+| rejected | a case expecting refused evidence passes only when the evaluation raises with that code, and the refusal is its whole expectation | `test_a_rejected_case_passes_only_when_the_evidence_is_refused_with_that_code`, `test_rejected_is_the_whole_expectation_and_names_a_code` |
 | activity kind | the interval and the coverage notes of the activity member are checked | `test_the_activity_kind_checks_the_interval_and_the_coverage_it_discloses` |
 
-Cases not yet implemented as tests (T3, T6, T8, T9, R5..R53, ART-05,
+Cases not yet implemented as tests (T3, T6, T8, R5..R53, ART-05,
 ART-08..ART-11, ART-15, RPT-4..RPT-6, RPT-9) are listed in the ROADMAP under the
-synthetic fixture suite. The research process delivers them as executable JSON
+synthetic fixture suite; T9 is implemented by its generator since 0.2.0, and
+its cell-key vectors are still the research process's to deliver. The research process delivers them as executable JSON
 vectors in the format of [vectors.md](vectors.md), one accepted family per
 unit; the ones accepted so far (T2, R1, R2, R3, R4, T4, T5, T7) are in the
 corpus above, and so are the twenty cases of `PV-CLUTTER-INCOMPLETE-001`,
@@ -370,3 +559,17 @@ about, so that family can be materialized against it (issue #20); `variants`
 and the dependency-group assertions close the T8 and part of the T6 gap of
 issue #23, while T3 and the bundle and store cases still need a surface this
 version does not publish.
+
+## Companion regression evidence (implementation-owned)
+
+These DEV-WORK families exercise `devostasis.work.v1`; they do not replace
+the outstanding research cases above or claim acceptance of a Vital rule.
+
+| Family | Proof |
+| --- | --- |
+| queues and identity | `test_work_five_queues_and_bounded_acceptance`, `test_work_determinism_ids_and_explicit_priority` |
+| exact-head admission | `test_work_merge_admission_matrix`, `test_work_missing_cannot_admit_merge`, `test_work_stale_verdict_dismissal_and_self_review` |
+| source and producer gaps | `test_work_report_profiles`, `test_work_malformed_and_unavailable_reports_are_not_zero`, `test_work_report_wrong_repo_and_revision`, `test_work_gitlab_missing_capabilities_are_explicit` |
+| bounded handoff | `test_work_cursor_exhaustive_binding_and_expiry`, `test_work_selected_refresh_does_not_discover_whole_repository`, `test_work_cli_offline_end_to_end_and_recheck` |
+| durable replay | `test_work_bundle_replay_and_forged_rehashed_projection_rejected`, `test_work_store_backfill_candidate_rename_and_latest_binding`, `test_work_store_lock_and_failed_pointer_write_preserve_history` |
+| transport | `test_work_redirect_cannot_forward_credentials`, `test_work_transport_refuses_mutation`, `test_work_conditional_304_replays_body_without_credential_crossing` |

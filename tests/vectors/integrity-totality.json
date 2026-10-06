@@ -68,7 +68,7 @@
           "failed_count_14d": 0,
           "unresolved_verdict_rule": "PV-INTEGRITY-TOTALITY-001"
         },
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -191,7 +191,7 @@
           "failed_count_14d": 0,
           "unresolved_verdict_rule": "PV-INTEGRITY-TOTALITY-001"
         },
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -314,7 +314,7 @@
           "failed_count_14d": 1,
           "unresolved_verdict_rule": "PV-INTEGRITY-TOTALITY-001"
         },
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -491,7 +491,7 @@
           "failed_count_14d": 0,
           "unresolved_verdict_rule": "PV-INTEGRITY-TOTALITY-001"
         },
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -695,7 +695,7 @@
           "failed_count_14d": 1,
           "unresolved_verdict_rule": "PV-INTEGRITY-TOTALITY-001"
         },
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -876,7 +876,7 @@
           "LATEST_REVISION_NON_DECISIVE",
           "CURRENT_VERIFICATION_UNRESOLVED"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -941,7 +941,7 @@
         "diagnostics": [
           "CI_UNINSTRUMENTED_WITH_RECENT_NONDECISIVE_HISTORY"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -1006,7 +1006,7 @@
         "diagnostics": [
           "CI_UNINSTRUMENTED_WITH_RECENT_NONDECISIVE_HISTORY"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -1093,7 +1093,7 @@
         "diagnostics_absent": [
           "CI_UNINSTRUMENTED_WITH_RECENT_NONDECISIVE_HISTORY"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -1268,7 +1268,7 @@
         "diagnostics_absent": [
           "CI_CURRENT_VERIFY_UNRESOLVED"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -1444,7 +1444,7 @@
         "diagnostics_absent": [
           "CI_CURRENT_VERIFY_UNRESOLVED"
         ],
-        "rule_id": "integrity.bands.v1+ci-unit-004"
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002"
       }
     },
     {
@@ -1614,7 +1614,7 @@
           "evaluation_status": "DEGRADED",
           "band_semantics": "EXACT",
           "possible_bands": null,
-          "rule_id": "integrity.bands.v1+ci-unit-004",
+          "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
           "derived": {
             "decisive_count_14d": 4,
             "failed_count_14d": 1

@@ -48,15 +48,26 @@ def obs(oid: str, value, value_type: str, coverage=None) -> Observation:
     )
 
 
+def _example_link(i: int) -> dict:
+    """Odd changes link to the open release 1.2; change 32 delivered release 1.1, closed since, and stays linked."""
+    if i % 2:
+        target, state = "3", "OPEN"
+    elif i == 2:
+        target, state = "2", "CLOSED"
+    else:
+        return {"target_id": None, "target_state": None, "target_refs": [], "linkage_unresolved": []}
+    return {"target_id": target, "target_state": state, "target_refs": [{"target_id": target, "state": state}], "linkage_unresolved": []}
+
+
 def build_observation_set() -> ObservationSet:
     commits = [
         {"sha": f"{i:040x}", "committed_at": f"2026-08-{10 + i:02d}T09:00:00Z", "title": f"feat: change number {i}"} for i in range(1, 20)
     ]
     change_requests = [
-        {"number": 40, "id": 40, "title": "Refactor the pricing module", "state": "OPEN", "draft": False, "created_at": "2026-09-02T10:00:00Z", "updated_at": "2026-09-04T10:00:00Z", "merged_at": None, "closed_at": None, "target_id": "3", "target_state": "OPEN", "author": "dev", "url": "https://example.invalid/pull/40"},
-        {"number": 41, "id": 41, "title": "Add the export button", "state": "OPEN", "draft": True, "created_at": "2026-09-03T10:00:00Z", "updated_at": "2026-09-05T08:00:00Z", "merged_at": None, "closed_at": None, "target_id": None, "target_state": None, "author": "dev", "url": "https://example.invalid/pull/41"},
+        {"number": 40, "id": 40, "title": "Refactor the pricing module", "state": "OPEN", "draft": False, "created_at": "2026-09-02T10:00:00Z", "updated_at": "2026-09-04T10:00:00Z", "merged_at": None, "closed_at": None, "target_id": "3", "target_state": "OPEN", "target_refs": [{"target_id": "3", "state": "OPEN"}], "linkage_unresolved": [], "author": "dev", "url": "https://example.invalid/pull/40"},
+        {"number": 41, "id": 41, "title": "Add the export button", "state": "OPEN", "draft": True, "created_at": "2026-09-03T10:00:00Z", "updated_at": "2026-09-05T08:00:00Z", "merged_at": None, "closed_at": None, "target_id": None, "target_state": None, "target_refs": [], "linkage_unresolved": [], "author": "dev", "url": "https://example.invalid/pull/41"},
     ] + [
-        {"number": 30 + i, "id": 30 + i, "title": f"Merged change {i}", "state": "MERGED", "draft": False, "created_at": f"2026-08-{12 + i:02d}T10:00:00Z", "updated_at": f"2026-08-{13 + i:02d}T10:00:00Z", "merged_at": f"2026-08-{13 + i:02d}T06:00:00Z", "closed_at": f"2026-08-{13 + i:02d}T06:00:00Z", "target_id": "3" if i % 2 else None, "target_state": "OPEN" if i % 2 else None, "author": "dev", "url": f"https://example.invalid/pull/{30 + i}"}
+        {"number": 30 + i, "id": 30 + i, "title": f"Merged change {i}", "state": "MERGED", "draft": False, "created_at": f"2026-08-{12 + i:02d}T10:00:00Z", "updated_at": f"2026-08-{13 + i:02d}T10:00:00Z", "merged_at": f"2026-08-{13 + i:02d}T06:00:00Z", "closed_at": f"2026-08-{13 + i:02d}T06:00:00Z", **_example_link(i), "author": "dev", "url": f"https://example.invalid/pull/{30 + i}"}
         for i in range(1, 9)
     ]
     issues = [
@@ -104,11 +115,12 @@ def build_observation_set() -> ObservationSet:
                 "history_state": history,
                 "historical_contribution": "VERIFY_FAIL" if history == "FAILURE_OBSERVED" else "VERIFY_PASS",
                 "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": True,
             }
         )
     window_revisions = [c for c in commits if c["committed_at"] >= "2026-08-22"]
     by_sha = {r["revision"]: r for r in revisions}
-    series = [by_sha.get(c["sha"], {"revision": c["sha"], "committed_at": c["committed_at"], "parents": [], "current_verdict": None, "history_state": "NO_DECISIVE_OBSERVED", "historical_contribution": None, "history_provenance": None}) for c in window_revisions]
+    series = [by_sha.get(c["sha"], {"revision": c["sha"], "committed_at": c["committed_at"], "parents": [], "current_verdict": None, "history_state": "NO_DECISIVE_OBSERVED", "historical_contribution": None, "history_provenance": None, "history_complete": True}) for c in window_revisions]
 
     result = ObservationSet(subject=SUBJECT, observed_at=OBSERVED_AT)
     result.add(obs(normalize.INV_REPO, {"id": 123456, "full_name": "acme/widget", "default_branch": "master", "visibility": "public", "has_issues": True, "archived": False, "pushed_at": "2026-09-05T08:00:00Z", "html_url": "https://example.invalid/acme/widget"}, "record"))

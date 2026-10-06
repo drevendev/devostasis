@@ -46,8 +46,15 @@ def test_change_request_aggregates():
     assert obs.value_of("forge.change_requests.stale_open_count_14d") == 1
     assert obs.value_of("forge.change_requests.updated_count_28d") == 3
     assert obs.value_of("planning.linkage.active_change_requests_count_28d") == 3
+    # Change request 4 delivered target 9, which has closed since; it stays
+    # linked (PV-REV-DIRECTION-CLOSED-TARGET-001), and only the presentation
+    # count of links to open targets leaves it out.
+    assert obs.value_of("planning.linkage.active_change_requests_linked_count_28d") == 3
+    assert obs.value_of("planning.linkage.active_change_requests_unlinked_count_28d") == 0
+    assert obs.value_of("planning.linkage.active_change_requests_unresolved_count_28d") == 0
     assert obs.value_of("planning.linkage.active_change_requests_linked_to_open_target_count_28d") == 2
-    assert obs.value_of("planning.linkage.links_per_target_28d") == {"5": 2}
+    assert obs.get("planning.linkage.active_change_requests_linked_to_open_target_count_28d").notes == normalize.LINKED_TO_OPEN_NOTE
+    assert obs.value_of("planning.linkage.links_per_target_28d") == {"5": 2, "9": 1}
 
 
 def test_flow_prec_01_sub_hour_medians_are_preserved():

@@ -19,6 +19,25 @@ SEM_UPPER = "CONSERVATIVE_UPPER_BOUND"
 SEM_SUPERSET = "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
 
 
+class InadmissibleEvidence(ValueError):
+    """Normalized inputs that contradict each other, so no admissible completion exists.
+
+    The totality contracts adopted in 0.2.0 name this case separately from
+    missing evidence: counts that cannot all be true at once (``L + U + R != N``
+    for Direction, a beyond-28-day count above the future-boundary count for
+    Horizon) are invalid normalized input and fail validation *before*
+    classification, never ``UNKNOWN`` or ``DEGRADED`` compensation
+    (PV-DIRECTION-INCOMPLETE-001 section 7, PV-HORIZON-PARTIAL-001 case
+    HOR-PARTIAL-15). The derivation never produces such a set; a saved or
+    hand-written one that does is refused as input. ``code`` is the stable
+    reason a caller or a vector can match.
+    """
+
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+
+
 @dataclass
 class VitalResult:
     vital_id: str

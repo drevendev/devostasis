@@ -1,0 +1,3188 @@
+{
+  "schema": "devostasis.vectors.v1",
+  "notes": "Cases DIR-CLOSED-01..09 of PV-REV-DIRECTION-CLOSED-TARGET-001 and DIR-INCOMPLETE-01..16 of PV-DIRECTION-INCOMPLETE-001 (accepted by PV-REV-DIRECTION-INCOMPLETE-001), transcribed from the contracts' required fixtures and adopted in 0.2.0 as one Direction rule version, direction.bands.v2. Cases about per-change evidence state the change-request and target inventories and run the derivation (given.derive), so the state-neutral linkage and the LINKED/UNLINKED/UNRESOLVED reduction are executed where they happen; cases about the completion rule itself state the N/L/U/R counts. A reference's state is what its resolution established: OPEN or CLOSED when the declared target resolves, MISSING when a complete register positively lacks the id, anything else unresolved.",
+  "vectors": [
+    {
+      "case": "DIR-CLOSED-01",
+      "title": "an active change request with an explicit link to an open target is linked",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "1",
+                "target_state": "OPEN",
+                "target_refs": [
+                  {
+                    "target_id": "1",
+                    "state": "OPEN"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 1,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0
+        }
+      }
+    },
+    {
+      "case": "DIR-CLOSED-02",
+      "title": "the same change request and target id stay linked when the target moves from open to closed; the linkage share is unchanged",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "target 1 open",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "target 1 closed",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "MIXED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 2,
+          "linked_active_change_count_28d": 1,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 0
+        }
+      }
+    },
+    {
+      "case": "DIR-CLOSED-03",
+      "title": "a link to a closed target is linked when the target identity resolves authoritatively",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "milestone embedded in the change request",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "4",
+                    "title": "target 4",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "4",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "4",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "register-backed target",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-4",
+                    "title": "target T-4",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-4",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-4",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 1,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0
+        }
+      }
+    },
+    {
+      "case": "DIR-CLOSED-04",
+      "title": "a reference to a target the complete register positively lacks is unlinked with the missing-reference diagnostic; linkage is never fabricated",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "T-1",
+                "title": "target T-1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "file"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-9",
+                "target_state": "MISSING",
+                "target_refs": [
+                  {
+                    "target_id": "T-9",
+                    "state": "MISSING"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "SCATTERED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 0,
+          "missing_target_reference_count_28d": 1
+        },
+        "diagnostics": [
+          "DIRECTION_TARGET_REFERENCE_MISSING"
+        ]
+      },
+      "notes": "The judgement's 'unlinked or unresolved' was narrowed by PV-REV-DIRECTION-INCOMPLETE-001: a positively missing id is UNLINKED (this case, DIR-INCOMPLETE-07); an id nobody could resolve is UNRESOLVED (DIR-INCOMPLETE-08, -09). Neither is ever linked."
+    },
+    {
+      "case": "DIR-CLOSED-05",
+      "title": "closing a target cannot by itself worsen the Direction band",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "before: target 1 open",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "after: target 1 closed",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "1",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "1",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "MIXED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 3,
+          "linked_active_change_count_28d": 2,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 0
+        }
+      },
+      "notes": "Under direction.bands.v1.1 the closed variant counted 0 of 3 linked and was SCATTERED: calibration finding 9."
+    },
+    {
+      "case": "DIR-CLOSED-06",
+      "title": "reopening a target cannot by itself improve the Direction band",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "before: target 2 closed",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "after: target 2 reopened",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "2",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "2",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "SCATTERED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 3,
+          "linked_active_change_count_28d": 1,
+          "unlinked_active_change_count_28d": 2,
+          "unresolved_active_change_count_28d": 0
+        }
+      }
+    },
+    {
+      "case": "DIR-CLOSED-07",
+      "title": "Horizon's open-target counts still exclude the closed target a change request stays linked to, so the two Vitals may diverge",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "CLOSED",
+                "due_at": "2026-12-01T00:00:00Z"
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "1",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "1",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "UNDECLARED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 0,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0
+        }
+      },
+      "notes": "The same evidence is FULLY_LINKED for Direction (DIR-CLOSED-03): Direction traces work to declared targets, Horizon counts what is still open."
+    },
+    {
+      "case": "DIR-CLOSED-08",
+      "title": "every active change request linked to one closed target is FULLY_LINKED with the single-target diagnostic: traceability, not alignment",
+      "kind": "vital",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "5",
+                "title": "target 5",
+                "state": "CLOSED",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "5",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "5",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "5",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "5",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 3,
+                "title": "change 3",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "5",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "5",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 3,
+          "linked_active_change_count_28d": 3,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0,
+          "links_per_target": {
+            "5": 3
+          }
+        },
+        "diagnostics": [
+          "ALL_LINKS_TO_SINGLE_TARGET"
+        ]
+      }
+    },
+    {
+      "case": "DIR-CLOSED-09",
+      "title": "adopting the repair changes the Direction rule id: the first comparison across it is INCOMPARABLE for Direction alone, while an unaffected Vital still compares",
+      "kind": "delta",
+      "source_unit": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+      "given": {
+        "previous": {
+          "vitals": [
+            {
+              "vital_id": "direction",
+              "band": "SCATTERED",
+              "rule_id": "direction.bands.v1.1"
+            },
+            {
+              "vital_id": "pulse",
+              "band": "STEADY",
+              "rule_id": "pulse.bands.v1"
+            }
+          ]
+        },
+        "current": {
+          "vitals": [
+            {
+              "vital_id": "direction",
+              "band": "MIXED",
+              "rule_id": "direction.bands.v2"
+            },
+            {
+              "vital_id": "pulse",
+              "band": "STEADY",
+              "rule_id": "pulse.bands.v1"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "comparison_status": "COMPARABLE",
+        "vitals": {
+          "direction": {
+            "transition_class": "INCOMPARABLE",
+            "reason_codes": [
+              "RULE_VERSION_BOUNDARY:direction.bands.v1.1->direction.bands.v2"
+            ],
+            "metric_deltas": {}
+          },
+          "pulse": {
+            "transition_class": "UNCHANGED"
+          }
+        }
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-01",
+      "title": "N=5, L=0, U=3, R=2: every completion k in {0,1,2} is SCATTERED",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.capability",
+            "value_type": "enum",
+            "value": "SUPPORTED"
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_count_28d",
+            "value": 5
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+            "value": 0
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+            "value": 3
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+            "value": 2
+          }
+        ]
+      },
+      "expect": {
+        "band": "SCATTERED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "SCATTERED"
+        ],
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 5,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 3,
+          "unresolved_active_change_count_28d": 2,
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-02",
+      "title": "N=5, L=3, U=1, R=1: every completion k in {3,4} is MIXED",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.capability",
+            "value_type": "enum",
+            "value": "SUPPORTED"
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_count_28d",
+            "value": 5
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+            "value": 3
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+            "value": 1
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+            "value": 1
+          }
+        ]
+      },
+      "expect": {
+        "band": "MIXED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "MIXED"
+        ],
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 5,
+          "linked_active_change_count_28d": 3,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 1,
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-03",
+      "title": "N=4, L=2, U=0, R=2: completions reach MIXED and FULLY_LINKED, so no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.capability",
+            "value_type": "enum",
+            "value": "SUPPORTED"
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_count_28d",
+            "value": 4
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+            "value": 2
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+            "value": 0
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+            "value": 2
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 4,
+          "linked_active_change_count_28d": 2,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 2,
+          "reachable_bands": [
+            "MIXED",
+            "FULLY_LINKED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-04",
+      "title": "N=5, L=1, U=1, R=3: completions reach SCATTERED and MIXED, so no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.capability",
+            "value_type": "enum",
+            "value": "SUPPORTED"
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_count_28d",
+            "value": 5
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+            "value": 1
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+            "value": 1
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+            "value": 3
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 5,
+          "linked_active_change_count_28d": 1,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 3,
+          "reachable_bands": [
+            "SCATTERED",
+            "MIXED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-05",
+      "title": "N=1, L=0, U=0, R=1: completions reach SCATTERED and FULLY_LINKED; never DEGRADED FULLY_LINKED",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.capability",
+            "value_type": "enum",
+            "value": "SUPPORTED"
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_count_28d",
+            "value": 1
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+            "value": 0
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+            "value": 0
+          },
+          {
+            "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+            "value": 1
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 1,
+          "reachable_bands": [
+            "SCATTERED",
+            "FULLY_LINKED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-06",
+      "title": "a marker to an authoritatively resolved closed target is LINKED; closing or reopening the target alone does not change the linkage",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "target T-2 closed",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "target T-2 reopened",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 2,
+          "linked_active_change_count_28d": 2,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0
+        }
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-07",
+      "title": "a marker to T that a complete authoritative lookup proves absent is UNLINKED: N=1, L=0, U=1, R=0 is exactly SCATTERED with the missing-reference diagnostic",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "T-1",
+                "title": "target T-1",
+                "state": "OPEN",
+                "due_at": null
+              },
+              {
+                "target_id": "T-2",
+                "title": "target T-2",
+                "state": "CLOSED",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "file"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T",
+                "target_state": "MISSING",
+                "target_refs": [
+                  {
+                    "target_id": "T",
+                    "state": "MISSING"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "SCATTERED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 0,
+          "missing_target_reference_count_28d": 1
+        },
+        "diagnostics": [
+          "DIRECTION_TARGET_REFERENCE_MISSING"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-08",
+      "title": "a marker to T while the target list is PARTIAL and T is not in the observed subset, with no direct lookup, is UNRESOLVED: no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              },
+              {
+                "target_id": "2",
+                "title": "target 2",
+                "state": "CLOSED",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T",
+                "target_state": "UNKNOWN",
+                "target_refs": [
+                  {
+                    "target_id": "T",
+                    "state": "UNKNOWN"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 1,
+          "unresolved_change_requests": {
+            "1": [
+              "TARGET_UNRESOLVED:T:UNKNOWN"
+            ]
+          },
+          "reachable_bands": [
+            "SCATTERED",
+            "FULLY_LINKED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      },
+      "notes": "The incomplete target list still proves the planning capability (a returned target exists), so Direction reaches the completion rule; absence from the partial list is never deletion proof."
+    },
+    {
+      "case": "DIR-INCOMPLETE-09",
+      "title": "a marker whose target resolution is unavailable, forbidden, unknown, errored or stale is UNRESOLVED, never LINKED by fallback",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "resolution UNAVAILABLE",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "UNAVAILABLE",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "UNAVAILABLE"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "resolution FORBIDDEN",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "FORBIDDEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "FORBIDDEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "resolution UNKNOWN",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "UNKNOWN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "UNKNOWN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "resolution ERROR",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "ERROR",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "ERROR"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "resolution STALE",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "STALE",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "STALE"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "link evidence unreadable",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": [
+                      "body:dict"
+                    ]
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 1,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 1,
+          "reachable_bands": [
+            "SCATTERED",
+            "FULLY_LINKED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-10",
+      "title": "a PARTIAL global target enumeration does not degrade Direction when every referenced target is resolved on its own",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "7",
+                "target_state": "OPEN",
+                "target_refs": [
+                  {
+                    "target_id": "7",
+                    "state": "OPEN"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "3",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "3",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 2,
+          "linked_active_change_count_28d": 2,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0
+        }
+      },
+      "notes": "Targets 7 and 3 are resolved by the milestones embedded in the change requests, not by the capped target list; Horizon over the same evidence stays incomplete (HOR-PARTIAL-08)."
+    },
+    {
+      "case": "DIR-INCOMPLETE-11",
+      "title": "partial link evidence leaves two change requests unresolved, but N/L/U/R forces SCATTERED for every completion",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "T-1",
+                "title": "target T-1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "file"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": null,
+                "target_state": null,
+                "target_refs": [],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": null,
+                "target_state": null,
+                "target_refs": [],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 3,
+                "title": "change 3",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": null,
+                "target_state": null,
+                "target_refs": [],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 4,
+                "title": "change 4",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-1",
+                "target_state": "UNKNOWN",
+                "target_refs": [
+                  {
+                    "target_id": "T-1",
+                    "state": "UNKNOWN"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 5,
+                "title": "change 5",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": null,
+                "target_state": null,
+                "target_refs": [],
+                "linkage_unresolved": [
+                  "title:int"
+                ]
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "SCATTERED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "SCATTERED"
+        ],
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 5,
+          "linked_active_change_count_28d": 0,
+          "unlinked_active_change_count_28d": 3,
+          "unresolved_active_change_count_28d": 2,
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-12",
+      "title": "partial link evidence admits MIXED and FULLY_LINKED, so no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "T-1",
+                "title": "target T-1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "file"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-1",
+                "target_state": "OPEN",
+                "target_refs": [
+                  {
+                    "target_id": "T-1",
+                    "state": "OPEN"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-1",
+                "target_state": "OPEN",
+                "target_refs": [
+                  {
+                    "target_id": "T-1",
+                    "state": "OPEN"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 3,
+                "title": "change 3",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-2",
+                "target_state": "UNKNOWN",
+                "target_refs": [
+                  {
+                    "target_id": "T-2",
+                    "state": "UNKNOWN"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 3,
+          "linked_active_change_count_28d": 2,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 1,
+          "reachable_bands": [
+            "MIXED",
+            "FULLY_LINKED"
+          ]
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-13",
+      "title": "linkage capability that is neither positively present nor absent is UNKNOWN with no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "variants": [
+          {
+            "title": "capability UNKNOWN",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "status": "UNKNOWN",
+                "reason_code": "TARGETS_INCOMPLETE"
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_count_28d",
+                "value": 3
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "title": "capability PARTIAL",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "status": "PARTIAL",
+                "reason_code": "TARGETS_INCOMPLETE"
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_count_28d",
+                "value": 3
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "title": "capability UNAVAILABLE",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "status": "UNAVAILABLE",
+                "reason_code": "TARGETS_INCOMPLETE"
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_count_28d",
+                "value": 3
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+                "value": 1
+              },
+              {
+                "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "diagnostics": [
+          "MISSING_REQUIRED:planning.explicit_targets.capability"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-14",
+      "title": "an active-change inventory that is PARTIAL leaves N unproven: UNKNOWN with no band",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "1",
+                "target_state": "OPEN",
+                "target_refs": [
+                  {
+                    "target_id": "1",
+                    "state": "OPEN"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": null,
+                "target_state": null,
+                "target_refs": [],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": false,
+              "window_start": "2026-08-10T12:00:00Z"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "diagnostics": [
+          "MISSING_REQUIRED:planning.linkage.active_change_requests_count_28d:PARTIAL"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-15",
+      "title": "reversed and reshuffled enumeration, page boundaries, marker order and target order leave L/U/R, the reachable bands, the status, the band and the diagnostics unchanged",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "provider order",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      },
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 4,
+                    "title": "change 4",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 5,
+                    "title": "change 5",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-3",
+                    "target_state": "UNKNOWN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-3",
+                        "state": "UNKNOWN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "reversed, markers and targets reordered",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "CLOSED",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 5,
+                    "title": "change 5",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-3",
+                    "target_state": "UNKNOWN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-3",
+                        "state": "UNKNOWN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 4,
+                    "title": "change 4",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      },
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "title": "interleaved",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "CLOSED",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "file"
+                }
+              },
+              {
+                "observation_id": "forge.change_requests.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 3,
+                    "title": "change 3",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 1,
+                    "title": "change 1",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-1",
+                    "target_state": "OPEN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 5,
+                    "title": "change 5",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-3",
+                    "target_state": "UNKNOWN",
+                    "target_refs": [
+                      {
+                        "target_id": "T-3",
+                        "state": "UNKNOWN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "change 2",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": "T-2",
+                    "target_state": "CLOSED",
+                    "target_refs": [
+                      {
+                        "target_id": "T-2",
+                        "state": "CLOSED"
+                      },
+                      {
+                        "target_id": "T-1",
+                        "state": "OPEN"
+                      }
+                    ],
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 4,
+                    "title": "change 4",
+                    "state": "OPEN",
+                    "draft": false,
+                    "created_at": "2026-08-20T10:00:00Z",
+                    "updated_at": "2026-09-01T10:00:00Z",
+                    "merged_at": null,
+                    "closed_at": null,
+                    "target_id": null,
+                    "target_state": null,
+                    "target_refs": [],
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": true,
+                  "window_complete": true,
+                  "window_start": "2026-08-10T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "MIXED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "MIXED"
+        ],
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 5,
+          "linked_active_change_count_28d": 3,
+          "unlinked_active_change_count_28d": 1,
+          "unresolved_active_change_count_28d": 1,
+          "links_per_target": {
+            "T-1": 2,
+            "T-2": 2
+          },
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "DIR-INCOMPLETE-16",
+      "title": "several active change requests all linked to one authoritatively resolved closed target, with complete evidence, are exactly FULLY_LINKED: neutral, no concentration threshold",
+      "kind": "vital",
+      "source_unit": "PV-DIRECTION-INCOMPLETE-001",
+      "given": {
+        "vital": "direction",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "file",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "T-9",
+                "title": "target T-9",
+                "state": "CLOSED",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "file"
+            }
+          },
+          {
+            "observation_id": "forge.change_requests.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 1,
+                "title": "change 1",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-9",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "T-9",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 2,
+                "title": "change 2",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-9",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "T-9",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 3,
+                "title": "change 3",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-9",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "T-9",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              },
+              {
+                "number": 4,
+                "title": "change 4",
+                "state": "OPEN",
+                "draft": false,
+                "created_at": "2026-08-20T10:00:00Z",
+                "updated_at": "2026-09-01T10:00:00Z",
+                "merged_at": null,
+                "closed_at": null,
+                "target_id": "T-9",
+                "target_state": "CLOSED",
+                "target_refs": [
+                  {
+                    "target_id": "T-9",
+                    "state": "CLOSED"
+                  }
+                ],
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": true,
+              "window_complete": true,
+              "window_start": "2026-08-10T12:00:00Z"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FULLY_LINKED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "direction.bands.v2",
+        "derived": {
+          "active_change_count_28d": 4,
+          "linked_active_change_count_28d": 4,
+          "unlinked_active_change_count_28d": 0,
+          "unresolved_active_change_count_28d": 0,
+          "links_per_target": {
+            "T-9": 4
+          }
+        },
+        "diagnostics": [
+          "ALL_LINKS_TO_SINGLE_TARGET"
+        ],
+        "diagnostics_absent": [
+          "DIRECTION_INCOMPLETE_BAND_INVARIANT",
+          "DIRECTION_INCOMPLETE_AMBIGUOUS"
+        ]
+      }
+    }
+  ]
+}

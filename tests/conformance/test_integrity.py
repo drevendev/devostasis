@@ -160,7 +160,7 @@ def test_partial_revision_series_is_unknown_with_its_evidence_preserved():
     assert result.band is None and result.evaluation_status == "UNKNOWN" and result.possible_bands is None
     assert result.derived["decisive_count_14d"] == 5 and result.derived["series_status"] == "PARTIAL"
     assert "REVISION_SERIES_PARTIAL:PAGINATION_CAPPED" in result.diagnostics
-    assert result.rule_id == "integrity.bands.v1+ci-unit-004"
+    assert result.rule_id == "integrity.bands.v1+ci-unit-004+hist-002"
 
 
 def test_sparse_samples_declare_their_strength_and_established_ones_do_not_carry_the_diagnostic():
@@ -277,9 +277,37 @@ def test_latest_non_decisive_revision_falls_back_to_latest_decisive_verdict():
     assert any(code.startswith("LATEST_REVISION_NON_DECISIVE") for code in result.diagnostics)
 
 
-def test_parent_level_provenance_is_diagnosed():
+def test_parent_level_provenance_is_diagnosed_and_a_favorable_one_is_unknown_history():
+    """R52 and PV-HIST-002 HIST-06: a check suite hides its earlier outcomes, so its pass proves no history.
+
+    The record states PASS_ONLY_OBSERVED, as a 0.1.x record would; the union
+    is rebuilt from its parents, and a parent-level pass is not a complete
+    history, so the Vital claims no band around it.
+    """
     revs = [revision("s", "2026-09-01T00:00:00Z", [parent("suite", "VERIFY_PASS", kind="github_check_suite")], "VERIFY_PASS", "PASS_ONLY_OBSERVED", provenance="PARENT_LEVEL_ONLY")]
     obs = obs_set()
     integrity_inputs(obs, True, revs)
     result = integrity.evaluate(obs)
-    assert "HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:1" in result.diagnostics
+    assert "HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:1" in result.diagnostics and "REVISION_HISTORY_UNKNOWN:s" in result.diagnostics
+    assert (result.band, result.evaluation_status) == (None, "UNKNOWN")
+    assert result.derived["revision_history"]["records"][0]["history_state"] == "UNKNOWN_HISTORY"
+
+
+def test_a_parent_level_failure_is_still_a_proven_failure():
+    """Only favorable parent-level evidence is unknown: an observed failure is proven on any surface."""
+    revs = [revision("s", "2026-09-01T00:00:00Z", [parent("suite", "VERIFY_FAIL", kind="github_check_suite")], "VERIFY_FAIL", "FAILURE_OBSERVED", provenance="PARENT_LEVEL_ONLY")]
+    obs = obs_set()
+    integrity_inputs(obs, True, revs)
+    result = integrity.evaluate(obs)
+    assert (result.band, result.evaluation_status) == ("FAILING", "AVAILABLE") and result.derived["failed_count_14d"] == 1
+
+
+def test_a_record_without_its_revision_identity_is_a_defect_not_a_crash():
+    """Durable history is keyed by immutable revision (PV-HIST-002): a record that names none cannot be counted or carried."""
+    anonymous = revision("x", "2026-09-01T00:00:00Z", [parent("p", "VERIFY_PASS")], "VERIFY_PASS", "PASS_ONLY_OBSERVED")
+    del anonymous["revision"]
+    obs = obs_set()
+    integrity_inputs(obs, True, passing_revisions(4) + [anonymous])
+    result = integrity.evaluate(obs)
+    assert (result.band, result.evaluation_status) == (None, "UNKNOWN")
+    assert any(code.startswith("REVISION_RECORD_INCONSISTENT") for code in result.diagnostics)

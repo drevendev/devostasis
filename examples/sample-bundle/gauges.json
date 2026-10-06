@@ -27,7 +27,7 @@
       "contract": "devostasis.gauge.v1",
       "qualifier": "exact",
       "scale": "traceability share",
-      "value": 50,
+      "value": 60,
       "vital_id": "direction"
     },
     {

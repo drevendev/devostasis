@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from devostasis.adapters.github import GitHubAdapter, GitHubClient, LinkageEvidenceError, classify_http_error
+from devostasis.adapters.github import GitHubAdapter, GitHubClient, classify_http_error
 from devostasis.config import single_project
 from devostasis.normalize import CI_CONFIGURED, CI_REVISIONS, INV_BRANCHES, INV_CRS, INV_ISSUES, INV_TARGETS, derive
 from devostasis.observations import AVAILABLE, ERROR, FORBIDDEN, PARTIAL, UNAVAILABLE
@@ -301,7 +301,7 @@ def test_a_successful_response_that_is_not_json_becomes_a_declared_provider_fail
         raise AssertionError("a 200 with a non-JSON body must be a declared failure")
 
 
-# --------------------------------------------------------------------------- linkage evidence (PV-REV-PR-015)
+# --------------------------------------------------------------------------- linkage evidence (PV-REV-PR-015, PV-DIRECTION-INCOMPLETE-001)
 
 
 def _pull(number=7, **fields):
@@ -332,24 +332,56 @@ def _observe(routes, project):
     return GitHubAdapter(GitHubClient(FakeTransport(routes)), NOW).collect(project)
 
 
+def _register_route(ids_and_states):
+    import base64
+    import json as _json
+
+    document = {"schema": "devostasis.targets.v1", "targets": [{"id": tid, "state": state} for tid, state in ids_and_states]}
+    content = base64.b64encode(_json.dumps(document).encode("utf-8")).decode("ascii")
+    return 200, {}, {"type": "file", "size": len(content), "encoding": "base64", "content": content}
+
+
+def _file_planning_routes(pulls, register=(("B1", "open"),)):
+    return _routes(**{f"{BASE}/pulls": _paged(pulls), f"{BASE}/contents/.devostasis/targets.json": _register_route(register)})
+
+
 @pytest.mark.parametrize("field, value", [("title", 7), ("title", ["a"]), ("body", {"a": 1}), ("body", 3.5)])
-def test_unreadable_linkage_evidence_is_declared_not_read_as_unlinked(field, value):
-    """`Target: <id>` lives in the title and the body, so payload of the wrong type there is not an absent link."""
-    routes = _routes(**{f"{BASE}/pulls": _paged([_pull(**{field: value})])})
-    try:
-        _observe(routes, _file_planning_project())
-    except LinkageEvidenceError as exc:
-        assert "#7" in str(exc) and field in str(exc)
-    else:
-        raise AssertionError(f"a {type(value).__name__} {field} must not silently become an unlinked change request")
+def test_unreadable_linkage_evidence_is_unresolved_not_unlinked_and_not_a_failed_project(field, value):
+    """`Target: <id>` lives in the title and the body, so payload of the wrong type there is not an absent link.
+
+    Since PV-DIRECTION-INCOMPLETE-001 it is not a failed project either: the
+    change request keeps what could be read, names what could not, and enters
+    Direction as UNRESOLVED instead of UNLINKED.
+    """
+    project = _file_planning_project()
+    obs = _observe(_file_planning_routes([_pull(**{field: value})]), project)
+    record = obs.get(INV_CRS).value[0]
+    assert record["target_refs"] == [] and record["linkage_unresolved"] == [f"{field}:{type(value).__name__}"]
+    derive(obs, project)
+    assert obs.value_of("planning.linkage.active_change_requests_unresolved_count_28d") == 1
+    assert obs.value_of("planning.linkage.active_change_requests_unlinked_count_28d") == 0
+    assert obs.value_of("planning.linkage.unresolved_change_requests_28d") == {"7": [f"LINKAGE_UNREADABLE:{field}:{type(value).__name__}"]}
+    direction = {r.vital_id: r for r in evaluate_all(obs)}["direction"]
+    assert (direction.band, direction.evaluation_status) == (None, "UNKNOWN"), "one unresolved of one could be FULLY_LINKED or SCATTERED"
+
+
+def test_a_readable_link_is_not_undone_by_an_unreadable_field():
+    """Unreadable evidence can only add references, and a resolved one already links the change request."""
+    project = _file_planning_project()
+    obs = _observe(_file_planning_routes([_pull(title="Target: B1", body={"not": "text"})]), project)
+    record = obs.get(INV_CRS).value[0]
+    assert record["target_refs"] == [{"target_id": "B1", "state": "OPEN"}] and record["linkage_unresolved"] == ["body:dict"]
+    derive(obs, project)
+    assert obs.value_of("planning.linkage.active_change_requests_linked_count_28d") == 1
+    assert obs.value_of("planning.linkage.active_change_requests_unresolved_count_28d") == 0
 
 
 def test_a_change_request_with_no_marker_is_unlinked_and_that_is_not_an_error():
-    """The distinction the error exists to preserve: absent evidence is a fact, unreadable evidence is not."""
+    """The distinction the unresolved state exists to preserve: absent evidence is a fact, unreadable evidence is not."""
     routes = _routes(**{f"{BASE}/pulls": _paged([_pull(title="nothing to see", body="no marker here")])})
     item = _observe(routes, _file_planning_project()).get(INV_CRS)
     assert item.status == AVAILABLE
-    assert item.value[0]["target_refs"] == [] and item.value[0]["target_id"] is None
+    assert item.value[0]["target_refs"] == [] and item.value[0]["target_id"] is None and item.value[0]["linkage_unresolved"] == []
 
 
 def test_a_marker_in_the_body_still_links_after_the_repair():
@@ -358,22 +390,35 @@ def test_a_marker_in_the_body_still_links_after_the_repair():
     assert item.value[0]["target_id"] == "B1"
 
 
-def test_a_milestone_without_a_number_cannot_name_the_target_it_links_to():
-    """Under planning.source=milestones the milestone *is* the link; a malformed one is unreadable evidence."""
+def test_a_milestone_without_a_number_is_unresolved_linkage_not_a_failed_project():
+    """Under planning.source=milestones the milestone *is* the link; a malformed one is unreadable evidence, kept as such."""
+    project = single_project("acme/widget")
     routes = _routes(**{f"{BASE}/pulls": _paged([_pull(milestone={"state": "open"})])})
-    try:
-        _observe(routes, single_project("acme/widget"))
-    except LinkageEvidenceError as exc:
-        assert "#7" in str(exc)
-    else:
-        raise AssertionError("a milestone with no number must not be read as no milestone")
+    obs = _observe(routes, project)
+    record = obs.get(INV_CRS).value[0]
+    assert record["target_refs"] == [] and record["linkage_unresolved"] == ["milestone:NO_NUMBER"]
+    derive(obs, project)
+    assert obs.value_of("planning.linkage.active_change_requests_unresolved_count_28d") == 1
 
 
-def test_unreadable_linkage_evidence_is_a_collection_error_so_one_project_fails_alone():
-    """It reaches run_project's declared boundary, not run_all's catch-all for the unanticipated."""
-    from devostasis.adapters.github import CollectionError
+def test_a_reference_the_complete_register_lacks_is_missing_and_one_the_register_could_not_answer_is_unknown():
+    """DIR-INCOMPLETE-07 against DIR-INCOMPLETE-09: positive absence is a broken reference, an unreadable register is no evidence."""
+    project = _file_planning_project()
+    present = _observe(_file_planning_routes([_pull(body="Target: T-9")]), project)
+    assert present.get(INV_CRS).value[0]["target_refs"] == [{"target_id": "T-9", "state": "MISSING"}]
+    absent = _observe(_routes(**{f"{BASE}/pulls": _paged([_pull(body="Target: T-9")])}), project)
+    assert absent.get(INV_TARGETS).reason_code == "REGISTER_NOT_FOUND"
+    assert absent.get(INV_CRS).value[0]["target_refs"] == [{"target_id": "T-9", "state": "UNKNOWN"}]
 
-    assert issubclass(LinkageEvidenceError, CollectionError)
+
+def test_a_closed_register_target_is_still_a_resolved_reference():
+    """DIR-CLOSED-03 at the adapter: the register resolves the id, and its lifecycle is carried, not used to unlink."""
+    project = _file_planning_project()
+    obs = _observe(_file_planning_routes([_pull(body="Target: B1")], register=(("B1", "closed"),)), project)
+    assert obs.get(INV_CRS).value[0]["target_refs"] == [{"target_id": "B1", "state": "CLOSED"}]
+    derive(obs, project)
+    assert obs.value_of("planning.linkage.active_change_requests_linked_count_28d") == 1
+    assert obs.value_of("planning.linkage.active_change_requests_linked_to_open_target_count_28d") == 0
 
 
 # --------------------------------------------------------------------------- register shapes (#12 finding 5)

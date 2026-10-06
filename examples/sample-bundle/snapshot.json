@@ -1,6 +1,6 @@
 {
   "observation_contract_version": "RAW-OBS-V0",
-  "observations_digest": "sha256:8be202ed47fbf0fc95288df179037b061e02192f6a48f6507b6cab5eaad0ce98",
+  "observations_digest": "sha256:78603834c2e4cb90798cc144488c5b9e8d99407908269572a622ed13f1e58b33",
   "observed_at": "2026-09-05T12:00:00Z",
   "policy_version": "devostasis.policy.v1",
   "schema": "devostasis.snapshot.v1",
@@ -60,7 +60,7 @@
       ],
       "policy_version": "devostasis.policy.v1",
       "possible_bands": null,
-      "rule_id": "horizon.bands.v1",
+      "rule_id": "horizon.bands.v2",
       "shared_signal_groups": [
         "PLANNING_TARGETS"
       ],
@@ -155,17 +155,20 @@
       "derived": {
         "active_change_count_28d": 10,
         "capability": "SUPPORTED",
-        "linked_active_change_count_28d": 5,
+        "linkage_rule": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+        "linked_active_change_count_28d": 6,
+        "linked_to_open_target_count_28d": 5,
         "links_per_target": {
+          "2": 1,
           "3": 5
         },
-        "unlinked_active_change_count_28d": 5
+        "missing_target_reference_count_28d": 0,
+        "unlinked_active_change_count_28d": 4,
+        "unresolved_active_change_count_28d": 0
       },
-      "diagnostics": [
-        "ALL_LINKS_TO_SINGLE_TARGET"
-      ],
+      "diagnostics": [],
       "evaluation_status": "AVAILABLE",
-      "explanation": "5 of 10 active change requests are explicitly linked to an open planning target.",
+      "explanation": "6 of 10 active change requests are explicitly linked to a declared target, open or closed.",
       "inputs": [
         {
           "freshness": "FRESH",
@@ -174,7 +177,17 @@
         },
         {
           "freshness": "FRESH",
-          "observation_id": "planning.linkage.active_change_requests_linked_to_open_target_count_28d",
+          "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
           "status": "AVAILABLE"
         },
         {
@@ -186,11 +199,21 @@
           "freshness": "FRESH",
           "observation_id": "planning.linkage.links_per_target_28d",
           "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.missing_target_reference_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.unresolved_change_requests_28d",
+          "status": "AVAILABLE"
         }
       ],
       "policy_version": "devostasis.policy.v1",
       "possible_bands": null,
-      "rule_id": "direction.bands.v1.1",
+      "rule_id": "direction.bands.v2",
       "shared_signal_groups": [
         "PLANNING_TARGETS",
         "CHANGE_REQUEST_ACTIVITY"
@@ -274,9 +297,201 @@
         "history_provenance": {
           "ATTEMPT_LEVEL": 8
         },
+        "history_rule": "PV-HIST-002",
+        "revision_history": {
+          "lineage": "devostasis.ci-history.v2",
+          "records": [
+            {
+              "committed_at": "2026-08-22T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:900"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000c"
+            },
+            {
+              "committed_at": "2026-08-23T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:901"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000d"
+            },
+            {
+              "committed_at": "2026-08-24T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:902"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000e"
+            },
+            {
+              "committed_at": "2026-08-25T09:00:00Z",
+              "historical_contribution": "VERIFY_FAIL",
+              "history_complete": true,
+              "history_state": "FAILURE_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_FAIL"
+                    },
+                    {
+                      "attempt": 2,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 2,
+                  "parent_ids": [
+                    "github_actions:workflow_run:903"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000f"
+            },
+            {
+              "committed_at": "2026-08-26T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:904"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000010"
+            },
+            {
+              "committed_at": "2026-08-27T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:905"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000011"
+            },
+            {
+              "committed_at": "2026-08-28T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:906"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000012"
+            },
+            {
+              "committed_at": "2026-08-29T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:907"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000013"
+            }
+          ],
+          "source": {
+            "reason": "NO_PREVIOUS_BUNDLE",
+            "status": "BASELINE"
+          }
+        },
         "revisions_in_window": 8,
+        "revisions_with_history": 8,
         "revisions_with_verification": 8,
-        "sample_strength": "ESTABLISHED"
+        "sample_strength": "ESTABLISHED",
+        "unknown_history_count_14d": 0
       },
       "diagnostics": [],
       "evaluation_status": "AVAILABLE",
@@ -291,11 +506,16 @@
           "freshness": "FRESH",
           "observation_id": "ci.revision_verdicts_14d",
           "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "ci.revision_history_carried",
+          "status": "UNAVAILABLE"
         }
       ],
       "policy_version": "devostasis.policy.v1",
       "possible_bands": null,
-      "rule_id": "integrity.bands.v1+ci-unit-004",
+      "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
       "shared_signal_groups": [
         "CI_VERIFICATION"
       ],
@@ -354,7 +574,7 @@
       ],
       "policy_version": "devostasis.policy.v1",
       "possible_bands": null,
-      "rule_id": "debt.bands.v1.1",
+      "rule_id": "debt.bands.v2",
       "shared_signal_groups": [
         "EXPLICIT_DEBT_REGISTER",
         "FORGE_INVENTORY"

@@ -3,12 +3,28 @@
   "notes": "Registered maintenance obligations of this repository, read by Devostasis when debt.source = file. An item belongs here when the current code carries a cost, not when a feature is missing: planned work lives in targets.json and ROADMAP.md. 'opened' is the date the obligation started being carried, 'updated' the last time it changed; an open item untouched for 30 days is stale.",
   "items": [
     {
+      "id": "D-7",
+      "title": "Live candidate content recheck needs an explicit mutable source-ref binding",
+      "state": "open",
+      "opened": "2026-10-02",
+      "updated": "2026-10-02",
+      "cost": "Candidate subject identity binds an immutable commit but not a mutable branch/MR content-source ref. The CLI therefore requires a freshly attested inventory for candidate issue/research/analysis recheck; it cannot reuse a historical SHA as proof that a branch stayed current. Named source-ref support is tracked in https://github.com/drevendev/Devostasis/issues/60. Canonical default-branch tasks and candidate PR head recheck are unaffected."
+    },
+    {
+      "id": "D-6",
+      "title": "GitLab work scopes cannot certify exact-head approvals from the aggregate approvals API",
+      "state": "open",
+      "opened": "2026-10-02",
+      "updated": "2026-10-02",
+      "cost": "The 0.3.0 companion reads approval capability but the standard GitLab response supplies users/times, not the reviewed commit. It therefore keeps exact-head approval UNKNOWN and cannot admit automatic merges. A revision-bound read-only profile and adopter integration validation are tracked in https://github.com/drevendev/Devostasis/issues/58; this debt does not block independent review, issue, research or analysis work."
+    },
+    {
       "id": "D-1",
       "title": "Conformance cases named in the specification have no executable fixture",
       "state": "open",
       "opened": "2026-09-05",
-      "updated": "2026-09-30",
-      "cost": "docs/spec/conformance.md named T2-T9, R1-R53, ART-05, ART-08-ART-11, ART-15 and RPT-4-RPT-9 with no test behind them, so the public coverage claim is larger than the proof. The vector format and runner exist since 0.1.8, and 0.1.9 transcribed the accepted exact vectors the research process delivered (T2, R1, R2, R3, R4, T4, T5, T7) together with whole accepted families (INT-UNKNOWN, INT-TOTAL, CLU-INCOMPLETE, ACT-COV); sixty-three of the seventy named cases still have no evidence, and several (T3, T6, T8, the bundle and store cases) need a conformance surface this format does not yet carry (issues #20, #23)."
+      "updated": "2026-10-02",
+      "cost": "docs/spec/conformance.md named T2-T9, R1-R53, ART-05, ART-08-ART-11, ART-15 and RPT-4-RPT-9 with no test behind them, so the public coverage claim is larger than the proof. The vector format and runner exist since 0.1.8, and 0.1.9 transcribed the accepted exact vectors the research process delivered (T2, R1, R2, R3, R4, T4, T5, T7) together with whole accepted families (INT-UNKNOWN, INT-TOTAL, CLU-INCOMPLETE, ACT-COV). The pending 0.2.0 branch holds T9 to its accepted table with a generator, leaving sixty-two named cases without executable proof. Several (T3, T6, T8, the bundle and store cases) need further conformance capabilities or accepted vectors (issues #20, #23)."
     },
     {
       "id": "D-2",

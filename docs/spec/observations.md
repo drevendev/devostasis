@@ -65,7 +65,7 @@ Inventories (emitted by adapters):
 | --- | --- | --- |
 | `forge.repository.metadata` | record | id, default branch, visibility, `has_issues`, archived, pushed_at |
 | `git.default_branch.commits_28d` | series | `{sha, committed_at, title}` for the 28-day window; coverage `complete` |
-| `forge.change_requests.inventory` | series | all open change requests plus those updated in 28 days; coverage `open_complete`, `window_complete` |
+| `forge.change_requests.inventory` | series | all open change requests plus those updated in 28 days; coverage `open_complete`, `window_complete`. Each record carries `target_refs`, the explicit target references with the state their resolution established (`OPEN` or `CLOSED` when the declared target resolves, `MISSING` when a complete register positively lacks the id, `UNKNOWN` when nothing could resolve it), and `linkage_unresolved`, the linkage fields that could not be read (`body:dict`, `milestone:NO_NUMBER`) |
 | `forge.issues.inventory` | series | all open issues plus those updated in 28 days; `UNAVAILABLE` when issues are disabled |
 | `git.nondefault_branches.inventory` | series | `{name, head_sha, head_committed_at, protected}`; coverage `complete`, `heads_resolved` |
 | `git.nondefault_branches.retention_semantics` | enum | whether the purpose of the non-default branches is known: `UNCLASSIFIED` makes a stale count an upper bound on residue ([vitals.md](vitals.md#clutter), case T7). Optional; the GitHub adapter does not emit it in this version |
@@ -73,6 +73,7 @@ Inventories (emitted by adapters):
 | `forge.releases.inventory` | series | the 30 most recent published releases; a full page is `PARTIAL`, because the provider had at least that many |
 | `ci.configured` | boolean | positively observed presence or absence of verification |
 | `ci.revision_verdicts_14d` | series | one canonical record per default-branch revision of the 14-day window (see [integrity-ci.md](integrity-ci.md)); coverage `runs_complete`, `attempts_complete`, `suites_complete`, `suite_revisions_planned`, `suite_revisions_examined`, `suites_stop_reason`, `surface` |
+| `ci.revision_history_carried` | record | added by a build, not a collector: the durable revision history of the immediate predecessor bundle, or why there is none ([integrity-ci.md](integrity-ci.md#durable-history-pv-hist-002)) |
 
 Aggregates (derived deterministically from inventories; status follows the
 relevant coverage flag):
@@ -83,8 +84,8 @@ relevant coverage flag):
 | `forge.change_requests.open_count`, `.merged_count_28d`, `.updated_count_28d`, `.stale_open_count_14d`, `.oldest_open_age_days` (when open > 0), `.median_time_to_merge_seconds_28d` (when merged > 0; exact rational record `{"numerator": n, "denominator": d}` in seconds), `.median_time_to_merge_hours_28d` (whole-hour projection of the former, presentation only) | change requests |
 | `forge.issues.open_count`, `.stale_open_count_30d`, `.updated_count_28d` | issues |
 | `git.nondefault_branches.stale_count_30d` | branches (heads older than 30 days) |
-| `planning.explicit_targets.capability` (`SUPPORTED`, `SUPPORTED_UNUSED`, `UNSUPPORTED`), `.open_count`, `.open_with_future_boundary_count`, `.open_beyond_28d_count`, `.nearest_future_boundary_days` | targets and configuration |
-| `planning.linkage.active_change_requests_count_28d`, `.active_change_requests_linked_to_open_target_count_28d`, `.links_per_target_28d` | change requests with milestone linkage |
+| `planning.explicit_targets.capability` (`SUPPORTED`, `SUPPORTED_UNUSED`, `UNSUPPORTED`), `.open_count`, `.open_with_future_boundary_count`, `.open_beyond_28d_count`, `.nearest_future_boundary_days` | targets and configuration; a fresh partial enumeration that returned a target proves `SUPPORTED` (`coverage.basis = RETURNED_TARGET_RECORD`), and its counts are observed-subset lower bounds |
+| `planning.linkage.active_change_requests_count_28d`, `.active_change_requests_linked_count_28d`, `.active_change_requests_unlinked_count_28d`, `.active_change_requests_unresolved_count_28d`, `.unresolved_change_requests_28d` (record: change request number to its unresolved reasons), `.links_per_target_28d` (resolved references per target, open or closed), `.unknown_target_reference_count_28d`, `.missing_target_reference_count_28d`, `.active_change_requests_linked_to_open_target_count_28d` (presentation only since `direction.bands.v2`) | change requests with their target references |
 | `debt.registry.capability` (`CONFIGURED`, `UNCONFIGURED`), `debt.mapping`, `debt.items.open_count`, `.open_stale_count_30d`, `.closed_count_28d` | issues filtered by the configured label mapping |
 
 A count aggregate derived from an incomplete inventory is `PARTIAL`, and its
@@ -94,15 +95,19 @@ enumeration did return, which the records it did not return can only
 increase. That declaration is what lets a Vital read a `PARTIAL` value as a
 lower bound (`PV-REV-PR-031-003`); `PARTIAL` alone never does. Every count
 above carries it; `oldest_open_age_days`, the two medians and
-`links_per_target_28d` never do, because a maximum, a median or a record of a
+`links_per_target_28d` and `unresolved_change_requests_28d` never do, because
+a maximum, a median or a record of a
 subset is not a lower bound of anything a Vital classifies. A complete
 aggregate's coverage is unchanged, so this declaration moves no bundle
 identity built over complete evidence.
 
 Definitions: "stale" means open and not updated for the stated number of days;
 "active" change requests are those updated within the 28-day frame; "linked"
-means the change request carries an explicit reference to an open planning
-target; merge durations are computed exactly from the timestamps (fractional
+means the change request carries an explicit reference to a declared planning
+target that resolves, open or closed (state-neutral since
+`direction.bands.v2`), "unlinked" that it carries none or only references a
+complete register positively lacks, and "unresolved" that its linkage
+evidence could not be read or a reference could not be resolved; merge durations are computed exactly from the timestamps (fractional
 seconds of an RFC 3339 timestamp are kept as exact decimal fractions, never
 rounded through binary floats), the "median" over an odd sample is the middle
 duration and over an even sample the exact arithmetic mean of the two middle

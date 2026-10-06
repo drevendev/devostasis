@@ -46,6 +46,7 @@
           "committed_at": "2026-08-22T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -73,6 +74,7 @@
           "committed_at": "2026-08-23T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -100,6 +102,7 @@
           "committed_at": "2026-08-24T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -127,6 +130,7 @@
           "committed_at": "2026-08-25T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_FAIL",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "FAILURE_OBSERVED",
           "parents": [
@@ -158,6 +162,7 @@
           "committed_at": "2026-08-26T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -185,6 +190,7 @@
           "committed_at": "2026-08-27T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -212,6 +218,7 @@
           "committed_at": "2026-08-28T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -239,6 +246,7 @@
           "committed_at": "2026-08-29T09:00:00Z",
           "current_verdict": "VERIFY_PASS",
           "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
           "history_provenance": "ATTEMPT_LEVEL",
           "history_state": "PASS_ONLY_OBSERVED",
           "parents": [
@@ -291,10 +299,17 @@
           "created_at": "2026-09-02T10:00:00Z",
           "draft": false,
           "id": 40,
+          "linkage_unresolved": [],
           "merged_at": null,
           "number": 40,
           "state": "OPEN",
           "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
           "target_state": "OPEN",
           "title": "Refactor the pricing module",
           "updated_at": "2026-09-04T10:00:00Z",
@@ -306,10 +321,12 @@
           "created_at": "2026-09-03T10:00:00Z",
           "draft": true,
           "id": 41,
+          "linkage_unresolved": [],
           "merged_at": null,
           "number": 41,
           "state": "OPEN",
           "target_id": null,
+          "target_refs": [],
           "target_state": null,
           "title": "Add the export button",
           "updated_at": "2026-09-05T08:00:00Z",
@@ -321,10 +338,17 @@
           "created_at": "2026-08-13T10:00:00Z",
           "draft": false,
           "id": 31,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-14T06:00:00Z",
           "number": 31,
           "state": "MERGED",
           "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
           "target_state": "OPEN",
           "title": "Merged change 1",
           "updated_at": "2026-08-14T10:00:00Z",
@@ -336,11 +360,18 @@
           "created_at": "2026-08-14T10:00:00Z",
           "draft": false,
           "id": 32,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-15T06:00:00Z",
           "number": 32,
           "state": "MERGED",
-          "target_id": null,
-          "target_state": null,
+          "target_id": "2",
+          "target_refs": [
+            {
+              "state": "CLOSED",
+              "target_id": "2"
+            }
+          ],
+          "target_state": "CLOSED",
           "title": "Merged change 2",
           "updated_at": "2026-08-15T10:00:00Z",
           "url": "https://example.invalid/pull/32"
@@ -351,10 +382,17 @@
           "created_at": "2026-08-15T10:00:00Z",
           "draft": false,
           "id": 33,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-16T06:00:00Z",
           "number": 33,
           "state": "MERGED",
           "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
           "target_state": "OPEN",
           "title": "Merged change 3",
           "updated_at": "2026-08-16T10:00:00Z",
@@ -366,10 +404,12 @@
           "created_at": "2026-08-16T10:00:00Z",
           "draft": false,
           "id": 34,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-17T06:00:00Z",
           "number": 34,
           "state": "MERGED",
           "target_id": null,
+          "target_refs": [],
           "target_state": null,
           "title": "Merged change 4",
           "updated_at": "2026-08-17T10:00:00Z",
@@ -381,10 +421,17 @@
           "created_at": "2026-08-17T10:00:00Z",
           "draft": false,
           "id": 35,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-18T06:00:00Z",
           "number": 35,
           "state": "MERGED",
           "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
           "target_state": "OPEN",
           "title": "Merged change 5",
           "updated_at": "2026-08-18T10:00:00Z",
@@ -396,10 +443,12 @@
           "created_at": "2026-08-18T10:00:00Z",
           "draft": false,
           "id": 36,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-19T06:00:00Z",
           "number": 36,
           "state": "MERGED",
           "target_id": null,
+          "target_refs": [],
           "target_state": null,
           "title": "Merged change 6",
           "updated_at": "2026-08-19T10:00:00Z",
@@ -411,10 +460,17 @@
           "created_at": "2026-08-19T10:00:00Z",
           "draft": false,
           "id": 37,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-20T06:00:00Z",
           "number": 37,
           "state": "MERGED",
           "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
           "target_state": "OPEN",
           "title": "Merged change 7",
           "updated_at": "2026-08-20T10:00:00Z",
@@ -426,10 +482,12 @@
           "created_at": "2026-08-20T10:00:00Z",
           "draft": false,
           "id": 38,
+          "linkage_unresolved": [],
           "merged_at": "2026-08-21T06:00:00Z",
           "number": 38,
           "state": "MERGED",
           "target_id": null,
+          "target_refs": [],
           "target_state": null,
           "title": "Merged change 8",
           "updated_at": "2026-08-21T10:00:00Z",

@@ -1,0 +1,18 @@
+# Scheduled/manual only: a release merge legitimately precedes its tag.
+# The reusable observer installs the released engine; observing that merge
+# before it is tagged would manufacture an install failure (see issue #18).
+name: Observe own work scopes
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  checks: read
+jobs:
+  work:
+    uses: ./.github/workflows/work-observe.yml
+    with:
+      policy-path: .devostasis/work-policy.json

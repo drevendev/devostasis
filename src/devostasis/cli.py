@@ -19,6 +19,7 @@ from .config import ConfigError, load_config, single_project
 from .history import FilesystemHistoryStore, HistoryStoreError
 from .observations import ObservationSet
 from .runner import FleetSurfaceError, build_from_observations, evaluate, observe, run_all, write_fleet_index
+from .vitals.common import InadmissibleEvidence
 
 TOKEN_ENVS = ("DEVOSTASIS_GITHUB_TOKEN", "GITHUB_TOKEN", "GH_TOKEN")
 
@@ -499,6 +500,8 @@ def build_parser() -> argparse.ArgumentParser:
     summary_p = sub.add_parser("actions-summary", help="write a GitHub Actions job summary and step outputs (attention, levels, bands, gauges) for a bundle")
     summary_p.add_argument("--bundle", required=True, help="bundle directory")
     summary_p.set_defaults(func=cmd_actions_summary)
+    from .workscope.cli import add_parser
+    add_parser(sub)
     return parser
 
 
@@ -524,6 +527,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except InputError as exc:
         print(f"input error: {exc}", file=sys.stderr)
+        return 2
+    except InadmissibleEvidence as exc:
+        # Counts that cannot all be true are refused before classification
+        # (PV-DIRECTION-INCOMPLETE-001, PV-HORIZON-PARTIAL-001): the saved
+        # observation set is invalid input, not a Vital without a band.
+        print(f"input error: the observations contradict themselves: {exc}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
         return 130

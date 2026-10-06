@@ -63,7 +63,7 @@
     {
       "band": "MIXED",
       "evaluation_status": "AVAILABLE",
-      "gauge": 50,
+      "gauge": 60,
       "level": "MEDIUM",
       "reason": "BAND:MIXED",
       "vital_id": "direction"

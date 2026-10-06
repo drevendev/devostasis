@@ -154,7 +154,10 @@ directory and performs, in this order:
    hashes to `source_receipts_digest` (`RECEIPT_DIGEST_MISMATCH`), the
    receipt inside `observations.json` is that receipt
    (`RECEIPT_COPY_MISMATCH`), `snapshot.json` names the evidence the bundle
-   carries (`OBSERVATIONS_DIGEST_MISMATCH`), and `semantic_config`, the field
+   carries (`OBSERVATIONS_DIGEST_MISMATCH`), the durable revision history the
+   Integrity result and `observations.json` name was carried from the bundle
+   the manifest follows (`HISTORY_SOURCE_MISMATCH`, PV-HIST-002), and
+   `semantic_config`, the field
    the comparison reads, is exactly the projection of the validated stored
    config under its schema (`SEMANTIC_CONFIG_MISMATCH`). A manifest that is
    not an object, or whose `members`, `receipt`, `identity_preimage` or

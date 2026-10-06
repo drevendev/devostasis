@@ -67,6 +67,7 @@ SEMANTIC_CONFIG_MISMATCH = "SEMANTIC_CONFIG_MISMATCH"
 IDENTITY_FIELD_MISMATCH = "IDENTITY_FIELD_MISMATCH"
 RECEIPT_DIGEST_MISMATCH = "RECEIPT_DIGEST_MISMATCH"
 RECEIPT_COPY_MISMATCH = "RECEIPT_COPY_MISMATCH"
+HISTORY_SOURCE_MISMATCH = "HISTORY_SOURCE_MISMATCH"
 OBSERVATIONS_DIGEST_MISMATCH = "OBSERVATIONS_DIGEST_MISMATCH"
 UNSUPPORTED_LINEAGE = "UNSUPPORTED_ARTIFACT_LINEAGE"
 RENDERER_NOT_IN_LINEAGE = "RENDERER_VERSION_NOT_IN_LINEAGE"
@@ -452,6 +453,48 @@ def _check_evidence_binding(members: dict[str, bytes], manifest: dict[str, Any],
         declared = manifest["members"]["observations.json"]
         if isinstance(snapshot, dict) and snapshot.get("observations_digest") != declared:
             problems.append(f"{OBSERVATIONS_DIGEST_MISMATCH}: snapshot.json was evaluated over {snapshot.get('observations_digest')}, the bundle carries {declared}")
+    problems.extend(_check_history_source(members, manifest, observations))
+    return problems
+
+
+def _history_source_named(snapshot: Any) -> tuple[str | None, str | None]:
+    """The status and bundle of the durable history source the Integrity result names, if it names one."""
+    if not isinstance(snapshot, dict):
+        return None, None
+    for vital in snapshot.get("vitals") or []:
+        if isinstance(vital, dict) and vital.get("vital_id") == "integrity":
+            history = (vital.get("derived") or {}).get("revision_history") if isinstance(vital.get("derived"), dict) else None
+            source = history.get("source") if isinstance(history, dict) else None
+            if isinstance(source, dict):
+                return source.get("status"), source.get("bundle_id")
+    return None, None
+
+
+def _check_history_source(members: dict[str, bytes], manifest: dict[str, Any], observations: Any) -> list[str]:
+    """PV-HIST-002 section C: the carried history came from the bundle this one follows, and says so.
+
+    The selection of the source is auditable only if the bundle names it; a
+    bundle whose carried history names another bundle than the one its
+    manifest says it follows consumed history from outside its own chain.
+    Bundles older than the carrier name nothing and are not checked.
+    """
+    problems: list[str] = []
+    previous = manifest.get("previous_bundle_id")
+    try:
+        snapshot = canonical.loads(members["snapshot.json"].decode("utf-8")) if "snapshot.json" in members else None
+    except Exception:  # noqa: BLE001
+        snapshot = None
+    status, source = _history_source_named(snapshot)
+    if status == "CARRIED" and source != previous:
+        problems.append(f"{HISTORY_SOURCE_MISMATCH}: the Integrity history was carried from {source}, the manifest follows {previous}")
+    if isinstance(observations, dict):
+        for item in observations.get("observations") or []:
+            if not isinstance(item, dict) or item.get("observation_id") != "ci.revision_history_carried":
+                continue
+            value = item.get("value")
+            named = value.get("source_bundle_id") if isinstance(value, dict) else None
+            if named is not None and named != previous:
+                problems.append(f"{HISTORY_SOURCE_MISMATCH}: observations.json carries history from {named}, the manifest follows {previous}")
     return problems
 
 

@@ -10,7 +10,7 @@ from typing import Any
 
 from . import activity as activity_mod
 from . import delta as delta_mod
-from . import canonical, fleet, normalize, render, timeutil
+from . import canonical, fleet, normalize, render, revision_history, timeutil
 from .adapters.cache import ConditionalCache
 from .adapters.github import CollectionError, GitHubAdapter, GitHubClient, UrllibTransport
 from .bundle import Bundle, BundleError, build_bundle
@@ -52,13 +52,36 @@ def evaluate(obs: ObservationSet, project: ResolvedProject | None = None) -> dic
     return build_snapshot(obs, evaluate_all(obs))
 
 
+@dataclass
+class Predecessor:
+    """The bundle a new one follows: what the comparison and the carried history both consume."""
+
+    status: str
+    bundle_id: str | None
+    manifest: dict[str, Any] | None
+    snapshot: dict[str, Any] | None
+    observations: dict[str, Any] | None
+    reasons: list[str]
+
+
 def decide_comparison(
     store: FilesystemHistoryStore,
     project: ResolvedProject,
     immutable_project_id: str | None = None,
     observed_at: str | None = None,
 ) -> tuple[str, str | None, dict[str, Any] | None, dict[str, Any] | None, list[str]]:
-    """Return (comparison_status, previous_bundle_id, previous_manifest, previous_snapshot, reasons).
+    """Return (comparison_status, previous_bundle_id, previous_manifest, previous_snapshot, reasons)."""
+    found = find_predecessor(store, project, immutable_project_id, observed_at)
+    return found.status, found.bundle_id, found.manifest, found.snapshot, found.reasons
+
+
+def find_predecessor(
+    store: FilesystemHistoryStore,
+    project: ResolvedProject,
+    immutable_project_id: str | None = None,
+    observed_at: str | None = None,
+) -> Predecessor:
+    """The immediate predecessor of a new bundle and how the two compare.
 
     The immutable project id locates history across a rename or transfer
     (RPT-7); without it the locator is the identity and a renamed project
@@ -74,9 +97,9 @@ def decide_comparison(
     """
     latest = store.latest(project.project_key, immutable_project_id)
     if not latest.exists:
-        return delta_mod.BASELINE, None, None, None, []
+        return Predecessor(delta_mod.BASELINE, None, None, None, None, [])
     if not latest.verified or latest.manifest is None or latest.snapshot is None:
-        return delta_mod.HISTORY_GAP, latest.bundle_id, None, None, latest.problems
+        return Predecessor(delta_mod.HISTORY_GAP, latest.bundle_id, None, None, None, latest.problems)
     current_fields = {
         "vitals_contract_version": VITALS_CONTRACT_VERSION,
         "observation_contract_version": OBSERVATION_CONTRACT_VERSION,
@@ -89,8 +112,8 @@ def decide_comparison(
         if timeutil.parse_ts(observed_at) <= timeutil.parse_ts(previous_observed_at):
             reasons.append(f"{NON_MONOTONIC_OBSERVATION}:{previous_observed_at}->{observed_at}")
     if reasons:
-        return delta_mod.INCOMPARABLE, latest.bundle_id, latest.manifest, latest.snapshot, reasons
-    return delta_mod.COMPARABLE, latest.bundle_id, latest.manifest, latest.snapshot, []
+        return Predecessor(delta_mod.INCOMPARABLE, latest.bundle_id, latest.manifest, latest.snapshot, latest.observations, reasons)
+    return Predecessor(delta_mod.COMPARABLE, latest.bundle_id, latest.manifest, latest.snapshot, latest.observations, [])
 
 
 def check_receipt_config(project: ResolvedProject, obs: ObservationSet) -> None:
@@ -114,11 +137,53 @@ def check_receipt_config(project: ResolvedProject, obs: ObservationSet) -> None:
         )
 
 
+HISTORY_SOURCE_NOT_PREDECESSOR = "HISTORY_SOURCE_NOT_PREDECESSOR"
+HISTORY_CONTENT_MISMATCH = "HISTORY_CONTENT_MISMATCH"
+
+
+def attach_revision_history(obs: ObservationSet, predecessor: Predecessor) -> ObservationSet:
+    """The observations with the durable revision history the predecessor carries (PV-HIST-002, section C).
+
+    The source is the bundle the comparison resolved, the immediate
+    predecessor, never an older one. A set that already states carried history
+    (rebuilt from a bundle's own observations) is kept only when it names that
+    same predecessor and exactly matches the observation reconstructed from
+    its verified contents. Naming a source alone cannot prove its history:
+    accepting edited records would let an earlier failure disappear.
+    """
+    carried = revision_history.carried_observation(
+        predecessor.status,
+        predecessor.bundle_id,
+        predecessor.manifest,
+        predecessor.snapshot,
+        predecessor.observations,
+        predecessor.reasons,
+        obs.observed_at,
+    )
+    stated = obs.get(revision_history.CARRIED)
+    if stated is None:
+        return revision_history.with_carried_history(obs, carried)
+    if revision_history.carried_source_bundle(obs) != predecessor.bundle_id or stated.status != carried.status:
+        raise BundleError(
+            f"{HISTORY_SOURCE_NOT_PREDECESSOR}: the observations carry revision history from "
+            f"{revision_history.carried_source_bundle(obs) or 'no bundle'} ({stated.status}), this store's predecessor is "
+            f"{predecessor.bundle_id or 'none'} ({predecessor.status}); durable history is consumed only from the immediate predecessor"
+        )
+    if canonical.canonical_bytes(stated.to_dict()) != canonical.canonical_bytes(carried.to_dict()):
+        raise BundleError(
+            f"{HISTORY_CONTENT_MISMATCH}: the stated revision history does not match the observation reconstructed "
+            f"from the verified immediate predecessor {predecessor.bundle_id or 'none'}; records and provenance cannot be substituted"
+        )
+    return obs
+
+
 def build_from_observations(project: ResolvedProject, obs: ObservationSet, store: FilesystemHistoryStore, run_meta: dict[str, Any] | None = None) -> Bundle:
     check_receipt_config(project, obs)
+    predecessor = find_predecessor(store, project, obs.subject.get("immutable_project_id"), obs.observed_at)
+    obs = attach_revision_history(obs, predecessor)
     snapshot = build_snapshot(obs, evaluate_all(obs))
-    status, previous_id, previous_manifest, previous_snapshot, reasons = decide_comparison(store, project, obs.subject.get("immutable_project_id"), obs.observed_at)
-    delta = delta_mod.compare(snapshot, previous_snapshot, status, previous_id, reasons)
+    status, previous_id, previous_manifest, reasons = predecessor.status, predecessor.bundle_id, predecessor.manifest, predecessor.reasons
+    delta = delta_mod.compare(snapshot, predecessor.snapshot, status, previous_id, reasons)
     activity = None
     if project.activity_enabled:
         interval_start = previous_manifest.get("observed_at") if (status == delta_mod.COMPARABLE and previous_manifest) else None

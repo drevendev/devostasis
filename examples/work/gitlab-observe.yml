@@ -1,0 +1,64 @@
+# Include this template and commit an adopter-owned .devostasis/work-policy.json.
+# The runner has a mounted private durable volume at WORK_HISTORY_ROOT. Only
+# protected canonical jobs can write it. It must not be inside the observed repo.
+variables:
+  DEVOSTASIS_REF: "v0.3.0"
+  WORK_POLICY: ".devostasis/work-policy.json"
+
+.work-observer:
+  image: python:3.12-slim
+  stage: .post
+  needs: []
+  allow_failure: true
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git >/dev/null
+    - python -m pip install "git+https://github.com/drevendev/Devostasis.git@${DEVOSTASIS_REF}"
+  script:
+    - mkdir -p work-output
+    - |
+      context=CANDIDATE
+      store=work-output/history
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ] && [ "$CI_COMMIT_REF_PROTECTED" = "true" ]; then
+        context=CANONICAL
+        test -n "$WORK_HISTORY_ROOT"
+        store="$WORK_HISTORY_ROOT"
+      fi
+      python -m devostasis work run --provider gitlab --endpoint "$CI_API_V4_URL" \
+        --repo "$CI_PROJECT_ID" --policy "$WORK_POLICY" --revision "$CI_COMMIT_SHA" \
+        --context "$context" --store "$store" --max-requests 100 --max-pages 5 --seconds 120 \
+        > work-output/result.json 2> work-output/failure.txt
+      python - <<'PY'
+      import json, pathlib, shutil, subprocess, sys
+      result = json.loads(pathlib.Path('work-output/result.json').read_text())
+      bundle = pathlib.Path(result['path'])
+      subprocess.run([sys.executable, '-m', 'devostasis', 'work', 'verify', '--bundle', str(bundle)], check=True)
+      shutil.copytree(bundle, 'work-output/bundle')
+      subprocess.run([sys.executable, '-m', 'devostasis', 'work', 'slice', '--bundle', str(bundle), '--limit', '20', '--output', 'work-output/slice.json'], check=True)
+      PY
+  artifacts:
+    when: always
+    paths: [work-output/]
+    expire_in: 30 days
+
+work-canonical:
+  extends: .work-observer
+  resource_group: devostasis-canonical-history
+  # These runner tags/volume mappings must be configured by the adopter.
+  tags: [work-history-protected]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"'
+      when: always
+
+work-candidate:
+  extends: .work-observer
+  tags: [work-observation]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+# Configure DEVOSTASIS_GITLAB_TOKEN as a protected masked read_api credential
+# on the canonical runner. Never assume CI_JOB_TOKEN can read approvals/issues.
+# The candidate runner gets no history volume or protected credential. It can
+# collect public data or report explicit missing capabilities; no writer secret.
+# Enable a schedule every six hours on the protected default branch. Observation
+# is non-gating and has no dependency on the checks it reads. For strict quotas,
+# reduce budgets or increase cadence; partial collection remains explicit.

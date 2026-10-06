@@ -9,6 +9,7 @@ from devostasis.bundle import DUPLICATED_IDENTITY_FIELDS, LINEAGES, BundleError,
 from devostasis.contracts import ARTIFACT_CONTRACT_VERSION, RENDERER_VERSION
 from devostasis.config import single_project
 from devostasis.history import FilesystemHistoryStore, ImmutabilityError
+from devostasis.observations import Observation
 from devostasis.runner import build_from_observations
 from helpers import OBSERVED_AT, add, finalize, full_inputs, obs_set
 
@@ -184,7 +185,9 @@ def test_rule_version_boundary_makes_one_vital_incomparable_inside_a_comparable_
 def test_art_06_neutral_rendering_of_fully_linked_and_present(tmp_path):
     obs = obs_set()
     full_inputs(obs)
-    obs.replace(type(obs.get("planning.linkage.active_change_requests_linked_to_open_target_count_28d"))(**dict(obs.get("planning.linkage.active_change_requests_linked_to_open_target_count_28d").to_dict(), value=10)))
+    for key, value in (("linked", 10), ("unlinked", 0)):
+        observation_id = f"planning.linkage.active_change_requests_{key}_count_28d"
+        obs.replace(Observation.from_dict(dict(obs.get(observation_id).to_dict(), value=value)))
     bundle = build_from_observations(_project(), obs, FilesystemHistoryStore(tmp_path))
     report = bundle.members["report.md"].decode("utf-8")
     assert "FULLY_LINKED" in report and "PRESENT" in report
