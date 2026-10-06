@@ -89,6 +89,10 @@ class LatestState:
     manifest: dict[str, Any] | None
     snapshot: dict[str, Any] | None
     problems: list[str]
+    # The observation set the bundle was evaluated over, when it keeps one: the
+    # replay source of durable revision history for a bundle older than the
+    # carrier in its snapshot (PV-HIST-002, HIST-13).
+    observations: dict[str, Any] | None = None
 
 
 @dataclass
@@ -405,6 +409,7 @@ class FilesystemHistoryStore:
         try:
             manifest = canonical.loads(members["manifest.json"].decode("utf-8"))
             snapshot = canonical.loads(members["snapshot.json"].decode("utf-8")) if "snapshot.json" in members else None
+            observations = canonical.loads(members["observations.json"].decode("utf-8")) if "observations.json" in members else None
         except Exception as exc:  # noqa: BLE001
             return LatestState(True, False, expected_id, None, None, problems + [f"immutable bundle unreadable: {type(exc).__name__}"])
         if not isinstance(manifest, dict):
@@ -423,7 +428,7 @@ class FilesystemHistoryStore:
                 copied_id = None
             if copied_id is not None and copied_id != manifest.get("bundle_id") and not self._is_stale_copy(index, copied_id, manifest):
                 problems.append(f"latest pointer {copied_id} differs from index tail {manifest.get('bundle_id')}")
-        return LatestState(True, not problems, manifest.get("bundle_id"), manifest, snapshot, problems)
+        return LatestState(True, not problems, manifest.get("bundle_id"), manifest, snapshot, problems, observations if isinstance(observations, dict) else None)
 
     @staticmethod
     def _is_stale_copy(index: dict[str, Any], copied_id: str, tail_manifest: dict[str, Any]) -> bool:

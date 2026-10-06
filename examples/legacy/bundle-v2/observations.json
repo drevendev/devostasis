@@ -1,0 +1,1795 @@
+{
+  "observation_contract_version": "RAW-OBS-V0",
+  "observations": [
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "ci.configured",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:ci.configured",
+      "status": "AVAILABLE",
+      "value": true,
+      "value_type": "boolean"
+    },
+    {
+      "adapter_version": "devostasis.ci-history.v2",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": null,
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "ci.revision_history_carried",
+      "provider": "history",
+      "reason_code": "NO_PREVIOUS_BUNDLE",
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "store:none",
+      "status": "UNAVAILABLE",
+      "value": null,
+      "value_type": "record"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "attempts_complete": true,
+        "outcome_map_version": "devostasis.ci-outcomes.github.v1",
+        "runs_complete": true,
+        "surface": "github_actions",
+        "window_end": "2026-09-05T12:00:00Z",
+        "window_start": "2026-08-22T12:00:00Z"
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "ci.revision_verdicts_14d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:ci.revision_verdicts_14d",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "committed_at": "2026-08-22T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:900",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "000000000000000000000000000000000000000c"
+        },
+        {
+          "committed_at": "2026-08-23T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:901",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "000000000000000000000000000000000000000d"
+        },
+        {
+          "committed_at": "2026-08-24T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:902",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "000000000000000000000000000000000000000e"
+        },
+        {
+          "committed_at": "2026-08-25T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_FAIL",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "FAILURE_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_FAIL"
+                },
+                {
+                  "attempt": 2,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 2,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "FAILURE_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:903",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "000000000000000000000000000000000000000f"
+        },
+        {
+          "committed_at": "2026-08-26T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:904",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "0000000000000000000000000000000000000010"
+        },
+        {
+          "committed_at": "2026-08-27T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:905",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "0000000000000000000000000000000000000011"
+        },
+        {
+          "committed_at": "2026-08-28T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:906",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "0000000000000000000000000000000000000012"
+        },
+        {
+          "committed_at": "2026-08-29T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "historical_contribution": "VERIFY_PASS",
+          "history_complete": true,
+          "history_provenance": "ATTEMPT_LEVEL",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "parents": [
+            {
+              "attempts_complete": true,
+              "attempts_observed": [
+                {
+                  "attempt": 1,
+                  "state": "VERIFY_PASS"
+                }
+              ],
+              "current_attempt": 1,
+              "current_state": "VERIFY_PASS",
+              "event": "push",
+              "history_state": "PASS_ONLY_OBSERVED",
+              "kind": "github_actions_workflow_run",
+              "name": "CI",
+              "parent_id": "github_actions:workflow_run:907",
+              "url": "https://example.invalid/actions/runs/900"
+            }
+          ],
+          "revision": "0000000000000000000000000000000000000013"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory",
+          "debt.mapping"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "debt.items.closed_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory",
+          "debt.mapping"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "debt.items.open_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory",
+          "debt.mapping"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "debt.items.open_stale_count_30d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 0,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "config",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": null,
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "debt.mapping",
+      "provider": "config",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "config:debt",
+      "status": "AVAILABLE",
+      "value": {
+        "labels": [
+          "type:refactor"
+        ],
+        "mapping_version": "example-1",
+        "source": "labels"
+      },
+      "value_type": "record"
+    },
+    {
+      "adapter_version": "config",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": null,
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "debt.registry.capability",
+      "provider": "config",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "config:debt",
+      "status": "AVAILABLE",
+      "value": "CONFIGURED",
+      "value_type": "enum"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "open_complete": true,
+        "window_complete": true,
+        "window_start": "2026-08-08T12:00:00Z"
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.inventory",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "author": "dev",
+          "closed_at": null,
+          "created_at": "2026-09-02T10:00:00Z",
+          "draft": false,
+          "id": 40,
+          "linkage_unresolved": [],
+          "merged_at": null,
+          "number": 40,
+          "state": "OPEN",
+          "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
+          "target_state": "OPEN",
+          "title": "Refactor the pricing module",
+          "updated_at": "2026-09-04T10:00:00Z",
+          "url": "https://example.invalid/pull/40"
+        },
+        {
+          "author": "dev",
+          "closed_at": null,
+          "created_at": "2026-09-03T10:00:00Z",
+          "draft": true,
+          "id": 41,
+          "linkage_unresolved": [],
+          "merged_at": null,
+          "number": 41,
+          "state": "OPEN",
+          "target_id": null,
+          "target_refs": [],
+          "target_state": null,
+          "title": "Add the export button",
+          "updated_at": "2026-09-05T08:00:00Z",
+          "url": "https://example.invalid/pull/41"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-14T06:00:00Z",
+          "created_at": "2026-08-13T10:00:00Z",
+          "draft": false,
+          "id": 31,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-14T06:00:00Z",
+          "number": 31,
+          "state": "MERGED",
+          "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
+          "target_state": "OPEN",
+          "title": "Merged change 1",
+          "updated_at": "2026-08-14T10:00:00Z",
+          "url": "https://example.invalid/pull/31"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-15T06:00:00Z",
+          "created_at": "2026-08-14T10:00:00Z",
+          "draft": false,
+          "id": 32,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-15T06:00:00Z",
+          "number": 32,
+          "state": "MERGED",
+          "target_id": "2",
+          "target_refs": [
+            {
+              "state": "CLOSED",
+              "target_id": "2"
+            }
+          ],
+          "target_state": "CLOSED",
+          "title": "Merged change 2",
+          "updated_at": "2026-08-15T10:00:00Z",
+          "url": "https://example.invalid/pull/32"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-16T06:00:00Z",
+          "created_at": "2026-08-15T10:00:00Z",
+          "draft": false,
+          "id": 33,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-16T06:00:00Z",
+          "number": 33,
+          "state": "MERGED",
+          "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
+          "target_state": "OPEN",
+          "title": "Merged change 3",
+          "updated_at": "2026-08-16T10:00:00Z",
+          "url": "https://example.invalid/pull/33"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-17T06:00:00Z",
+          "created_at": "2026-08-16T10:00:00Z",
+          "draft": false,
+          "id": 34,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-17T06:00:00Z",
+          "number": 34,
+          "state": "MERGED",
+          "target_id": null,
+          "target_refs": [],
+          "target_state": null,
+          "title": "Merged change 4",
+          "updated_at": "2026-08-17T10:00:00Z",
+          "url": "https://example.invalid/pull/34"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-18T06:00:00Z",
+          "created_at": "2026-08-17T10:00:00Z",
+          "draft": false,
+          "id": 35,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-18T06:00:00Z",
+          "number": 35,
+          "state": "MERGED",
+          "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
+          "target_state": "OPEN",
+          "title": "Merged change 5",
+          "updated_at": "2026-08-18T10:00:00Z",
+          "url": "https://example.invalid/pull/35"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-19T06:00:00Z",
+          "created_at": "2026-08-18T10:00:00Z",
+          "draft": false,
+          "id": 36,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-19T06:00:00Z",
+          "number": 36,
+          "state": "MERGED",
+          "target_id": null,
+          "target_refs": [],
+          "target_state": null,
+          "title": "Merged change 6",
+          "updated_at": "2026-08-19T10:00:00Z",
+          "url": "https://example.invalid/pull/36"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-20T06:00:00Z",
+          "created_at": "2026-08-19T10:00:00Z",
+          "draft": false,
+          "id": 37,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-20T06:00:00Z",
+          "number": 37,
+          "state": "MERGED",
+          "target_id": "3",
+          "target_refs": [
+            {
+              "state": "OPEN",
+              "target_id": "3"
+            }
+          ],
+          "target_state": "OPEN",
+          "title": "Merged change 7",
+          "updated_at": "2026-08-20T10:00:00Z",
+          "url": "https://example.invalid/pull/37"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-21T06:00:00Z",
+          "created_at": "2026-08-20T10:00:00Z",
+          "draft": false,
+          "id": 38,
+          "linkage_unresolved": [],
+          "merged_at": "2026-08-21T06:00:00Z",
+          "number": 38,
+          "state": "MERGED",
+          "target_id": null,
+          "target_refs": [],
+          "target_state": null,
+          "title": "Merged change 8",
+          "updated_at": "2026-08-21T10:00:00Z",
+          "url": "https://example.invalid/pull/38"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory",
+          "forge.change_requests.median_time_to_merge_seconds_28d"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": "whole-hour projection of median_time_to_merge_seconds_28d for presentation; never a classifier input",
+      "observation_id": "forge.change_requests.median_time_to_merge_hours_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 20,
+      "value_type": "duration"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.median_time_to_merge_seconds_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": {
+        "denominator": 1,
+        "numerator": 72000
+      },
+      "value_type": "duration"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.merged_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 8,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.oldest_open_age_days",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 3,
+      "value_type": "duration"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.open_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 2,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.stale_open_count_14d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 0,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.change_requests.updated_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 10,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "open_complete": true,
+        "window_complete": true,
+        "window_start": "2026-08-08T12:00:00Z"
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.issues.inventory",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "author": "user",
+          "closed_at": null,
+          "created_at": "2026-05-01T10:00:00Z",
+          "id": 5,
+          "labels": [
+            "enhancement"
+          ],
+          "number": 5,
+          "state": "OPEN",
+          "target_id": null,
+          "title": "Old feature request",
+          "updated_at": "2026-06-01T10:00:00Z",
+          "url": "https://example.invalid/issues/5"
+        },
+        {
+          "author": "dev",
+          "closed_at": null,
+          "created_at": "2026-08-20T10:00:00Z",
+          "id": 12,
+          "labels": [
+            "type:refactor"
+          ],
+          "number": 12,
+          "state": "OPEN",
+          "target_id": "3",
+          "title": "Replace the legacy parser",
+          "updated_at": "2026-09-01T10:00:00Z",
+          "url": "https://example.invalid/issues/12"
+        },
+        {
+          "author": "user",
+          "closed_at": null,
+          "created_at": "2026-09-04T10:00:00Z",
+          "id": 13,
+          "labels": [
+            "bug"
+          ],
+          "number": 13,
+          "state": "OPEN",
+          "target_id": null,
+          "title": "Crash on empty input",
+          "updated_at": "2026-09-04T12:00:00Z",
+          "url": "https://example.invalid/issues/13"
+        },
+        {
+          "author": "dev",
+          "closed_at": "2026-08-25T10:00:00Z",
+          "created_at": "2026-08-01T10:00:00Z",
+          "id": 11,
+          "labels": [
+            "type:refactor"
+          ],
+          "number": 11,
+          "state": "CLOSED",
+          "target_id": null,
+          "title": "Remove dead configuration flags",
+          "updated_at": "2026-08-25T10:00:00Z",
+          "url": "https://example.invalid/issues/11"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.issues.open_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 3,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.issues.stale_open_count_30d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.issues.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.issues.updated_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.issues.inventory",
+      "status": "AVAILABLE",
+      "value": 3,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "limit": 30,
+        "recent_only": true
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.releases.inventory",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:forge.releases.inventory",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "name": "Release 1.1",
+          "prerelease": false,
+          "published_at": "2026-08-16T10:00:00Z",
+          "tag": "v1.1.0",
+          "url": "https://example.invalid/releases/v1.1.0"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "forge.repository.metadata",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:forge.repository.metadata",
+      "status": "AVAILABLE",
+      "value": {
+        "archived": false,
+        "default_branch": "master",
+        "full_name": "acme/widget",
+        "has_issues": true,
+        "html_url": "https://example.invalid/acme/widget",
+        "id": 123456,
+        "pushed_at": "2026-09-05T08:00:00Z",
+        "visibility": "public"
+      },
+      "value_type": "record"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "branch": "master",
+          "complete": true,
+          "window_end": "2026-09-05T12:00:00Z",
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "git.default_branch.commits_28d"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "git.default_branch.commit_active_days_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:git.default_branch.commits_28d",
+      "status": "AVAILABLE",
+      "value": 19,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "branch": "master",
+          "complete": true,
+          "window_end": "2026-09-05T12:00:00Z",
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "git.default_branch.commits_28d"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "git.default_branch.commits.count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:git.default_branch.commits_28d",
+      "status": "AVAILABLE",
+      "value": 19,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "branch": "master",
+        "complete": true,
+        "window_end": "2026-09-05T12:00:00Z",
+        "window_start": "2026-08-08T12:00:00Z"
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "git.default_branch.commits_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:git.default_branch.commits_28d",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "committed_at": "2026-08-11T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000001",
+          "title": "feat: change number 1"
+        },
+        {
+          "committed_at": "2026-08-12T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000002",
+          "title": "feat: change number 2"
+        },
+        {
+          "committed_at": "2026-08-13T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000003",
+          "title": "feat: change number 3"
+        },
+        {
+          "committed_at": "2026-08-14T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000004",
+          "title": "feat: change number 4"
+        },
+        {
+          "committed_at": "2026-08-15T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000005",
+          "title": "feat: change number 5"
+        },
+        {
+          "committed_at": "2026-08-16T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000006",
+          "title": "feat: change number 6"
+        },
+        {
+          "committed_at": "2026-08-17T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000007",
+          "title": "feat: change number 7"
+        },
+        {
+          "committed_at": "2026-08-18T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000008",
+          "title": "feat: change number 8"
+        },
+        {
+          "committed_at": "2026-08-19T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000009",
+          "title": "feat: change number 9"
+        },
+        {
+          "committed_at": "2026-08-20T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000a",
+          "title": "feat: change number 10"
+        },
+        {
+          "committed_at": "2026-08-21T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000b",
+          "title": "feat: change number 11"
+        },
+        {
+          "committed_at": "2026-08-22T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000c",
+          "title": "feat: change number 12"
+        },
+        {
+          "committed_at": "2026-08-23T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000d",
+          "title": "feat: change number 13"
+        },
+        {
+          "committed_at": "2026-08-24T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000e",
+          "title": "feat: change number 14"
+        },
+        {
+          "committed_at": "2026-08-25T09:00:00Z",
+          "sha": "000000000000000000000000000000000000000f",
+          "title": "feat: change number 15"
+        },
+        {
+          "committed_at": "2026-08-26T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000010",
+          "title": "feat: change number 16"
+        },
+        {
+          "committed_at": "2026-08-27T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000011",
+          "title": "feat: change number 17"
+        },
+        {
+          "committed_at": "2026-08-28T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000012",
+          "title": "feat: change number 18"
+        },
+        {
+          "committed_at": "2026-08-29T09:00:00Z",
+          "sha": "0000000000000000000000000000000000000013",
+          "title": "feat: change number 19"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "head_lookups": 2,
+        "heads_resolved": true
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "git.nondefault_branches.inventory",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:git.nondefault_branches.inventory",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "head_committed_at": "2026-06-15T10:00:00Z",
+          "head_sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "name": "experiment/old-idea",
+          "protected": false
+        },
+        {
+          "head_committed_at": "2026-09-05T08:00:00Z",
+          "head_sha": "ffffffffffffffffffffffffffffffffffffffff",
+          "name": "feature/export",
+          "protected": false
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "complete": true,
+          "head_lookups": 2,
+          "heads_resolved": true
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "git.nondefault_branches.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "git.nondefault_branches.stale_count_30d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:git.nondefault_branches.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": null,
+      "evidence_ref": {
+        "derived_from": [
+          "planning.explicit_targets.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.capability",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": "SUPPORTED",
+      "value_type": "enum"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source": "milestones"
+      },
+      "evidence_ref": {
+        "example": true
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.inventory",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "example:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": [
+        {
+          "closed_items": 4,
+          "due_at": "2026-10-31T00:00:00Z",
+          "id": 3,
+          "open_items": 3,
+          "state": "OPEN",
+          "target_id": "3",
+          "title": "Release 1.2",
+          "url": "https://example.invalid/milestone/3"
+        },
+        {
+          "closed_items": 9,
+          "due_at": "2026-08-15T00:00:00Z",
+          "id": 2,
+          "open_items": 0,
+          "state": "CLOSED",
+          "target_id": "2",
+          "title": "Release 1.1",
+          "url": "https://example.invalid/milestone/2"
+        }
+      ],
+      "value_type": "series"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "complete": true,
+          "source": "milestones"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "planning.explicit_targets.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.nearest_future_boundary_days",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": 55,
+      "value_type": "duration"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "complete": true,
+          "source": "milestones"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "planning.explicit_targets.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.open_beyond_28d_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "complete": true,
+          "source": "milestones"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "planning.explicit_targets.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.open_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "complete": true,
+          "source": "milestones"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "planning.explicit_targets.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.explicit_targets.open_with_future_boundary_count",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:planning.explicit_targets.inventory",
+      "status": "AVAILABLE",
+      "value": 1,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.active_change_requests_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 10,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 6,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": "active change requests linked to a target that is open now; presentation only since direction.bands.v2, never a classifier input",
+      "observation_id": "planning.linkage.active_change_requests_linked_to_open_target_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 5,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 4,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 0,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.links_per_target_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": {
+        "2": 1,
+        "3": 5
+      },
+      "value_type": "record"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.missing_target_reference_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 0,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.unknown_target_reference_count_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": 0,
+      "value_type": "count"
+    },
+    {
+      "adapter_version": "devostasis.github.v1",
+      "collected_at": "2026-09-05T12:00:00Z",
+      "coverage": {
+        "complete": true,
+        "source_coverage": {
+          "open_complete": true,
+          "window_complete": true,
+          "window_start": "2026-08-08T12:00:00Z"
+        }
+      },
+      "evidence_ref": {
+        "derived_from": [
+          "forge.change_requests.inventory"
+        ]
+      },
+      "freshness": "FRESH",
+      "notes": null,
+      "observation_id": "planning.linkage.unresolved_change_requests_28d",
+      "provider": "github",
+      "reason_code": null,
+      "schema_version": "RAW-OBS-V0",
+      "source_ref": "derived:forge.change_requests.inventory",
+      "status": "AVAILABLE",
+      "value": {},
+      "value_type": "record"
+    }
+  ],
+  "observed_at": "2026-09-05T12:00:00Z",
+  "receipt": {
+    "capability_notes": [
+      "CHECKS_SURFACE_NOT_COLLECTED",
+      "CI_SURFACE:GITHUB_ACTIONS_ONLY"
+    ],
+    "collector_version": "devostasis.github.v1",
+    "config_hash": "example",
+    "ended_at": "2026-09-05T12:00:00Z",
+    "per_key": {
+      "ci.configured": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "ci.revision_verdicts_14d": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.change_requests.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.issues.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.releases.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.repository.metadata": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "git.default_branch.commits_28d": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "git.nondefault_branches.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "planning.explicit_targets.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      }
+    },
+    "requested_keys": [
+      "ci.configured",
+      "ci.revision_verdicts_14d",
+      "forge.change_requests.inventory",
+      "forge.issues.inventory",
+      "forge.releases.inventory",
+      "forge.repository.metadata",
+      "git.default_branch.commits_28d",
+      "git.nondefault_branches.inventory",
+      "planning.explicit_targets.inventory"
+    ],
+    "returned_keys": [
+      "ci.configured",
+      "ci.revision_verdicts_14d",
+      "forge.change_requests.inventory",
+      "forge.issues.inventory",
+      "forge.releases.inventory",
+      "forge.repository.metadata",
+      "git.default_branch.commits_28d",
+      "git.nondefault_branches.inventory",
+      "planning.explicit_targets.inventory"
+    ],
+    "run_id": "run-20260905T120000Z-acme-widget",
+    "schema": "devostasis.receipt.v2",
+    "started_at": "2026-09-05T12:00:00Z",
+    "target": {
+      "default_branch": "master",
+      "display_locator": "acme/widget",
+      "forge_instance": "github.com",
+      "immutable_project_id": "123456",
+      "owner": "acme",
+      "provider": "github",
+      "repo": "widget",
+      "visibility": "public"
+    }
+  },
+  "schema": "devostasis.observations.v1",
+  "subject": {
+    "default_branch": "master",
+    "display_locator": "acme/widget",
+    "forge_instance": "github.com",
+    "immutable_project_id": "123456",
+    "owner": "acme",
+    "provider": "github",
+    "repo": "widget",
+    "visibility": "public"
+  }
+}

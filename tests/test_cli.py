@@ -126,7 +126,7 @@ def test_verify_does_not_claim_a_replay_it_did_not_perform(tmp_path, capsys):
     manifest["renderer_version"] = manifest["identity_preimage"]["renderer_version"] = "devostasis.render.v3"
     manifest["bundle_id"] = canonical.sha256_hex(canonical.canonical_bytes(manifest["identity_preimage"]))
     (latest / "manifest.json").write_bytes(canonical.pretty_json(manifest).encode("utf-8"))
-    assert main(["verify", "--bundle", str(latest)]) == 0
+    assert main(["verify", "--bundle", str(latest)]) == 1
     out = capsys.readouterr().out
-    assert "not replayed" in out and "devostasis.render.v3" in out
+    assert "RENDERER_VERSION_NOT_IN_LINEAGE" in out
     assert "reproducibility all match" not in out

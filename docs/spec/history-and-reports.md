@@ -132,6 +132,12 @@ still refused (`latest pointer ... differs from index tail`). `HISTORY_GAP`
 therefore means what its definition says: the previous immutable bundle
 cannot be loaded or verified.
 
+The same predecessor is the source of the durable Integrity revision
+history a build carries (PV-HIST-002): the bundle the comparison resolves,
+never an older one, so a `HISTORY_GAP` is also a gap in that history and says
+so (`REVISION_HISTORY_GAP`); see
+[integrity-ci.md](integrity-ci.md#durable-history-pv-hist-002).
+
 A bundle is routed by what its canonical members say: a wrapper whose
 `bundle_id` or `project_key` disagrees with its own manifest is refused
 before anything is written. A locator derives a store path only as a

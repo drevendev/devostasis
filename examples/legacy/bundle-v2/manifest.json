@@ -1,0 +1,190 @@
+{
+  "adapters": [
+    {
+      "adapter_version": "devostasis.github.v1",
+      "provider": "github"
+    }
+  ],
+  "artifact_contract_version": "devostasis.bundle.v2",
+  "bundle_id": "422f6c269728988da2808817b5e72db3f3df97a330fb91c52f3f53e6ee76554c",
+  "bundle_identity_contract": "PV-BUNDLE-ID-002",
+  "canonical_member_profile": {
+    "activity_json": "ENABLED",
+    "demand_json": "REQUIRED",
+    "effective_config_json": "REQUIRED",
+    "gauges_json": "REQUIRED",
+    "observations_json": "ENABLED",
+    "report_html": "DISABLED",
+    "report_md": "REQUIRED"
+  },
+  "canonical_serialization_version": "devostasis.canon.v1",
+  "ci_unit_contract_version": "PV-CI-UNIT-004",
+  "comparison_status": "BASELINE",
+  "config_version": "example-1",
+  "demand_contract": "devostasis.demand.v2",
+  "effective_config_authority_contract": "PV-EFFECTIVE-CONFIG-AUTHORITY-001",
+  "effective_config_contract": "PV-EFFECTIVE-CONFIG-001",
+  "effective_config_digest": "sha256:cc472c9ad93f6721ecc9a3fc14f3067ccc85af33c2acceb4489982a44eb370ac",
+  "gauge_contract": "devostasis.gauge.v1",
+  "identity_preimage": {
+    "activity_digest": "sha256:d80fa63f29071d59425dad060211db5fbf6d165248c23b18169b06c37a1a0595",
+    "artifact_contract_version": "devostasis.bundle.v2",
+    "bundle_identity_contract": "PV-BUNDLE-ID-002",
+    "canonical_serialization_version": "devostasis.canon.v1",
+    "ci_unit_contract_version": "PV-CI-UNIT-004",
+    "comparison_status": "BASELINE",
+    "config_version": "example-1",
+    "delta_digest": "sha256:a36c8ad814fc8ae9c9e2d0b31f7764fc7a5ca959a39017922a389994029cf8f8",
+    "demand_contract": "devostasis.demand.v2",
+    "demand_digest": "sha256:38f9170d967c28516dcaf4ca34d77815c0b5589701c076fa1ee176a4f64f0d94",
+    "effective_config_contract": "PV-EFFECTIVE-CONFIG-001",
+    "effective_config_digest": "sha256:cc472c9ad93f6721ecc9a3fc14f3067ccc85af33c2acceb4489982a44eb370ac",
+    "gauge_contract": "devostasis.gauge.v1",
+    "gauges_digest": "sha256:f396534cc1b29a280d8680d2ce89826dfc9ef99f7cd84262cb6e80009dbad2be",
+    "observation_contract_version": "RAW-OBS-V0",
+    "observations_digest": "sha256:78603834c2e4cb90798cc144488c5b9e8d99407908269572a622ed13f1e58b33",
+    "observed_at": "2026-09-05T12:00:00Z",
+    "policy_version": "devostasis.policy.v1",
+    "previous_bundle_id": null,
+    "project_identity": {
+      "default_branch": "master",
+      "display_locator": "acme/widget",
+      "forge_instance": "github.com",
+      "immutable_project_id": "123456",
+      "provider": "github"
+    },
+    "renderer_version": "devostasis.render.v4",
+    "snapshot_digest": "sha256:d0274768919e75f1c6f76b6720e7612282229f7af11f050d76cc8a29bf4b85b9",
+    "source_receipts_digest": "sha256:fda4a9bc9f4f74739ecd59c85eed55a83e95a7085ae22fa7d82d9c98f36ecde3",
+    "vitals_contract_version": "PV-VITALS-V1-002"
+  },
+  "members": {
+    "activity.json": "sha256:d80fa63f29071d59425dad060211db5fbf6d165248c23b18169b06c37a1a0595",
+    "delta.json": "sha256:a36c8ad814fc8ae9c9e2d0b31f7764fc7a5ca959a39017922a389994029cf8f8",
+    "demand.json": "sha256:38f9170d967c28516dcaf4ca34d77815c0b5589701c076fa1ee176a4f64f0d94",
+    "effective-config.json": "sha256:cc472c9ad93f6721ecc9a3fc14f3067ccc85af33c2acceb4489982a44eb370ac",
+    "gauges.json": "sha256:f396534cc1b29a280d8680d2ce89826dfc9ef99f7cd84262cb6e80009dbad2be",
+    "observations.json": "sha256:78603834c2e4cb90798cc144488c5b9e8d99407908269572a622ed13f1e58b33",
+    "report.md": "sha256:4b7c14593a029b47956d7343c839d221b9f4146a960c1a9eba3d6894cf9f2598",
+    "snapshot.json": "sha256:d0274768919e75f1c6f76b6720e7612282229f7af11f050d76cc8a29bf4b85b9"
+  },
+  "observation_contract_version": "RAW-OBS-V0",
+  "observed_at": "2026-09-05T12:00:00Z",
+  "policy_version": "devostasis.policy.v1",
+  "previous_bundle_id": null,
+  "project_identity": {
+    "default_branch": "master",
+    "display_locator": "acme/widget",
+    "forge_instance": "github.com",
+    "immutable_project_id": "123456",
+    "provider": "github"
+  },
+  "project_key": "github.com/acme/widget",
+  "receipt": {
+    "capability_notes": [
+      "CHECKS_SURFACE_NOT_COLLECTED",
+      "CI_SURFACE:GITHUB_ACTIONS_ONLY"
+    ],
+    "collector_version": "devostasis.github.v1",
+    "config_hash": "example",
+    "ended_at": "2026-09-05T12:00:00Z",
+    "per_key": {
+      "ci.configured": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "ci.revision_verdicts_14d": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.change_requests.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.issues.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.releases.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "forge.repository.metadata": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "git.default_branch.commits_28d": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "git.nondefault_branches.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      },
+      "planning.explicit_targets.inventory": {
+        "freshness": "FRESH",
+        "status": "AVAILABLE"
+      }
+    },
+    "requested_keys": [
+      "ci.configured",
+      "ci.revision_verdicts_14d",
+      "forge.change_requests.inventory",
+      "forge.issues.inventory",
+      "forge.releases.inventory",
+      "forge.repository.metadata",
+      "git.default_branch.commits_28d",
+      "git.nondefault_branches.inventory",
+      "planning.explicit_targets.inventory"
+    ],
+    "returned_keys": [
+      "ci.configured",
+      "ci.revision_verdicts_14d",
+      "forge.change_requests.inventory",
+      "forge.issues.inventory",
+      "forge.releases.inventory",
+      "forge.repository.metadata",
+      "git.default_branch.commits_28d",
+      "git.nondefault_branches.inventory",
+      "planning.explicit_targets.inventory"
+    ],
+    "run_id": "run-20260905T120000Z-acme-widget",
+    "schema": "devostasis.receipt.v2",
+    "started_at": "2026-09-05T12:00:00Z",
+    "target": {
+      "default_branch": "master",
+      "display_locator": "acme/widget",
+      "forge_instance": "github.com",
+      "immutable_project_id": "123456",
+      "owner": "acme",
+      "provider": "github",
+      "repo": "widget",
+      "visibility": "public"
+    }
+  },
+  "renderer_version": "devostasis.render.v4",
+  "run_meta": {
+    "example": true,
+    "tool": {
+      "name": "devostasis",
+      "version": "0.2.0"
+    }
+  },
+  "schema": "devostasis.manifest.v1",
+  "semantic_config": {
+    "debt_mapping": {
+      "labels": [
+        "type:refactor"
+      ],
+      "mapping_version": "example-1",
+      "source": "labels"
+    },
+    "planning": {
+      "link_marker": "Target:",
+      "path": null,
+      "source": "milestones"
+    }
+  },
+  "supersedes_bundle_id": null,
+  "vitals_contract_version": "PV-VITALS-V1-002"
+}

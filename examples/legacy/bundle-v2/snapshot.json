@@ -1,0 +1,643 @@
+{
+  "observation_contract_version": "RAW-OBS-V0",
+  "observations_digest": "sha256:78603834c2e4cb90798cc144488c5b9e8d99407908269572a622ed13f1e58b33",
+  "observed_at": "2026-09-05T12:00:00Z",
+  "policy_version": "devostasis.policy.v1",
+  "schema": "devostasis.snapshot.v1",
+  "subject": {
+    "default_branch": "master",
+    "display_locator": "acme/widget",
+    "forge_instance": "github.com",
+    "immutable_project_id": "123456",
+    "owner": "acme",
+    "provider": "github",
+    "repo": "widget",
+    "visibility": "public"
+  },
+  "vitals": [
+    {
+      "band": "EXTENDED",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "HORIZON_DIRECTION_PLANNING"
+      ],
+      "derived": {
+        "capability": "SUPPORTED",
+        "nearest_future_boundary_days": 55,
+        "open_beyond_28d_count": 1,
+        "open_count": 1,
+        "open_with_future_boundary_count": 1
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "1 open planning targets, 1 with a future boundary, 1 reaching beyond 28 days.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.capability",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.open_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.open_with_future_boundary_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.open_beyond_28d_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.nearest_future_boundary_days",
+          "status": "AVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "horizon.bands.v2",
+      "shared_signal_groups": [
+        "PLANNING_TARGETS"
+      ],
+      "vital_id": "horizon",
+      "vital_version": "PV-VITALS-V1-002/horizon",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "LIGHT",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "CLUTTER_FLOW_FORGE"
+      ],
+      "derived": {
+        "components": {
+          "branches": {
+            "acquisition": "COMPLETE",
+            "stale_30d": 1
+          },
+          "change_requests": {
+            "acquisition": "COMPLETE",
+            "open": 2,
+            "stale_14d": 0
+          },
+          "issues": {
+            "acquisition": "COMPLETE",
+            "open": 3,
+            "stale_30d": 1
+          }
+        },
+        "stale_branch_count": 1,
+        "stale_work_count": 1,
+        "stale_work_ratio": {
+          "den": 5,
+          "num": 1
+        },
+        "tracked_open_count": 5
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "1 stale work items out of 5 tracked open items; 1 stale non-default branches.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.issues.open_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.issues.stale_open_count_30d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.open_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.stale_open_count_14d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "git.nondefault_branches.stale_count_30d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "UNKNOWN",
+          "observation_id": "git.nondefault_branches.retention_semantics",
+          "status": "NOT_REQUESTED"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "clutter.bands.v1",
+      "shared_signal_groups": [
+        "FORGE_INVENTORY",
+        "BRANCH_RESIDUE"
+      ],
+      "vital_id": "clutter",
+      "vital_version": "PV-VITALS-V1-002/clutter",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "MIXED",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "HORIZON_DIRECTION_PLANNING",
+        "DIRECTION_PULSE_ACTIVITY"
+      ],
+      "derived": {
+        "active_change_count_28d": 10,
+        "capability": "SUPPORTED",
+        "linkage_rule": "PV-REV-DIRECTION-CLOSED-TARGET-001",
+        "linked_active_change_count_28d": 6,
+        "linked_to_open_target_count_28d": 5,
+        "links_per_target": {
+          "2": 1,
+          "3": 5
+        },
+        "missing_target_reference_count_28d": 0,
+        "unlinked_active_change_count_28d": 4,
+        "unresolved_active_change_count_28d": 0
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "6 of 10 active change requests are explicitly linked to a declared target, open or closed.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_linked_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_unlinked_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.active_change_requests_unresolved_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.explicit_targets.capability",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.links_per_target_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.missing_target_reference_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "planning.linkage.unresolved_change_requests_28d",
+          "status": "AVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "direction.bands.v2",
+      "shared_signal_groups": [
+        "PLANNING_TARGETS",
+        "CHANGE_REQUEST_ACTIVITY"
+      ],
+      "vital_id": "direction",
+      "vital_version": "PV-VITALS-V1-002/direction",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "MOVING",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "CLUTTER_FLOW_FORGE",
+        "FLOW_PULSE_ACTIVITY"
+      ],
+      "derived": {
+        "median_time_to_merge_hours_28d": 20,
+        "median_time_to_merge_seconds_28d": {
+          "denominator": 1,
+          "numerator": 72000
+        },
+        "merged_count_28d": 8,
+        "oldest_open_age_days": 3,
+        "open_count": 2
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "2 open change requests; 8 merged in 28 days; oldest open for 3 days; median time to merge 20h 0m.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.open_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.merged_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.oldest_open_age_days",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.median_time_to_merge_seconds_28d",
+          "status": "AVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "flow.bands.v1",
+      "shared_signal_groups": [
+        "CHANGE_REQUEST_INVENTORY",
+        "CHANGE_REQUEST_ACTIVITY"
+      ],
+      "vital_id": "flow",
+      "vital_version": "PV-VITALS-V1-002/flow",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "FLAKY",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "INTEGRITY_ONLY"
+      ],
+      "derived": {
+        "current_revision": {
+          "committed_at": "2026-08-29T09:00:00Z",
+          "current_verdict": "VERIFY_PASS",
+          "history_state": "PASS_ONLY_OBSERVED",
+          "revision": "0000000000000000000000000000000000000013"
+        },
+        "decisive_count_14d": 8,
+        "failed_count_14d": 1,
+        "failure_ratio_14d": {
+          "den": 8,
+          "num": 1
+        },
+        "history_provenance": {
+          "ATTEMPT_LEVEL": 8
+        },
+        "history_rule": "PV-HIST-002",
+        "revision_history": {
+          "lineage": "devostasis.ci-history.v2",
+          "records": [
+            {
+              "committed_at": "2026-08-22T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:900"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000c"
+            },
+            {
+              "committed_at": "2026-08-23T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:901"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000d"
+            },
+            {
+              "committed_at": "2026-08-24T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:902"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000e"
+            },
+            {
+              "committed_at": "2026-08-25T09:00:00Z",
+              "historical_contribution": "VERIFY_FAIL",
+              "history_complete": true,
+              "history_state": "FAILURE_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_FAIL"
+                    },
+                    {
+                      "attempt": 2,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 2,
+                  "parent_ids": [
+                    "github_actions:workflow_run:903"
+                  ]
+                }
+              ],
+              "revision": "000000000000000000000000000000000000000f"
+            },
+            {
+              "committed_at": "2026-08-26T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:904"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000010"
+            },
+            {
+              "committed_at": "2026-08-27T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:905"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000011"
+            },
+            {
+              "committed_at": "2026-08-28T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:906"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000012"
+            },
+            {
+              "committed_at": "2026-08-29T09:00:00Z",
+              "historical_contribution": "VERIFY_PASS",
+              "history_complete": true,
+              "history_state": "PASS_ONLY_OBSERVED",
+              "parent_groups": [
+                {
+                  "attempts": [
+                    {
+                      "attempt": 1,
+                      "state": "VERIFY_PASS"
+                    }
+                  ],
+                  "kind": "github_actions_workflow_run",
+                  "latest_attempt": 1,
+                  "parent_ids": [
+                    "github_actions:workflow_run:907"
+                  ]
+                }
+              ],
+              "revision": "0000000000000000000000000000000000000013"
+            }
+          ],
+          "source": {
+            "reason": "NO_PREVIOUS_BUNDLE",
+            "status": "BASELINE"
+          }
+        },
+        "revisions_in_window": 8,
+        "revisions_with_history": 8,
+        "revisions_with_verification": 8,
+        "sample_strength": "ESTABLISHED",
+        "unknown_history_count_14d": 0
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "1 of 8 decisive revisions failed verification in 14 days; latest decisive verdict is VERIFY_PASS.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "ci.configured",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "ci.revision_verdicts_14d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "ci.revision_history_carried",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+      "shared_signal_groups": [
+        "CI_VERIFICATION"
+      ],
+      "vital_id": "integrity",
+      "vital_version": "PV-VITALS-V1-002/integrity",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "PRESENT",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "DEBT_CLUTTER_MAINTENANCE"
+      ],
+      "derived": {
+        "capability": "CONFIGURED",
+        "closed_count_28d": 1,
+        "mapping": {
+          "labels": [
+            "type:refactor"
+          ],
+          "mapping_version": "example-1",
+          "source": "labels"
+        },
+        "open_count": 1,
+        "open_stale_count_30d": 0
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "1 open registered debt items under mapping version example-1.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "debt.registry.capability",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "debt.items.open_count",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "debt.items.open_stale_count_30d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "debt.items.closed_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "debt.mapping",
+          "status": "AVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "debt.bands.v2",
+      "shared_signal_groups": [
+        "EXPLICIT_DEBT_REGISTER",
+        "FORGE_INVENTORY"
+      ],
+      "vital_id": "debt",
+      "vital_version": "PV-VITALS-V1-002/debt",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    },
+    {
+      "band": "SURGING",
+      "band_semantics": "EXACT",
+      "dependency_group_ids": [
+        "FLOW_PULSE_ACTIVITY",
+        "DIRECTION_PULSE_ACTIVITY"
+      ],
+      "derived": {
+        "activity_events_28d": 32,
+        "channel_count": 3,
+        "channels_observed": {
+          "commits": 19,
+          "forge.change_requests.updated_count_28d": 10,
+          "forge.issues.updated_count_28d": 3
+        },
+        "commit_active_days_28d": 19,
+        "commits_28d": 19
+      },
+      "diagnostics": [],
+      "evaluation_status": "AVAILABLE",
+      "explanation": "19 default-branch commits on 19 active days and 32 activity events across 3 channels in 28 days.",
+      "inputs": [
+        {
+          "freshness": "FRESH",
+          "observation_id": "git.default_branch.commits.count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "git.default_branch.commit_active_days_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.change_requests.updated_count_28d",
+          "status": "AVAILABLE"
+        },
+        {
+          "freshness": "FRESH",
+          "observation_id": "forge.issues.updated_count_28d",
+          "status": "AVAILABLE"
+        }
+      ],
+      "policy_version": "devostasis.policy.v1",
+      "possible_bands": null,
+      "rule_id": "pulse.bands.v1",
+      "shared_signal_groups": [
+        "DEFAULT_BRANCH_ACTIVITY",
+        "CHANGE_REQUEST_ACTIVITY",
+        "ISSUE_ACTIVITY"
+      ],
+      "vital_id": "pulse",
+      "vital_version": "PV-VITALS-V1-002/pulse",
+      "vitals_contract_version": "PV-VITALS-V1-002"
+    }
+  ],
+  "vitals_contract_version": "PV-VITALS-V1-002"
+}

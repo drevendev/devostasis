@@ -197,10 +197,23 @@ def test_run_meta_keeps_the_fetching_provenance(tmp_path):
     outcome = run_project(single_project("acme/widget", config_version="1"), FilesystemHistoryStore(tmp_path), client, NOW)
     assert outcome.ok
     manifest = json.loads((FilesystemHistoryStore(tmp_path).project_dir("github.com/acme/widget") / "latest" / "manifest.json").read_text("utf-8"))
-    run_meta = manifest["run_meta"]
+    assert "run_meta" not in manifest
+    run_meta = outcome.execution_receipt["run_meta"]
     assert run_meta["requests"] == client.request_count and run_meta["billed_requests"] == client.billed_count
     assert run_meta["conditional_hits"] == 0 and run_meta["retries"] == 0
     assert "run_meta" not in manifest["identity_preimage"]
+
+
+def test_failed_collection_retains_external_invocation_audit(tmp_path):
+    from devostasis.runner import run_project
+    routes = _routes(); routes[BASE] = (403, {}, {"message": "Forbidden"})
+    client = GitHubClient(FakeTransport(routes))
+    outcome = run_project(single_project("acme/widget"), FilesystemHistoryStore(tmp_path), client, NOW)
+    assert not outcome.ok and outcome.execution_receipt["run_id"]
+    assert outcome.execution_receipt["result_bundle_id"] is None
+    assert outcome.execution_receipt["receipt_identity"] is None
+    assert outcome.execution_receipt["diagnostics"]
+    assert not list(tmp_path.rglob("manifest.json"))
 
 
 def test_a_missing_or_corrupt_cache_costs_requests_never_correctness(tmp_path):

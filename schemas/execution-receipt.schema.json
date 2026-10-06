@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Non-canonical current execution audit; never stored in a bundle",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "started_at",
+    "ended_at",
+    "result_bundle_id",
+    "diagnostics",
+    "run_meta",
+    "receipt_identity"
+  ],
+  "properties": {
+    "schema": {
+      "const": "devostasis.execution-receipt.v1"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "ended_at": {
+      "type": "string"
+    },
+    "result_bundle_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run_meta": {
+      "type": "object"
+    },
+    "receipt_identity": {
+      "oneOf": [
+        {
+          "$ref": "receipt-identity.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$id": "https://github.com/drevendev/devostasis/schemas/execution-receipt.schema.json"
+}

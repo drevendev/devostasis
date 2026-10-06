@@ -160,14 +160,20 @@ def test_file_registers_feed_horizon_direction_and_debt():
     assert obs.get(INV_TARGETS).value[1]["target_id"] == "T-3" and obs.get(INV_DEBT_REGISTER).value[0]["id"] == "D-1"
     crs = {c["number"]: c for c in obs.value_of("forge.change_requests.inventory")}
     assert crs[7]["target_refs"] == [{"target_id": "T-3", "state": "OPEN"}]
-    assert crs[8]["target_refs"] == [{"target_id": "T-9", "state": "UNKNOWN"}]
+    # T-9 is not in the complete register: a broken reference, not missing evidence (DIR-INCOMPLETE-07).
+    assert crs[8]["target_refs"] == [{"target_id": "T-9", "state": "MISSING"}]
     derive(obs, project)
     assert obs.value_of("planning.explicit_targets.capability") == "SUPPORTED"
+    assert obs.value_of("planning.linkage.active_change_requests_linked_count_28d") == 1
+    assert obs.value_of("planning.linkage.active_change_requests_unlinked_count_28d") == 1
     assert obs.value_of("planning.linkage.active_change_requests_linked_to_open_target_count_28d") == 1
-    assert obs.value_of("planning.linkage.unknown_target_reference_count_28d") == 1
+    assert obs.value_of("planning.linkage.unknown_target_reference_count_28d") == 0
+    assert obs.value_of("planning.linkage.missing_target_reference_count_28d") == 1
     assert obs.value_of("debt.items.open_count") == 1 and obs.value_of("debt.items.open_stale_count_30d") == 1 and obs.value_of("debt.items.closed_count_28d") == 1
     bands = {r.vital_id: r.band for r in evaluate_all(obs)}
     assert bands["horizon"] == "EXTENDED" and bands["direction"] == "MIXED" and bands["debt"] == "PRESENT"
+    direction = {r.vital_id: r for r in evaluate_all(obs)}["direction"]
+    assert "DIRECTION_TARGET_REFERENCE_MISSING:1" in direction.diagnostics
 
 
 def test_missing_register_is_explicit_not_undeclared():

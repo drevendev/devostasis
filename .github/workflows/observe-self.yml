@@ -4,7 +4,7 @@
 #
 #   jobs:
 #     vitals:
-#       uses: drevendev/devostasis/.github/workflows/observe-self.yml@v0.1.9
+#       uses: drevendev/devostasis/.github/workflows/observe-self.yml@v0.4.0
 #       with:
 #         debt-labels: "type:debt"
 #
@@ -24,7 +24,7 @@ on:
       devostasis-ref:
         description: Git ref of Devostasis to install (tag, branch or commit)
         type: string
-        default: v0.1.9
+        default: v0.4.0
       planning-source:
         description: milestones, file or none
         type: string

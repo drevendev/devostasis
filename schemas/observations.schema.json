@@ -1,57 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/drevendev/devostasis/schemas/observations.schema.json",
-  "title": "Observation set with collection receipt (devostasis.observations.v1)",
-  "type": "object",
-  "required": ["schema", "observation_contract_version", "subject", "observed_at", "observations", "receipt"],
-  "properties": {
-    "schema": { "const": "devostasis.observations.v1" },
-    "observation_contract_version": { "const": "RAW-OBS-V0" },
-    "subject": {
-      "type": "object",
-      "properties": {
-        "provider": { "type": "string" },
-        "forge_instance": { "type": "string" },
-        "owner": { "type": "string" },
-        "repo": { "type": "string" },
-        "display_locator": { "type": "string" },
-        "immutable_project_id": { "type": ["string", "null"] },
-        "default_branch": { "type": ["string", "null"] },
-        "visibility": { "type": ["string", "null"] }
-      }
+  "title": "Exact historical and successor observations schemas",
+  "oneOf": [
+    {
+      "$ref": "observations.v1.schema.json"
     },
-    "observed_at": { "type": "string", "format": "date-time" },
-    "observations": {
-      "type": "array",
-      "items": { "$ref": "observation.schema.json" }
-    },
-    "receipt": {
-      "type": ["object", "null"],
-      "required": ["schema", "run_id", "collector_version", "target", "requested_keys", "returned_keys", "per_key"],
-      "properties": {
-        "schema": { "enum": ["devostasis.receipt.v1", "devostasis.receipt.v2"] },
-        "run_id": { "type": "string" },
-        "collector_version": { "type": "string" },
-        "target": { "type": "object" },
-        "started_at": { "type": "string" },
-        "ended_at": { "type": "string" },
-        "requested_keys": { "type": "array", "items": { "type": "string" } },
-        "returned_keys": { "type": "array", "items": { "type": "string" } },
-        "per_key": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "required": ["status", "freshness"],
-            "properties": {
-              "status": { "enum": ["AVAILABLE", "PARTIAL", "UNAVAILABLE", "FORBIDDEN", "UNKNOWN", "ERROR"] },
-              "freshness": { "enum": ["FRESH", "STALE", "UNKNOWN"] }
-            }
-          }
-        },
-        "capability_notes": { "type": "array", "items": { "type": "string" } },
-        "config_hash": { "type": ["string", "null"] }
-      }
+    {
+      "$ref": "observations.v2.schema.json"
     }
-  },
-  "additionalProperties": false
+  ],
+  "$id": "https://github.com/drevendev/devostasis/schemas/observations.schema.json"
 }

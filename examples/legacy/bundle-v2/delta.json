@@ -1,0 +1,103 @@
+{
+  "band_order_contract": "PV-BAND-ORDER-001",
+  "band_order_version": "devostasis.band-order.v1",
+  "comparison_status": "BASELINE",
+  "current_observed_at": "2026-09-05T12:00:00Z",
+  "incomparable_reasons": [],
+  "previous_bundle_id": null,
+  "previous_observed_at": null,
+  "schema": "devostasis.delta.v2",
+  "vitals": [
+    {
+      "coverage_delta": [],
+      "current_band": "EXTENDED",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "horizon"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "LIGHT",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "clutter"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "MIXED",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "direction"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "MOVING",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "flow"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "FLAKY",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "integrity"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "PRESENT",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "debt"
+    },
+    {
+      "coverage_delta": [],
+      "current_band": "SURGING",
+      "current_evaluation_status": "AVAILABLE",
+      "metric_deltas": {},
+      "previous_band": null,
+      "previous_evaluation_status": null,
+      "reason_codes": [
+        "NO_PREVIOUS_BUNDLE"
+      ],
+      "transition_class": "BASELINE",
+      "vital_id": "pulse"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ from typing import Any, Iterable
 
 from . import canonical
 from .contracts import OBSERVATION_CONTRACT_VERSION, OBSERVATIONS_SCHEMA, RECEIPT_SCHEMA
+from .contracts import RECEIPT_IDENTITY_CONTRACT, RECEIPT_IDENTITY_SCHEMA, EXECUTION_RECEIPT_SCHEMA
 
 AVAILABLE = "AVAILABLE"
 PARTIAL = "PARTIAL"
@@ -49,6 +50,15 @@ VALUE_NOT_A_COUNT = "PARTIAL_VALUE_NOT_A_COUNT"
 
 class ObservationError(ValueError):
     """Raised when an envelope violates the observation contract."""
+
+
+def failed_execution(target, started_at, ended_at, reason, counters=None):
+    """An invocation can fail before any admissible receipt identity exists."""
+    from uuid import uuid4
+    return {"schema": EXECUTION_RECEIPT_SCHEMA, "run_id": uuid4().hex,
+            "started_at": started_at, "ended_at": ended_at, "result_bundle_id": None,
+            "receipt_identity": None, "diagnostics": [reason],
+            "run_meta": {"target_requested": target, **(counters or {})}}
 
 
 @dataclass(frozen=True)
@@ -137,9 +147,9 @@ class Receipt:
 
     It records *what* was asked for and what came back, never *how* the answers
     were fetched. The number of HTTP calls a run needed is a property of the
-    client and its cache, not of the evidence, so it lives in the bundle's
-    post-identity ``run_meta``: enabling a conditional cache must not change the
-    identity of a bundle built from identical observations (v2).
+    client and its cache, not of the evidence. Successor bundles retain only
+    ``identity()``; invocation fields and counters live in the external
+    ``execution()`` receipt. ``to_dict()`` preserves the historical v2 shape.
     """
 
     run_id: str
@@ -152,6 +162,43 @@ class Receipt:
     per_key: dict[str, dict[str, str]] = field(default_factory=dict)
     capability_notes: list[str] = field(default_factory=list)
     config_hash: str | None = None
+    coverage: dict[str, Any] = field(default_factory=dict)
+    diagnostics: list[str] = field(default_factory=list)
+
+    def identity(self, coverage: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Material acquisition provenance; invocation mechanics have no path here."""
+        result = {
+            "schema": RECEIPT_IDENTITY_SCHEMA,
+            "contract": RECEIPT_IDENTITY_CONTRACT,
+            "collector_version": self.collector_version,
+            "target": dict(self.target),
+            "requested_keys": sorted(set(self.requested_keys)),
+            "returned_keys": sorted(set(self.returned_keys)),
+            "per_key": {key: dict(self.per_key[key]) for key in sorted(self.per_key)},
+            "capability_notes": sorted(set(material_capability(n) for n in self.capability_notes)),
+            "coverage": dict(self.coverage, **(coverage or {})),
+            "config_hash": self.config_hash,
+        }
+        validate_receipt_identity(result)
+        return result
+
+    def execution(self, bundle_id: str | None = None, run_meta=None, receipt_identity=None) -> dict[str, Any]:
+        """Current invocation audit, returned outside immutable bundle storage."""
+        return {"schema": EXECUTION_RECEIPT_SCHEMA, "run_id": self.run_id,
+                "started_at": self.started_at, "ended_at": self.ended_at,
+                "result_bundle_id": bundle_id, "diagnostics": list(self.diagnostics) +
+                [n for n in self.capability_notes if n.startswith("REQUEST_BUDGET_EXHAUSTED:")],
+                "run_meta": dict(run_meta or {}), "receipt_identity": receipt_identity or self.identity()}
+
+    @classmethod
+    def from_identity(cls, data):
+        validate_receipt_identity(data)
+        return cls(run_id="", started_at="", ended_at="",
+                   collector_version=data["collector_version"], target=dict(data["target"]),
+                   requested_keys=list(data["requested_keys"]), returned_keys=list(data["returned_keys"]),
+                   per_key={k: dict(v) for k, v in data["per_key"].items()},
+                   capability_notes=list(data["capability_notes"]), config_hash=data["config_hash"],
+                   coverage=dict(data["coverage"]))
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -259,6 +306,13 @@ class ObservationSet:
         self.receipt = receipt
         return receipt
 
+    def receipt_identity(self):
+        if self.receipt is None:
+            return None
+        coverage = {key: self._items[key].coverage for key in self.receipt.requested_keys
+                    if key in self._items and self._items[key].coverage is not None}
+        return self.receipt.identity(coverage)
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "schema": OBSERVATIONS_SCHEMA,
@@ -266,12 +320,24 @@ class ObservationSet:
             "subject": self.subject,
             "observed_at": self.observed_at,
             "observations": [item.to_dict() for item in self.sorted()],
-            "receipt": self.receipt.to_dict() if self.receipt else None,
+            "receipt_identity": self.receipt_identity(),
         }
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ObservationSet":
-        receipt = Receipt.from_dict(data["receipt"]) if data.get("receipt") else None
+        if not isinstance(data, dict) or data.get("observation_contract_version") != OBSERVATION_CONTRACT_VERSION:
+            raise ObservationError("observations: unsupported observation contract")
+        schema = data.get("schema")
+        if schema == OBSERVATIONS_SCHEMA:
+            if "receipt" in data or "receipt_identity" not in data:
+                raise ObservationError("observations: mixed receipt lineage")
+            receipt = Receipt.from_identity(data["receipt_identity"]) if data["receipt_identity"] else None
+        elif schema == "devostasis.observations.v1":
+            if "receipt_identity" in data:
+                raise ObservationError("observations: mixed receipt lineage")
+            receipt = Receipt.from_dict(data["receipt"]) if data.get("receipt") else None
+        else:
+            raise ObservationError("observations: unsupported schema")
         return cls(
             subject=data.get("subject", {}),
             observed_at=data["observed_at"],
@@ -288,6 +354,47 @@ class ObservationSet:
 
     def digest(self) -> str:
         return canonical.digest(self.to_dict())
+
+
+def material_capability(note):
+    """Preserve exhaustion as evidence; its numeric request limit is mechanics."""
+    if not isinstance(note, str):
+        raise ObservationError("capability note must be a semantic string")
+    if note.startswith("REQUEST_BUDGET_EXHAUSTED:"):
+        if not note.split(":", 1)[1].isdigit():
+            raise ObservationError("ambiguous request-budget capability note")
+        return "REQUEST_BUDGET_EXHAUSTED"
+    return note
+
+
+def validate_receipt_identity(value):
+    required = {"schema", "contract", "collector_version", "target", "requested_keys",
+                "returned_keys", "per_key", "capability_notes", "coverage", "config_hash"}
+    def check(ok, message):
+        if not ok:
+            raise ObservationError("receipt_identity: " + message)
+    check(isinstance(value, dict) and set(value) == required, "missing or unknown fields")
+    check(value["schema"] == RECEIPT_IDENTITY_SCHEMA and value["contract"] == RECEIPT_IDENTITY_CONTRACT,
+          "unsupported lineage")
+    check(isinstance(value["collector_version"], str) and bool(value["collector_version"]), "collector version required")
+    check(isinstance(value["target"], dict), "target must be an object")
+    for key in ("requested_keys", "returned_keys", "capability_notes"):
+        entries = value[key]
+        check(isinstance(entries, list) and all(isinstance(x, str) and x for x in entries), key + " must be strings")
+        check(entries == sorted(set(entries)), key + " must be unique and sorted")
+    requested = set(value["requested_keys"])
+    check(all(material_capability(n) == n for n in value["capability_notes"]), "invocation accounting in capability facts")
+    check(set(value["returned_keys"]) <= requested, "returned key was not requested")
+    check(isinstance(value["per_key"], dict) and set(value["per_key"]) <= requested, "per-key scope mismatch")
+    for meta in value["per_key"].values():
+        check(isinstance(meta, dict) and set(meta) == {"status", "freshness"}, "invalid per-key fields")
+        check(isinstance(meta["status"], str) and meta["status"] in STATUSES and
+              isinstance(meta["freshness"], str) and meta["freshness"] in FRESHNESSES, "invalid acquisition state")
+    check(isinstance(value["coverage"], dict) and set(value["coverage"]) <= requested and
+          all(isinstance(x, dict) for x in value["coverage"].values()), "invalid coverage")
+    check(value["config_hash"] is None or isinstance(value["config_hash"], str), "invalid config hash")
+    canonical.canonical_bytes(value)
+    return value
 
 
 def subset_count_problem(item: Observation) -> str | None:

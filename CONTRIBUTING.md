@@ -11,6 +11,9 @@ runtime deterministic, model-free and honest about missing evidence.
   `release/0.1.0`). Feature branches target the current release branch.
 - When a release branch is complete and green, it is merged into `master`
   with a merge commit and tagged `v<version>`.
+- Dependabot version-update PRs also target the active release branch. When
+  opening the next release, advance both `target-branch` entries in
+  `.github/dependabot.yml`; do not send maintenance directly to `master`.
 
 ## Linking a pull request to a target
 
