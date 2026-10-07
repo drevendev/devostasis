@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/observations.v2.schema.json",
+  "title": "Canonical observation set (devostasis.observations.v2)",
+  "type": "object",
+  "required": [
+    "schema",
+    "observation_contract_version",
+    "subject",
+    "observed_at",
+    "observations",
+    "receipt_identity"
+  ],
+  "properties": {
+    "schema": {
+      "const": "devostasis.observations.v2"
+    },
+    "observation_contract_version": {
+      "const": "RAW-OBS-V0"
+    },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "forge_instance": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string"
+        },
+        "display_locator": {
+          "type": "string"
+        },
+        "immutable_project_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "visibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "$ref": "observation.schema.json"
+      }
+    },
+    "receipt_identity": {
+      "oneOf": [
+        {
+          "$ref": "receipt-identity.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+{
+  "contract": "devostasis.work.v1",
+  "kind": "policy",
+  "version": "devostasis-work-1",
+  "actor": "drevendev",
+  "roles": ["all"],
+  "ttl_seconds": 21600,
+  "queue_order": ["review", "finish_merge", "implement_issue", "research", "analyze_code"],
+  "required_checks": ["Tests (Python 3.12)", "Tests (Python 3.13)", "Tests (Python 3.14)"],
+  "minimum_approvals": 1,
+  "allow_merge_train": false,
+  "read_budget": {"max_files": 40, "max_bytes": 400000},
+  "priorities": {
+    "issue:58": {"rank": 10, "rationale": "Enable exact-head GitLab merge admission without weakening evidence."},
+    "request:receipt-identity": {"rank": 20, "rationale": "The accepted identity adoption has an intermittent release-validation failure."}
+  },
+  "criteria": [
+    {
+      "id": "gitlab-exact-head-approval",
+      "issue": "58",
+      "acceptance": [
+        "Define a read-only approval profile with exact reviewed SHA and explicit capability uncertainty.",
+        "Test retained approvals after new commits, dismissals, author reviews and collection races.",
+        "Verify it in the GitLab adopter before enabling merge admission."
+      ],
+      "paths": ["src/devostasis/workscope/collect.py", "src/devostasis/workscope/planner.py", "tests/test_workscope_adapters.py"],
+      "symbols": ["_gl_change", "merge_reasons"],
+      "dependencies": [],
+      "implementations": [],
+      "done": false
+    }
+  ],
+  "requests": [
+    {
+      "id": "receipt-identity",
+      "queue": "research",
+      "question": "Map the accepted PV-BUNDLE-ID-003 adoption on issue #19 to its exact current code and historical dispatch requirements.",
+      "paths": ["src/devostasis/bundle.py", "src/devostasis/observations.py", "tests/test_rate_limits.py"],
+      "symbols": ["build_bundle", "Receipt"],
+      "acceptance": ["Produce a bounded adoption map preserving observed_at, legacy verification and byte-identical successor members; do not alter a Vital rule."],
+      "dependencies": [],
+      "owner": null
+    }
+  ],
+  "dispositions": []
+}

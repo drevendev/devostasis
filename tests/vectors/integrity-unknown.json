@@ -30,7 +30,7 @@
         "evaluation_status": "UNKNOWN",
         "band_semantics": null,
         "possible_bands": null,
-        "rule_id": "integrity.bands.v1+ci-unit-004",
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
         "derived": {"decisive_count_14d": 4, "failed_count_14d": 0},
         "diagnostics": ["CURRENT_VERDICT_UNKNOWN:r5"],
         "diagnostics_absent": ["LATEST_REVISION_NON_DECISIVE"]
@@ -88,7 +88,7 @@
         "integrity": {
           "band": null,
           "evaluation_status": "UNKNOWN",
-          "rule_id": "integrity.bands.v1+ci-unit-004",
+          "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
           "derived": {"decisive_count_14d": 4, "failed_count_14d": 0},
           "diagnostics": ["CURRENT_VERDICT_UNKNOWN:r5"],
           "diagnostics_absent": ["LATEST_REVISION_NON_DECISIVE"]

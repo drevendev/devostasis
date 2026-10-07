@@ -29,10 +29,23 @@ Configuration: `"planning": {"source": "file", "path": "devostasis/targets.json"
   `DECLARED`; with a date within 28 days `VISIBLE`; beyond, `EXTENDED`.
 
 A change request is **linked** to a target when its title or body contains
-the marker followed by the target id, for example a line `Target: T-3`. Several
-markers link to several targets. A reference to an id that is not in the
-register counts as unlinked and is reported in
-`planning.linkage.unknown_target_reference_count_28d`.
+the marker followed by the target id, for example a line `Target: T-3`. The
+marker is a token of its own, matched exactly, case included: it starts the
+text or follows a character that cannot continue a word, so `SubTarget: T-3`,
+`NotTarget: T-3` and `PreTarget:T-3` link nothing
+(`PV-AUDIT-TARGET-MARKER-SYNTAX-001`); a marker that ends in a letter or digit
+also needs a boundary after it. Several markers link to several targets, in
+order, each once.
+
+Linkage is state-neutral: a closed target is still the target the work was
+declared against, so a change request that references it stays linked
+(`PV-REV-DIRECTION-CLOSED-TARGET-001`). Keep closed targets in the file for as
+long as recent work references them. A reference to an id the register does
+not contain is a broken reference: the change request counts as unlinked,
+`planning.linkage.missing_target_reference_count_28d` reports it, and
+Direction carries `DIRECTION_TARGET_REFERENCE_MISSING`. When the register
+itself cannot be read, nothing about the id is known, so the change request is
+unresolved rather than unlinked (`PV-DIRECTION-INCOMPLETE-001`).
 
 A missing file is `UNAVAILABLE / REGISTER_NOT_FOUND` and makes Horizon and
 Direction `UNKNOWN` (the mechanism is configured but absent). An invalid file

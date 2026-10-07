@@ -1,5 +1,7 @@
 """Horizon, Direction and Debt (V1-03..V1-07, V1-13..V1-15)."""
 
+import pytest
+
 from devostasis.observations import FORBIDDEN, PARTIAL
 from devostasis.vitals import debt, direction, horizon
 from helpers import add, debt_inputs, direction_inputs, obs_set, planning_inputs
@@ -89,22 +91,39 @@ def test_configured_debt_with_forbidden_register_is_unknown_never_clear():
     assert result.band is None and result.evaluation_status == "UNKNOWN"
 
 
+SUBSET = {"complete": False, "value_semantics": "OBSERVED_SUBSET_COUNT"}
+MAPPING = {"source": "labels", "labels": ["debt"], "mapping_version": "1"}
+
+
 def test_partial_register_with_observed_items_is_degraded_present():
+    """PD1 of PV-DEBT-PARTIAL-001: the band is exact, the acquisition is not."""
     obs = obs_set()
     add(obs, "debt.registry.capability", "CONFIGURED", "enum")
-    add(obs, "debt.items.open_count", 3, status=PARTIAL, reason_code="PAGINATION_CAPPED")
+    add(obs, "debt.mapping", MAPPING, "record")
+    add(obs, "debt.items.open_count", 3, status=PARTIAL, reason_code="PAGINATION_CAPPED", coverage=SUBSET)
     result = debt.evaluate(obs)
-    assert result.band == "PRESENT" and result.evaluation_status == "DEGRADED"
+    assert (result.band, result.evaluation_status, result.band_semantics, result.possible_bands) == ("PRESENT", "DEGRADED", "EXACT", None)
+    assert result.derived["open_count_semantics"] == "LOWER_BOUND" and result.derived["confirmed_open_count"] == 3
 
 
 def test_a_stale_partial_register_proves_nothing_about_now():
     """vitals.md: configured debt evidence that is stale yields UNKNOWN; a fresh partial one is a lower bound."""
-    from devostasis.observations import PARTIAL
-
     for freshness, expected in (("FRESH", "PRESENT"), ("STALE", None), ("UNKNOWN", None)):
         obs = obs_set()
         add(obs, "debt.registry.capability", "CONFIGURED", "enum")
-        add(obs, "debt.mapping", {"source": "labels", "labels": ["debt"], "mapping_version": "1"}, "record")
-        add(obs, "debt.items.open_count", 2, status=PARTIAL, freshness=freshness, reason_code="PAGINATION_CAPPED")
+        add(obs, "debt.mapping", MAPPING, "record")
+        add(obs, "debt.items.open_count", 2, status=PARTIAL, freshness=freshness, reason_code="PAGINATION_CAPPED", coverage=SUBSET)
         result = debt.evaluate(obs)
         assert result.band == expected, freshness
+
+
+@pytest.mark.parametrize("coverage", [None, {"complete": False}, {"complete": False, "value_semantics": "ESTIMATE"}, {"complete": True, "value_semantics": "OBSERVED_SUBSET_COUNT"}, "not a record"])
+def test_a_partial_debt_count_without_the_subset_proof_is_not_a_lower_bound(coverage):
+    """Issue #39: status PARTIAL proves nothing about the value; only a proven observed-subset count is a floor."""
+    obs = obs_set()
+    add(obs, "debt.registry.capability", "CONFIGURED", "enum")
+    add(obs, "debt.mapping", MAPPING, "record")
+    add(obs, "debt.items.open_count", 4, status=PARTIAL, reason_code="PAGINATION_CAPPED", coverage=coverage)
+    result = debt.evaluate(obs)
+    assert (result.band, result.evaluation_status) == (None, "UNKNOWN")
+    assert any(code.startswith("PARTIAL_COUNT_NOT_A_LOWER_BOUND:debt.items.open_count") for code in result.diagnostics)

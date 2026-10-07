@@ -36,6 +36,19 @@ band table, none of which moves a threshold or a window:
 A required series that cannot be used is ``UNKNOWN`` whatever ``ci.configured``
 says, because "no verification evidence" is exactly what it cannot establish,
 and a verdict outside the canonical vocabulary is read as ``UNKNOWN``.
+
+Rule ``integrity.bands.v1+ci-unit-004+hist-002`` (0.2.0) counts history over
+the durable union of **PV-HIST-002** (accepted by PV-REV-HIST-002, HIST-01..20)
+instead of over what the provider still shows: a failure one bundle proved
+stays in the counts while its revision is in the window, whatever the provider
+shows later, and favorable evidence that cannot prove every attempt
+(parent-level check suites, incomplete attempts) is ``UNKNOWN_HISTORY``, never
+a pass (R52). Any revision whose history is unknown makes the Vital
+``UNKNOWN``: T9 puts unknown history above every conservative branch, so no
+band is derived around it. The current verdict is still the current
+observation's alone (HIST-16), and the reconciled union is emitted in
+``derived.revision_history`` on every path, so the next bundle can carry it
+even across an evaluation that claimed no band (see ``revision_history``).
 """
 
 from __future__ import annotations
@@ -45,6 +58,7 @@ from typing import Any
 from ..canonical import ratio
 from ..observations import AVAILABLE, FRESH, PARTIAL, ObservationSet
 from ..policy import INTEGRITY
+from ..revision_history import CARRIED, SOURCE_GAP, UNKNOWN_HISTORY, Reconciled, reconcile
 from .common import (
     EVAL_AVAILABLE,
     EVAL_DEGRADED,
@@ -52,12 +66,12 @@ from .common import (
     SEM_EXACT,
     VitalResult,
     input_meta,
-    unknown_result,
 )
 
 VITAL_ID = "integrity"
 VITAL_VERSION = "PV-VITALS-V1-002/integrity"
-RULE_ID = "integrity.bands.v1+ci-unit-004"
+RULE_ID = "integrity.bands.v1+ci-unit-004+hist-002"
+HISTORY_RULE = "PV-HIST-002"
 UNKNOWN_RULE = "PV-REV-INTEGRITY-UNKNOWN-001"
 PARTIAL_RULE = "PV-REV-TEST-003"
 SPARSE_RULE = "PV-REV-TEST-VECTORS-002"
@@ -68,7 +82,7 @@ BANDS = ["UNINSTRUMENTED", "NO_RECENT_RUNS", "NO_DECISIVE_RUNS", "SPARSE", "SPAR
 
 CONFIGURED = "ci.configured"
 REVISIONS = "ci.revision_verdicts_14d"
-IDS = [CONFIGURED, REVISIONS]
+IDS = [CONFIGURED, REVISIONS, CARRIED]
 
 SHARED = ["CI_VERIFICATION"]
 GROUPS = ["INTEGRITY_ONLY"]
@@ -143,12 +157,14 @@ def sample_strength(n: int) -> str | None:
     return SAMPLE_SPARSE if n < INTEGRITY["established_sample"] else SAMPLE_ESTABLISHED
 
 
-HISTORY_CONTRIBUTION = {"FAILURE_OBSERVED": VERIFY_FAIL, "PASS_ONLY_OBSERVED": VERIFY_PASS, "NO_DECISIVE_OBSERVED": None}
+HISTORY_CONTRIBUTION = {"FAILURE_OBSERVED": VERIFY_FAIL, "PASS_ONLY_OBSERVED": VERIFY_PASS, "NO_DECISIVE_OBSERVED": None, UNKNOWN_HISTORY: None}
 
 
 def _record_consistent(record: Any) -> bool:
-    """A revision record's history state is in the vocabulary and its contribution is the one PV-CI-UNIT-004 derives from it."""
-    if not isinstance(record, dict) or not isinstance(record.get("history_state"), str) or record["history_state"] not in HISTORY_CONTRIBUTION:
+    """A revision record names its immutable revision, its history state is in the vocabulary, and its contribution is the one PV-CI-UNIT-004 derives from it."""
+    if not isinstance(record, dict) or not isinstance(record.get("revision"), str) or not record["revision"]:
+        return False
+    if not isinstance(record.get("history_state"), str) or record["history_state"] not in HISTORY_CONTRIBUTION:
         return False
     if not isinstance(record.get("current_verdict"), (str, type(None))):
         return False
@@ -167,8 +183,24 @@ def established_failing(n: int, f: int) -> bool:
     return n >= INTEGRITY["established_sample"] and f * fail_den >= n * fail_num
 
 
+def _unknown(obs: ObservationSet, history: dict[str, Any], diagnostics: list[str], explanation: str = "Evidence is insufficient for a deterministic band; no band is fabricated.") -> VitalResult:
+    """UNKNOWN with no band, still carrying the durable history for the next bundle."""
+    return _result(obs, None, EVAL_UNKNOWN, None, None, dict(history), diagnostics, explanation)
+
+
+def _bearing(history: Reconciled, revisions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The reconciled records of the current inventory that carry any verification history."""
+    records = [history.records[r.get("revision")] for r in revisions if isinstance(r, dict) and r.get("revision") in history.records]
+    return [r for r in records if r["parents"] or r.get("unresolved")]
+
+
 def evaluate(obs: ObservationSet) -> VitalResult:
     diagnostics: list[str] = []
+    reconciled = reconcile(obs)
+    history = {"revision_history": reconciled.output()}
+    if reconciled.source["status"] == SOURCE_GAP:
+        # HIST-08: explicit, and nothing older is carried in its place.
+        diagnostics.append(f"REVISION_HISTORY_GAP:{reconciled.source.get('reason')}")
     configured_obs = obs.get(CONFIGURED)
     series = obs.get(REVISIONS)
     configured_known = configured_obs is not None and configured_obs.good
@@ -188,19 +220,40 @@ def evaluate(obs: ObservationSet) -> VitalResult:
         diagnostics.append(f"MISSING_REQUIRED:{REVISIONS}:{obs.status_of(REVISIONS)}/{obs.freshness_of(REVISIONS)}")
         if not configured_known:
             diagnostics.append(f"MISSING_REQUIRED:{CONFIGURED}:{obs.status_of(CONFIGURED)}/{obs.freshness_of(CONFIGURED)}")
-        return unknown_result(VITAL_ID, VITAL_VERSION, RULE_ID, obs, IDS, diagnostics, SHARED, GROUPS)
+        return _unknown(obs, history, diagnostics)
 
     revisions: list[dict[str, Any]] = list(series.value)
     inconsistent = [r for r in revisions if not _record_consistent(r)]
-    if inconsistent:
+    if inconsistent or reconciled.problems:
         # A record whose contribution contradicts its own history (or names a
-        # state outside the vocabulary) is a coverage defect, not a pass.
+        # state outside the vocabulary), or carried history that is not the
+        # shape its lineage declares, is a coverage defect, not a pass.
         diagnostics.extend(f"REVISION_RECORD_INCONSISTENT:{_record_label(r)}" for r in inconsistent)
-        return unknown_result(VITAL_ID, VITAL_VERSION, RULE_ID, obs, IDS, diagnostics, SHARED, GROUPS)
+        diagnostics.extend(reconciled.problems)
+        return _unknown(obs, history, diagnostics)
     active = [r for r in revisions if r.get("parents")]
-    decisive = [r for r in active if r.get("historical_contribution") in DECISIVE]
+    provenance: dict[str, int] = {}
+    for r in active:
+        key = r.get("history_provenance") or "UNKNOWN"
+        provenance[key] = provenance.get(key, 0) + 1
+    if provenance.get("PARENT_LEVEL_ONLY"):
+        # Parent-level surfaces cannot prove an earlier failure; since R52 a
+        # favorable one is unknown history, and this names the surface.
+        diagnostics.append(f"HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:{provenance['PARENT_LEVEL_ONLY']}")
+    bearing = _bearing(reconciled, revisions)
+    decisive = [r for r in bearing if r.get("historical_contribution") in DECISIVE]
     failed = [r for r in decisive if r.get("history_state") == "FAILURE_OBSERVED"]
+    unknown_history = [r for r in bearing if r.get("history_state") == UNKNOWN_HISTORY]
     n, f = len(decisive), len(failed)
+    counts: dict[str, Any] = {
+        "revisions_in_window": len(revisions),
+        "revisions_with_verification": len(active),
+        "revisions_with_history": len(bearing),
+        "decisive_count_14d": n,
+        "failed_count_14d": f,
+        "unknown_history_count_14d": len(unknown_history),
+        "history_rule": HISTORY_RULE,
+    }
 
     if series.status == PARTIAL:
         # PV-REV-TEST-003: a truncated required series has no accepted degraded
@@ -214,19 +267,29 @@ def evaluate(obs: ObservationSet) -> VitalResult:
             EVAL_UNKNOWN,
             None,
             None,
-            {
-                "series_status": PARTIAL,
-                "revisions_in_window": len(revisions),
-                "revisions_with_verification": len(active),
-                "decisive_count_14d": n,
-                "failed_count_14d": f,
-                "partial_series_rule": PARTIAL_RULE,
-            },
+            {**counts, "series_status": PARTIAL, "partial_series_rule": PARTIAL_RULE, **history},
             diagnostics,
             f"The revision series is incomplete ({series.reason_code or 'truncated'}); {n} decisive revisions were observed, and no band is claimed over evidence known to be short.",
         )
 
+    if unknown_history:
+        # R52 and PV-HIST-002: history nobody can prove is neither a pass nor a
+        # zero, and T9 puts it above every conservative branch.
+        diagnostics.extend(f"REVISION_HISTORY_UNKNOWN:{r['revision']}" for r in unknown_history)
+        return _result(
+            obs, None, EVAL_UNKNOWN, None, None, {**counts, **history}, diagnostics,
+            f"The verification history of {len(unknown_history)} recent revisions cannot be proven complete; {f} of {n} decisive revisions failed, and no band is claimed around the unknown ones.",
+        )
+
     if not active:
+        if bearing:
+            # Durable history proves verification happened, but nothing current
+            # was observed, and a current verdict is never carried (HIST-16).
+            diagnostics.append("CURRENT_VERIFICATION_NOT_OBSERVED")
+            return _result(
+                obs, None, EVAL_UNKNOWN, None, None, {**counts, **history}, diagnostics,
+                f"{len(bearing)} recent revisions carry verification history from earlier bundles, but the provider shows no current verification, so no current band is claimed.",
+            )
         if configured_known and configured is False:
             return _result(
                 obs,
@@ -234,20 +297,20 @@ def evaluate(obs: ObservationSet) -> VitalResult:
                 EVAL_AVAILABLE,
                 SEM_EXACT,
                 None,
-                {"decisive_count_14d": 0, "failed_count_14d": 0, "revisions_in_window": len(revisions), "revisions_with_verification": 0},
+                {**counts, **history},
                 diagnostics,
                 "No automated verification is configured and no verification evidence exists for recent revisions.",
             )
         if not configured_known:
             diagnostics.append(f"MISSING_REQUIRED:{CONFIGURED}:{obs.status_of(CONFIGURED)}/{obs.freshness_of(CONFIGURED)}")
-            return unknown_result(VITAL_ID, VITAL_VERSION, RULE_ID, obs, IDS, diagnostics, SHARED, GROUPS)
+            return _unknown(obs, history, diagnostics)
         return _result(
             obs,
             "NO_RECENT_RUNS",
             EVAL_AVAILABLE,
             SEM_EXACT,
             None,
-            {"decisive_count_14d": 0, "failed_count_14d": 0, "revisions_in_window": len(revisions), "revisions_with_verification": 0},
+            {**counts, **history},
             diagnostics,
             f"Verification is configured but none of the {len(revisions)} recent default-branch revisions has a verification execution.",
         )
@@ -264,30 +327,21 @@ def evaluate(obs: ObservationSet) -> VitalResult:
         diagnostics.append(f"CURRENT_VERDICT_UNRECOGNIZED:{current}")
         current = VERDICT_UNKNOWN
 
-    provenance: dict[str, int] = {}
-    for r in active:
-        key = r.get("history_provenance") or "UNKNOWN"
-        provenance[key] = provenance.get(key, 0) + 1
-    if provenance.get("PARENT_LEVEL_ONLY"):
-        diagnostics.append(f"HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:{provenance['PARENT_LEVEL_ONLY']}")
-
     strength = sample_strength(n)
     if strength == SAMPLE_SPARSE:
         diagnostics.append(SPARSE_DIAGNOSTIC)
 
     derived: dict[str, Any] = {
-        "revisions_in_window": len(revisions),
-        "revisions_with_verification": len(active),
-        "decisive_count_14d": n,
-        "failed_count_14d": f,
+        **counts,
         "failure_ratio_14d": ratio(f, n) if n else None,
         "current_revision": {
             "revision": latest.get("revision"),
             "committed_at": latest.get("committed_at"),
             "current_verdict": current,
-            "history_state": latest.get("history_state"),
+            "history_state": reconciled.records.get(latest.get("revision"), {}).get("history_state", latest.get("history_state")),
         },
         "history_provenance": dict(sorted(provenance.items())),
+        **history,
     }
     if strength is not None:
         derived["sample_strength"] = strength

@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: ["master", "release/**"]
+    branches: ["master", "release/**", "zendreven/release-*"]
   pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -30,6 +34,20 @@ jobs:
         run: devostasis vectors --quiet
       - name: Example bundle verifies from its own contents
         run: devostasis verify --bundle examples/sample-bundle
+      - name: Work companion replay and deterministic handoff
+        run: |
+          devostasis work verify --bundle examples/work/bundle
+          devostasis work replay --bundle examples/work/bundle
+          devostasis work slice --bundle examples/work/bundle --at 2026-10-02T12:00:00Z --limit 2
+          devostasis work build --inventory examples/work/inventory.json --policy examples/work/policy.json --evidence examples/work/evidence.json --store /tmp/work-a > /tmp/work-a.json
+          devostasis work build --inventory examples/work/inventory.json --policy examples/work/policy.json --evidence examples/work/evidence.json --store /tmp/work-b > /tmp/work-b.json
+          python - <<'PY'
+          import json, subprocess
+          a = json.load(open('/tmp/work-a.json'))
+          b = json.load(open('/tmp/work-b.json'))
+          assert a['bundle_id'] == b['bundle_id']
+          subprocess.run(['devostasis', 'work', 'verify', '--bundle', a['path']], check=True)
+          PY
       - name: Determinism check on the example observations
         run: |
           a=$(devostasis build --observations examples/observations.json --store /tmp/store-a --planning milestones --debt-label type:refactor --debt-mapping-version example-1 | head -n 1 | awk '{print $2}')
@@ -37,3 +55,16 @@ jobs:
           echo "bundle ids: $a $b"
           test -n "$a" && test "$a" = "$b"
           devostasis verify --bundle /tmp/store-a/projects/github.com/acme/widget/latest
+      - name: Consumer operation receipts and portable history
+        run: |
+          devostasis work observe --binding examples/work/adoption.json --policy examples/work/policy.json --store /tmp/work-a --at 2026-10-02T12:00:00Z
+          devostasis work export-history --store /tmp/work-a --expected-project-id 123456 --output /tmp/work-history.zip
+          devostasis work verify-history --archive /tmp/work-history.zip --expected-project-id 123456
+          devostasis work import-history --archive /tmp/work-history.zip --store /tmp/work-restored --expected-project-id 123456
+          devostasis work audit --store /tmp/work-a --expected-project-id 123456 --at 2026-10-02T12:00:00Z > /tmp/audit-a.json
+          devostasis work audit --store /tmp/work-restored --expected-project-id 123456 --at 2026-10-02T12:00:00Z > /tmp/audit-b.json
+          python - <<'PY'
+          import json
+          a, b = (json.load(open(p)) for p in ('/tmp/audit-a.json', '/tmp/audit-b.json'))
+          assert a == b and a['invocations']['DISABLED'] == 1
+          PY

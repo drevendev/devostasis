@@ -42,6 +42,16 @@
                     "vital": { "enum": ["horizon", "clutter", "direction", "flow", "integrity", "debt", "pulse"] },
                     "observed_at": { "type": "string" },
                     "subject": { "type": "object" },
+                    "derive": {
+                      "type": "object",
+                      "description": "run the provider-neutral derivation over the stated inventories before evaluating, under these two project settings",
+                      "required": ["planning_source"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "planning_source": { "enum": ["none", "milestones", "file"] },
+                        "debt_mapping": { "type": ["object", "null"], "description": "the explicit debt mapping (labels or a register file), or null when none is configured" }
+                      }
+                    },
                     "observations": {
                       "type": "array",
                       "minItems": 1,
@@ -246,9 +256,12 @@
   "$defs": {
     "vital_expect": {
       "title": "What one Vital evaluation must yield",
-      "description": "The same shape for a vital case and for the Integrity evaluation a ci case may chain into.",
+      "description": "The same shape for a vital case and for the Integrity evaluation a ci case may chain into: a result to check, or the refusal a case about contradictory evidence expects.",
       "type": "object",
-      "required": ["band", "evaluation_status"],
+      "oneOf": [
+        { "required": ["band", "evaluation_status"], "not": { "required": ["rejected"] } },
+        { "required": ["rejected"], "maxProperties": 1 }
+      ],
       "additionalProperties": false,
       "properties": {
         "band": { "type": ["string", "null"] },
@@ -262,7 +275,8 @@
         "diagnostics_absent": { "type": "array", "items": { "type": "string" } },
         "explanation_contains": { "type": "array", "items": { "type": "string" } },
         "shared_signal_groups": { "type": "array", "items": { "type": "string" } },
-        "dependency_group_ids": { "type": "array", "items": { "type": "string" } }
+        "dependency_group_ids": { "type": "array", "items": { "type": "string" } },
+        "rejected": { "type": "string", "minLength": 1, "description": "the evidence must be refused before classification with this code (InadmissibleEvidence); the whole expectation of such a case" }
       }
     },
     "delta_expect": {

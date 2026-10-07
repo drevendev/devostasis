@@ -1,0 +1,93 @@
+{
+  "type": "object",
+  "required": [
+    "schema",
+    "collector_version",
+    "target",
+    "requested_keys",
+    "returned_keys",
+    "per_key",
+    "capability_notes",
+    "config_hash",
+    "contract",
+    "coverage"
+  ],
+  "properties": {
+    "schema": {
+      "const": "devostasis.receipt-identity.v1"
+    },
+    "collector_version": {
+      "type": "string"
+    },
+    "target": {
+      "type": "object"
+    },
+    "requested_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "returned_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "per_key": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status",
+          "freshness"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "UNAVAILABLE",
+              "FORBIDDEN",
+              "UNKNOWN",
+              "ERROR"
+            ]
+          },
+          "freshness": {
+            "enum": [
+              "FRESH",
+              "STALE",
+              "UNKNOWN"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "capability_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config_hash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contract": {
+      "const": "PV-RECEIPT-IDENTITY-003"
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "title": "Canonical receipt identity (PV-BUNDLE-ID-003)",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/receipt-identity.schema.json"
+}

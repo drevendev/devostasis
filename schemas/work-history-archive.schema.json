@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "required": [
+    "contract",
+    "project",
+    "latest_bundle_id",
+    "members"
+  ],
+  "properties": {
+    "contract": {
+      "const": "devostasis.work-history-archive.v1"
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "provider",
+        "endpoint",
+        "project_id"
+      ],
+      "properties": {
+        "provider": {
+          "enum": [
+            "github",
+            "gitlab"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "latest_bundle_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "members": {
+      "type": "object",
+      "maxProperties": 16000,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "digest",
+          "size"
+        ],
+        "properties": {
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 536870912
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/work-history-archive.schema.json",
+  "title": "Deterministic private history archive index"
+}

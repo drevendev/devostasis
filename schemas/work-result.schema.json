@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "required": [
+    "contract",
+    "result_id",
+    "scope_bundle_id",
+    "packet",
+    "claim",
+    "recorded_at",
+    "authority"
+  ],
+  "properties": {
+    "contract": {
+      "const": "devostasis.work-result.v1"
+    },
+    "result_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "scope_bundle_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "packet": {
+      "type": "object",
+      "description": "Complete devostasis.work-handoff.v1; validated against the referenced scope by the runtime."
+    },
+    "claim": {
+      "type": "object",
+      "required": [
+        "actor",
+        "outcome",
+        "notes",
+        "acceptance"
+      ],
+      "properties": {
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "outcome": {
+          "enum": [
+            "REPORTED_COMPLETE",
+            "BLOCKED",
+            "ABANDONED"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "acceptance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "criterion",
+              "status",
+              "evidence"
+            ],
+            "properties": {
+              "criterion": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 8192,
+                "pattern": "^[^\\u0000-\\u001f]+$"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "UNKNOWN"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8192,
+                  "pattern": "^[^\\u0000-\\u001f]+$"
+                },
+                "maxItems": 10000
+              }
+            },
+            "additionalProperties": false
+          },
+          "maxItems": 10000
+        }
+      },
+      "additionalProperties": false
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "authority": {
+      "const": "CALLER_REPORT_ONLY; no independent acceptance, claim, merge or deployment authority"
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/work-result.schema.json",
+  "title": "Packet-bound caller report; no independent acceptance"
+}

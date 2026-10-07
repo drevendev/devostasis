@@ -112,6 +112,49 @@
       }
     },
     {
+      "case": "EXAMPLE-DERIVE-01",
+      "title": "a returned open target beyond the frame forces EXTENDED over a partial enumeration",
+      "kind": "vital",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "value": [
+              {
+                "target_id": "1",
+                "state": "OPEN",
+                "due_at": "2026-12-01T00:00:00Z"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "EXTENDED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "EXTENDED"
+        ],
+        "diagnostics": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
       "case": "EXAMPLE-DELTA-01",
       "title": "A Vital with a declared order and exact evidence on both sides reports a direction",
       "kind": "delta",

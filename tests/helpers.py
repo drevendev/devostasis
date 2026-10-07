@@ -164,9 +164,13 @@ def planning_inputs(obs: ObservationSet, capability: str, open_count: int = 0, f
             add(obs, "planning.explicit_targets.nearest_future_boundary_days", nearest, "duration")
 
 
-def direction_inputs(obs: ObservationSet, active: int, linked: int | None = None, links: dict[str, int] | None = None) -> None:
+def direction_inputs(obs: ObservationSet, active: int, linked: int | None = None, links: dict[str, int] | None = None, unresolved: int = 0) -> None:
+    """Direction's inputs: the active population and, when ``linked`` is given, its state-neutral L/U/R split."""
     add(obs, "planning.linkage.active_change_requests_count_28d", active)
     if linked is not None:
+        add(obs, "planning.linkage.active_change_requests_linked_count_28d", linked)
+        add(obs, "planning.linkage.active_change_requests_unlinked_count_28d", active - linked - unresolved)
+        add(obs, "planning.linkage.active_change_requests_unresolved_count_28d", unresolved)
         add(obs, "planning.linkage.active_change_requests_linked_to_open_target_count_28d", linked)
     if links is not None:
         add(obs, "planning.linkage.links_per_target_28d", links, "record")

@@ -173,7 +173,7 @@ def build_activity(
     classes["RELEASE"] = {"count": len(release_items), "items": items}
 
     capability_changes: list[dict[str, Any]] = []
-    previous_receipt = (previous_manifest or {}).get("receipt") or {}
+    previous_receipt = (previous_manifest or {}).get("receipt_identity") or (previous_manifest or {}).get("receipt") or {}
     prev_keys = previous_receipt.get("per_key") or {}
     cur_keys = obs.receipt.per_key if obs.receipt else {}
     if previous_manifest is not None:

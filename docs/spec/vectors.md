@@ -11,7 +11,8 @@ cases with no test behind them (debt D-1, target B1). Since 0.1.9 the accepted
 exact vectors of the research process are in the corpus (seven of those 70,
 with sixty-three still to come), beside the accepted families transcribed
 from their contracts (`ORDER`, `INT-UNKNOWN`, `INT-TOTAL`, `CLU-INCOMPLETE`,
-`ACT-COV`). Authored against this format a case arrives executable instead of
+`ACT-COV`, and since 0.2.0 `DIR-CLOSED`, `DIR-INCOMPLETE`, `HOR-PARTIAL`,
+`DEBT-PARTIAL`, `HIST`). Authored against this format a case arrives executable instead of
 needing translation.
 
 ## A vector file
@@ -80,6 +81,40 @@ list of at least two `{title, observations}` entries, all held to the one
 `expect` of the case. The case passes only when every shape does, and a
 failure names the shape by its `title`. `variants` replaces `observations`;
 stating both is an error.
+
+A case about how inventories become aggregates states the inventories and
+`given.derive`: the provider-neutral derivation (`normalize.derive`) runs
+over the envelopes before the Vital is evaluated, under the two project
+settings it reads, `planning_source` (`none`, `milestones` or `file`) and
+`debt_mapping` (the explicit mapping object, or `null`). Aggregates the
+envelopes already state are kept, as the derivation keeps them for a saved
+observation set. The Direction, Horizon and Debt families of 0.2.0 use it,
+so a change request linked to a closed target or a partial target list is
+executed where the linkage and the counts are made, not over counts
+somebody derived by hand.
+
+```json
+{"case": "EXAMPLE-DERIVE-01", "kind": "vital",
+ "title": "a returned open target beyond the frame forces EXTENDED over a partial enumeration",
+ "given": {"vital": "horizon", "observed_at": "2026-09-07T12:00:00Z",
+           "derive": {"planning_source": "milestones", "debt_mapping": null},
+           "observations": [
+             {"observation_id": "planning.explicit_targets.inventory", "value_type": "series",
+              "status": "PARTIAL", "reason_code": "PAGINATION_CAPPED",
+              "coverage": {"complete": false, "source": "milestones"},
+              "value": [{"target_id": "1", "state": "OPEN", "due_at": "2026-12-01T00:00:00Z"}]}]},
+ "expect": {"band": "EXTENDED", "evaluation_status": "DEGRADED", "band_semantics": "EXACT",
+            "possible_bands": ["EXTENDED"], "diagnostics": ["HORIZON_PARTIAL_BAND_INVARIANT"]}}
+```
+
+A case whose evidence must be refused states `{"rejected": "<code>"}` as its
+whole `expect`: the evaluation must raise `InadmissibleEvidence` with that
+code (or one it is a prefix of). The totality contracts of 0.2.0 give
+contradictory normalized input that outcome, before classification and
+never as an `UNKNOWN` or `DEGRADED` result (HOR-PARTIAL-15; Direction's
+`L + U + R != N`). A refusal combined with any other expectation, or naming
+no code, is an error; a case that expects a refusal and gets a result fails
+and says which result it got.
 
 ### `kind: "delta"`
 

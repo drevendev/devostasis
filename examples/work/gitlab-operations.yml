@@ -1,0 +1,44 @@
+# Protected Linux shell runner: Python >=3.12, Git and existing host-specific glab
+# authentication, or the adopter's existing DEVOSTASIS_GITLAB_TOKEN environment.
+# Mount WORK_HISTORY_ROOT as a private durable volume outside the checkout.
+variables:
+  DEVOSTASIS_REF: "v0.5.0"
+  WORK_POLICY: ".devostasis/work-policy.json"
+  WORK_BINDING: ".devostasis/work-adoption.json"
+
+work-operations:
+  stage: .post
+  needs: []
+  tags: [work-history-protected]
+  resource_group: devostasis-canonical-history
+  allow_failure: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web")'
+      when: always
+  before_script:
+    - python -m pip install "git+https://github.com/drevendev/Devostasis.git@${DEVOSTASIS_REF}"
+  script:
+    - test -n "$WORK_HISTORY_ROOT"
+    - mkdir -p work-output
+    - |
+      python - <<'PY'
+      import json, os
+      from devostasis.workscope.operations import binding
+      b = binding(json.load(open(os.environ['WORK_BINDING'])), json.load(open(os.environ['WORK_POLICY'])))
+      if b['project']['provider'] != 'gitlab' or b['project']['endpoint'] != os.environ['CI_API_V4_URL'] or b['project']['project_id'] != os.environ['CI_PROJECT_ID']:
+          raise ValueError('caller project binding mismatch')
+      PY
+      rc=0
+      python -m devostasis work observe --binding "$WORK_BINDING" --policy "$WORK_POLICY" \
+        --store "$WORK_HISTORY_ROOT" --output work-output/result.json 2> work-output/failure.txt || rc=$?
+      python -m devostasis work audit --store "$WORK_HISTORY_ROOT" --provider gitlab \
+        --endpoint "$CI_API_V4_URL" --expected-project-id "$CI_PROJECT_ID" --output work-output/audit.json
+      python -m devostasis work export-history --store "$WORK_HISTORY_ROOT" --provider gitlab \
+        --endpoint "$CI_API_V4_URL" --expected-project-id "$CI_PROJECT_ID" --output work-output/history.zip
+      exit "$rc"
+  artifacts:
+    when: always
+    paths: [work-output/]
+    expire_in: 30 days
+# Configure the six-hour schedule in the adopter; this include does not create it.
+# Keep archive replication private and durable beyond the CI artifact lifetime.

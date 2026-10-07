@@ -1,0 +1,1269 @@
+{
+  "schema": "devostasis.vectors.v1",
+  "notes": "Cases DEBT-PARTIAL-01..16 of PV-DEBT-PARTIAL-001 (accepted by PV-REV-DEBT-PARTIAL-001), transcribed from the contract's required fixtures and adopted in 0.2.0 as debt.bands.v2 together with the observed-subset proof issue #39 asked for: a PARTIAL open count is a lower bound only when its coverage says OBSERVED_SUBSET_COUNT. Cases about the enumeration itself state the issue inventory under a label mapping and derive the counts; the others state the counts.",
+  "vectors": [
+    {
+      "case": "DEBT-PARTIAL-01",
+      "title": "a partial enumeration with no confirmed open item cannot manufacture CLEAR",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 0,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 0
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:0"
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-02",
+      "title": "a returned subset of closed debt items only is still not CLEAR: the closed count is a diagnostic, omitted open items stay possible",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "none",
+          "debt_mapping": {
+            "source": "labels",
+            "labels": [
+              "debt"
+            ],
+            "mapping_version": "1"
+          }
+        },
+        "observations": [
+          {
+            "observation_id": "forge.issues.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "number": 4,
+                "title": "issue 4",
+                "state": "CLOSED",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": "2026-09-02T00:00:00Z",
+                "labels": [
+                  "debt"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              },
+              {
+                "number": 5,
+                "title": "issue 5",
+                "state": "CLOSED",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": "2026-09-03T00:00:00Z",
+                "labels": [
+                  "debt"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              },
+              {
+                "number": 6,
+                "title": "issue 6",
+                "state": "OPEN",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": null,
+                "labels": [
+                  "bug"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": false,
+              "window_complete": true
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 0
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:0"
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      },
+      "notes": "Every count over an incomplete issue inventory is PARTIAL, the closed one included, so it stays out of the result's metrics; it could not prove open emptiness even when complete (DEBT-PARTIAL-11)."
+    },
+    {
+      "case": "DEBT-PARTIAL-03",
+      "title": "one confirmed open item forces PRESENT: DEGRADED / PRESENT / EXACT with the partial receipt retained",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 1,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 1,
+          "partial_enumeration": {
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "source": null,
+            "source_reason_code": null
+          }
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:1",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-04",
+      "title": "thirty-seven confirmed open items remain PRESENT, never ACCUMULATED or any quantitative severity",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 37,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_stale_count_30d",
+            "value": 29
+          },
+          {
+            "observation_id": "debt.items.closed_count_28d",
+            "value": 3
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 37,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 37,
+          "open_stale_count_30d": 29,
+          "closed_count_28d": 3
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:37",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-05",
+      "title": "the size of the omitted tail cannot erase a confirmed open item: two different partial receipts give the same band",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "variants": [
+          {
+            "title": "a page cap",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "value": "CONFIGURED"
+              },
+              {
+                "observation_id": "debt.mapping",
+                "value_type": "record",
+                "value": {
+                  "source": "labels",
+                  "labels": [
+                    "debt"
+                  ],
+                  "mapping_version": "1"
+                }
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 1,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "an exhausted request budget",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "value": "CONFIGURED"
+              },
+              {
+                "observation_id": "debt.mapping",
+                "value_type": "record",
+                "value": {
+                  "source": "labels",
+                  "labels": [
+                    "debt"
+                  ],
+                  "mapping_version": "1"
+                }
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 1,
+                "status": "PARTIAL",
+                "reason_code": "REQUEST_BUDGET_EXHAUSTED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 1
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:1",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-06",
+      "title": "provider naming, item order, page order and page boundaries do not change the normalized result",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "none",
+          "debt_mapping": {
+            "source": "labels",
+            "labels": [
+              "debt"
+            ],
+            "mapping_version": "1"
+          }
+        },
+        "variants": [
+          {
+            "title": "provider order",
+            "observations": [
+              {
+                "observation_id": "forge.issues.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 1,
+                    "title": "issue 1",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "issue 2",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt",
+                      "ops"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "issue 3",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "bug"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 4,
+                    "title": "issue 4",
+                    "state": "CLOSED",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": "2026-09-02T00:00:00Z",
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": false,
+                  "window_complete": true
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "reversed",
+            "observations": [
+              {
+                "observation_id": "forge.issues.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 4,
+                    "title": "issue 4",
+                    "state": "CLOSED",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": "2026-09-02T00:00:00Z",
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 3,
+                    "title": "issue 3",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "bug"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "issue 2",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt",
+                      "ops"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 1,
+                    "title": "issue 1",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": false,
+                  "window_complete": true
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "interleaved, another cap",
+            "observations": [
+              {
+                "observation_id": "forge.issues.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "number": 3,
+                    "title": "issue 3",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "bug"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 1,
+                    "title": "issue 1",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 4,
+                    "title": "issue 4",
+                    "state": "CLOSED",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": "2026-09-02T00:00:00Z",
+                    "labels": [
+                      "debt"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  },
+                  {
+                    "number": 2,
+                    "title": "issue 2",
+                    "state": "OPEN",
+                    "created_at": "2026-06-01T00:00:00Z",
+                    "updated_at": "2026-09-01T00:00:00Z",
+                    "closed_at": null,
+                    "labels": [
+                      "debt",
+                      "ops"
+                    ],
+                    "target_id": null,
+                    "linkage_unresolved": []
+                  }
+                ],
+                "coverage": {
+                  "open_complete": false,
+                  "window_complete": true
+                },
+                "status": "PARTIAL",
+                "reason_code": "REQUEST_BUDGET_EXHAUSTED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 2,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 2
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:2",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-07",
+      "title": "positively absent debt authority stays exactly UNINSTRUMENTED; the repair does not turn positive absence into UNKNOWN",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "UNCONFIGURED"
+          }
+        ]
+      },
+      "expect": {
+        "band": "UNINSTRUMENTED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2"
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-08",
+      "title": "uncertain mapping authority is never inferred from a partial payload that happens to hold an apparent open debt record",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "variants": [
+          {
+            "title": "capability unknown",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "status": "UNKNOWN",
+                "reason_code": "NOT_OBSERVED"
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 3,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "mapping unknown",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "value": "CONFIGURED"
+              },
+              {
+                "observation_id": "debt.mapping",
+                "value_type": "record",
+                "status": "UNKNOWN",
+                "reason_code": "NOT_OBSERVED"
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 3,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "diagnostics": [
+          "MISSING_REQUIRED:debt."
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-09",
+      "title": "a complete, fresh positive zero remains exactly CLEAR",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 0
+          }
+        ]
+      },
+      "expect": {
+        "band": "CLEAR",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 0
+        }
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-10",
+      "title": "a complete, fresh positive open count remains exactly PRESENT",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 4
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 4
+        }
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-11",
+      "title": "a partial zero stays UNKNOWN beside one hundred closed items: closed history cannot prove current open emptiness",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 0,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          },
+          {
+            "observation_id": "debt.items.closed_count_28d",
+            "value": 100
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 0,
+          "closed_count_28d": 100
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:0"
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-12",
+      "title": "a forced PRESENT under partial acquisition stays visibly DEGRADED, never AVAILABLE, with the acquisition machine-visible",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1"
+            }
+          },
+          {
+            "observation_id": "forge.issues.inventory",
+            "value_type": "series",
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "value": [
+              {
+                "number": 9,
+                "title": "issue 9",
+                "state": "OPEN",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": null,
+                "labels": [
+                  "debt"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": false,
+              "window_complete": true
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 1,
+            "status": "PARTIAL",
+            "reason_code": "SOURCE_COVERAGE_INCOMPLETE",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            },
+            "evidence_ref": {
+              "derived_from": [
+                "forge.issues.inventory",
+                "debt.mapping"
+              ]
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 1,
+          "partial_enumeration": {
+            "status": "PARTIAL",
+            "reason_code": "SOURCE_COVERAGE_INCOMPLETE",
+            "source": "forge.issues.inventory",
+            "source_reason_code": "PAGINATION_CAPPED"
+          }
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:1",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-13",
+      "title": "a stale positive count is not a confirmed current open item: UNKNOWN, as before the repair",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "variants": [
+          {
+            "title": "partial and stale",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "value": "CONFIGURED"
+              },
+              {
+                "observation_id": "debt.mapping",
+                "value_type": "record",
+                "value": {
+                  "source": "labels",
+                  "labels": [
+                    "debt"
+                  ],
+                  "mapping_version": "1"
+                }
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 5,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                },
+                "freshness": "STALE"
+              }
+            ]
+          },
+          {
+            "title": "complete and stale",
+            "observations": [
+              {
+                "observation_id": "debt.registry.capability",
+                "value_type": "enum",
+                "value": "CONFIGURED"
+              },
+              {
+                "observation_id": "debt.mapping",
+                "value_type": "record",
+                "value": {
+                  "source": "labels",
+                  "labels": [
+                    "debt"
+                  ],
+                  "mapping_version": "1"
+                }
+              },
+              {
+                "observation_id": "debt.items.open_count",
+                "value": 5,
+                "freshness": "STALE"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "diagnostics": [
+          "MISSING_REQUIRED:debt.items.open_count"
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-14",
+      "title": "one confirmed current open item survives other returned or tail records that stay unresolved under the partial receipt",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "none",
+          "debt_mapping": {
+            "source": "labels",
+            "labels": [
+              "debt"
+            ],
+            "mapping_version": "1"
+          }
+        },
+        "observations": [
+          {
+            "observation_id": "forge.issues.inventory",
+            "value_type": "series",
+            "status": "PARTIAL",
+            "reason_code": "REQUEST_BUDGET_EXHAUSTED",
+            "value": [
+              {
+                "number": 11,
+                "title": "issue 11",
+                "state": "OPEN",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": null,
+                "labels": [
+                  "debt"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              },
+              {
+                "number": 12,
+                "title": "issue 12",
+                "state": "OPEN",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": null,
+                "labels": [],
+                "target_id": null,
+                "linkage_unresolved": []
+              },
+              {
+                "number": 13,
+                "title": "issue 13",
+                "state": "CLOSED",
+                "created_at": "2026-06-01T00:00:00Z",
+                "updated_at": "2026-09-01T00:00:00Z",
+                "closed_at": "2026-09-01T00:00:00Z",
+                "labels": [
+                  "debt"
+                ],
+                "target_id": null,
+                "linkage_unresolved": []
+              }
+            ],
+            "coverage": {
+              "open_complete": false,
+              "window_complete": false
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 1
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:1",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-15",
+      "title": "a versioned project-local quantitative policy does not replace the canonical core under partial positive evidence",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1",
+              "local_policy": {
+                "policy_version": "acme-debt-1",
+                "accumulated_open_count": 5
+              }
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 12,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "PRESENT",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 12,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 12,
+          "mapping": {
+            "source": "labels",
+            "labels": [
+              "debt"
+            ],
+            "mapping_version": "1",
+            "local_policy": {
+              "policy_version": "acme-debt-1",
+              "accumulated_open_count": 5
+            }
+          }
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:12",
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    },
+    {
+      "case": "DEBT-PARTIAL-16",
+      "title": "a project-local policy cannot turn a partial zero into any canonical conclusion",
+      "kind": "vital",
+      "source_unit": "PV-DEBT-PARTIAL-001",
+      "given": {
+        "vital": "debt",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "debt.registry.capability",
+            "value_type": "enum",
+            "value": "CONFIGURED"
+          },
+          {
+            "observation_id": "debt.mapping",
+            "value_type": "record",
+            "value": {
+              "source": "labels",
+              "labels": [
+                "debt"
+              ],
+              "mapping_version": "1",
+              "local_policy": {
+                "policy_version": "acme-debt-1",
+                "accumulated_open_count": 5
+              }
+            }
+          },
+          {
+            "observation_id": "debt.items.open_count",
+            "value": 0,
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED",
+            "coverage": {
+              "complete": false,
+              "value_semantics": "OBSERVED_SUBSET_COUNT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "debt.bands.v2",
+        "derived": {
+          "open_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "confirmed_open_count": 0,
+          "mapping": {
+            "source": "labels",
+            "labels": [
+              "debt"
+            ],
+            "mapping_version": "1",
+            "local_policy": {
+              "policy_version": "acme-debt-1",
+              "accumulated_open_count": 5
+            }
+          }
+        },
+        "diagnostics": [
+          "DEBT_PARTIAL_ENUMERATION",
+          "DEBT_CONFIRMED_OPEN_LOWER_BOUND:0"
+        ],
+        "diagnostics_absent": [
+          "DEBT_BAND_FORCED_PRESENT_BY_CONFIRMED_OPEN"
+        ]
+      }
+    }
+  ]
+}

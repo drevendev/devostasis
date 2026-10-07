@@ -6,7 +6,12 @@ revision semantics.
 * the greatest observed attempt governs a parent's current state;
 * history is failure-sticky: any observed VERIFY_FAIL for a revision keeps its
   historical contribution VERIFY_FAIL while the revision is in the window;
-* attempts are never independent samples.
+* attempts are never independent samples;
+* history is known only where every attempt is: an Actions run whose attempts
+  cover 1..latest. A check suite keeps its id across re-requests and shows
+  only the latest outcome, so favorable parent-level or incomplete evidence is
+  ``UNKNOWN_HISTORY``, never a reconstructed pass (PV-CI-UNIT-004 R52,
+  PV-HIST-002 HIST-06). An observed failure is proven on any surface.
 """
 
 from __future__ import annotations
@@ -36,6 +41,8 @@ PRECEDENCE = [UNKNOWN, VERIFY_FAIL, VERIFY_UNRESOLVED, VERIFY_PASS, NON_VERIFY_T
 
 ATTEMPT_LEVEL = "ATTEMPT_LEVEL"
 PARENT_LEVEL_ONLY = "PARENT_LEVEL_ONLY"
+ACTIONS_KIND = "github_actions_workflow_run"
+UNKNOWN_HISTORY = "UNKNOWN_HISTORY"
 
 
 def normalize_outcome(status: str | None, conclusion: str | None) -> str:
@@ -63,6 +70,15 @@ def history_state(states: list[str]) -> str:
     return "NO_DECISIVE_OBSERVED"
 
 
+def known_history_state(states: list[str], complete: bool) -> str:
+    """The state evidence proves: a failure always, anything favorable only over complete attempts."""
+    if VERIFY_FAIL in states:
+        return "FAILURE_OBSERVED"
+    if not complete:
+        return UNKNOWN_HISTORY
+    return history_state(states)
+
+
 def contribution(state: str) -> str | None:
     return {"FAILURE_OBSERVED": VERIFY_FAIL, "PASS_ONLY_OBSERVED": VERIFY_PASS}.get(state)
 
@@ -77,6 +93,7 @@ def actions_parent(run: dict[str, Any], prior_attempts: list[dict[str, Any]]) ->
     attempts.sort(key=lambda a: a["attempt"])
     current = attempts[-1]["state"]
     states = [a["state"] for a in attempts]
+    complete = len(attempts) == latest_attempt
     return {
         "parent_id": f"github_actions:workflow_run:{run['id']}",
         "kind": "github_actions_workflow_run",
@@ -85,8 +102,8 @@ def actions_parent(run: dict[str, Any], prior_attempts: list[dict[str, Any]]) ->
         "current_attempt": latest_attempt,
         "current_state": current,
         "attempts_observed": attempts,
-        "attempts_complete": len(attempts) == latest_attempt,
-        "history_state": history_state(states),
+        "attempts_complete": complete,
+        "history_state": known_history_state(states, complete),
         "url": run.get("html_url"),
     }
 
@@ -103,7 +120,7 @@ def check_suite_parent(suite: dict[str, Any]) -> dict[str, Any]:
         "current_state": state,
         "attempts_observed": [{"attempt": None, "state": state}],
         "attempts_complete": False,
-        "history_state": history_state([state]),
+        "history_state": known_history_state([state], False),
         "url": suite.get("url"),
     }
 
@@ -118,10 +135,11 @@ def build_revision_records(
         parents = sorted(parents_by_sha.get(commit["sha"], []), key=lambda p: p["parent_id"])
         current_states = [p["current_state"] for p in parents]
         all_states = [a["state"] for p in parents for a in p["attempts_observed"]]
-        history = history_state(all_states) if parents else "NO_DECISIVE_OBSERVED"
+        complete = all(p["kind"] == ACTIONS_KIND and p.get("attempts_complete") is True for p in parents)
+        history = known_history_state(all_states, complete) if parents else "NO_DECISIVE_OBSERVED"
         provenance = None
         if parents:
-            provenance = ATTEMPT_LEVEL if all(p["kind"] == "github_actions_workflow_run" for p in parents) else PARENT_LEVEL_ONLY
+            provenance = ATTEMPT_LEVEL if all(p["kind"] == ACTIONS_KIND for p in parents) else PARENT_LEVEL_ONLY
         records.append(
             {
                 "revision": commit["sha"],
@@ -131,6 +149,7 @@ def build_revision_records(
                 "history_state": history,
                 "historical_contribution": contribution(history),
                 "history_provenance": provenance,
+                "history_complete": complete,
             }
         )
     return records

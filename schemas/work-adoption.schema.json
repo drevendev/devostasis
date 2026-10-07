@@ -1,0 +1,155 @@
+{
+  "type": "object",
+  "required": [
+    "contract",
+    "integration_id",
+    "enabled",
+    "engine_version",
+    "project",
+    "policy",
+    "selection",
+    "budget"
+  ],
+  "properties": {
+    "contract": {
+      "const": "devostasis.work-adoption.v1"
+    },
+    "integration_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8192,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "engine_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8192,
+      "pattern": "^[^\\u0000-\\u001f]+$"
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "provider",
+        "endpoint",
+        "project_id",
+        "locator"
+      ],
+      "properties": {
+        "provider": {
+          "enum": [
+            "github",
+            "gitlab"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "actor",
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f]+$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "type": "object",
+      "required": [
+        "mode",
+        "changes"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "OPEN_AND_REGISTERED",
+            "REGISTERED",
+            "CHANGES"
+          ]
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          },
+          "maxItems": 100,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "required": [
+        "max_requests",
+        "max_pages",
+        "seconds",
+        "workers"
+      ],
+      "properties": {
+        "max_requests": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "max_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "workers": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/work-adoption.schema.json",
+  "title": "Explicit canonical consumer adoption binding"
+}
