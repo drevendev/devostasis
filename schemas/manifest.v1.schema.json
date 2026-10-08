@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/manifest.v1.schema.json",
+  "title": "Bundle manifest (devostasis.manifest.v1)",
+  "description": "Post-identity description of an immutable bundle. bundle_id is SHA-256 over the canonical identity_preimage; member digests and run_meta are outside the preimage (acyclic identity).",
+  "type": "object",
+  "required": [
+    "schema",
+    "bundle_id",
+    "project_key",
+    "project_identity",
+    "observed_at",
+    "previous_bundle_id",
+    "comparison_status",
+    "supersedes_bundle_id",
+    "artifact_contract_version",
+    "bundle_identity_contract",
+    "vitals_contract_version",
+    "observation_contract_version",
+    "ci_unit_contract_version",
+    "policy_version",
+    "config_version",
+    "renderer_version",
+    "canonical_serialization_version",
+    "effective_config_contract",
+    "effective_config_digest",
+    "semantic_config",
+    "canonical_member_profile",
+    "adapters",
+    "receipt",
+    "identity_preimage",
+    "members",
+    "run_meta"
+  ],
+  "properties": {
+    "schema": {
+      "const": "devostasis.manifest.v1"
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "project_key": {
+      "type": "string"
+    },
+    "project_identity": {
+      "type": "object",
+      "required": [
+        "provider",
+        "forge_instance",
+        "immutable_project_id",
+        "display_locator"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "forge_instance": {
+          "type": "string"
+        },
+        "immutable_project_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display_locator": {
+          "type": "string"
+        },
+        "default_branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "previous_bundle_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "comparison_status": {
+      "enum": [
+        "BASELINE",
+        "COMPARABLE",
+        "HISTORY_GAP",
+        "INCOMPARABLE"
+      ]
+    },
+    "supersedes_bundle_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "artifact_contract_version": {
+      "type": "string"
+    },
+    "bundle_identity_contract": {
+      "const": "PV-BUNDLE-ID-002"
+    },
+    "vitals_contract_version": {
+      "const": "PV-VITALS-V1-002"
+    },
+    "observation_contract_version": {
+      "const": "RAW-OBS-V0"
+    },
+    "ci_unit_contract_version": {
+      "const": "PV-CI-UNIT-004"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "config_version": {
+      "type": "string"
+    },
+    "renderer_version": {
+      "type": "string"
+    },
+    "canonical_serialization_version": {
+      "type": "string"
+    },
+    "effective_config_contract": {
+      "const": "PV-EFFECTIVE-CONFIG-001"
+    },
+    "effective_config_authority_contract": {
+      "const": "PV-EFFECTIVE-CONFIG-AUTHORITY-001"
+    },
+    "effective_config_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "semantic_config": {
+      "type": "object"
+    },
+    "canonical_member_profile": {
+      "type": "object"
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "provider",
+          "adapter_version"
+        ]
+      }
+    },
+    "receipt": {
+      "type": "object"
+    },
+    "gauge_contract": {
+      "const": "devostasis.gauge.v1"
+    },
+    "demand_contract": {
+      "enum": [
+        "devostasis.demand.v1",
+        "devostasis.demand.v2"
+      ]
+    },
+    "identity_preimage": {
+      "type": "object",
+      "required": [
+        "bundle_identity_contract",
+        "artifact_contract_version",
+        "vitals_contract_version",
+        "observation_contract_version",
+        "policy_version",
+        "config_version",
+        "renderer_version",
+        "canonical_serialization_version",
+        "effective_config_contract",
+        "effective_config_digest",
+        "project_identity",
+        "observed_at",
+        "previous_bundle_id",
+        "comparison_status",
+        "snapshot_digest",
+        "delta_digest",
+        "activity_digest",
+        "observations_digest",
+        "source_receipts_digest"
+      ],
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "bundle_id"
+            ]
+          },
+          {
+            "required": [
+              "members"
+            ]
+          },
+          {
+            "required": [
+              "run_meta"
+            ]
+          }
+        ]
+      }
+    },
+    "members": {
+      "type": "object",
+      "required": [
+        "snapshot.json",
+        "delta.json",
+        "effective-config.json",
+        "report.md"
+      ],
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^sha256:[0-9a-f]{64}$"
+      }
+    },
+    "run_meta": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

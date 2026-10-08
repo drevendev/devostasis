@@ -33,13 +33,16 @@ from .contracts import (
     EFFECTIVE_CONFIG_CONTRACT,
     GAUGE_CONTRACT,
     MANIFEST_SCHEMA,
+    OBSERVATIONS_SCHEMA,
+    RECEIPT_IDENTITY_CONTRACT,
+    RECEIPT_IDENTITY_SCHEMA,
     OBSERVATION_CONTRACT_VERSION,
     RENDERER_VERSION,
     VITALS_CONTRACT_VERSION,
 )
 from .demand import build_demand
 from .gauges import gauges_member
-from .observations import ObservationSet
+from .observations import ObservationSet, validate_receipt_identity
 from .policy import POLICY_VERSION
 
 ACTIVITY_DISABLED = "ACTIVITY_DISABLED"
@@ -67,6 +70,7 @@ SEMANTIC_CONFIG_MISMATCH = "SEMANTIC_CONFIG_MISMATCH"
 IDENTITY_FIELD_MISMATCH = "IDENTITY_FIELD_MISMATCH"
 RECEIPT_DIGEST_MISMATCH = "RECEIPT_DIGEST_MISMATCH"
 RECEIPT_COPY_MISMATCH = "RECEIPT_COPY_MISMATCH"
+HISTORY_SOURCE_MISMATCH = "HISTORY_SOURCE_MISMATCH"
 OBSERVATIONS_DIGEST_MISMATCH = "OBSERVATIONS_DIGEST_MISMATCH"
 UNSUPPORTED_LINEAGE = "UNSUPPORTED_ARTIFACT_LINEAGE"
 RENDERER_NOT_IN_LINEAGE = "RENDERER_VERSION_NOT_IN_LINEAGE"
@@ -78,6 +82,10 @@ ADAPTERS_MISMATCH = "ADAPTERS_MISMATCH"
 # must agree: the preimage is what bundle_id commits to, the manifest copy is
 # what readers and the comparison read.
 DUPLICATED_IDENTITY_FIELDS = (
+    "manifest_schema",
+    "observations_schema",
+    "receipt_identity_contract",
+    "receipt_identity_schema",
     "bundle_identity_contract",
     "artifact_contract_version",
     "vitals_contract_version",
@@ -121,6 +129,16 @@ _PREIMAGE_V1 = (
     "source_receipts_digest",
 )
 _PREIMAGE_V2 = _PREIMAGE_V1 + ("gauge_contract", "demand_contract", "gauges_digest", "demand_digest")
+_PREIMAGE_V3 = _PREIMAGE_V2 + ("manifest_schema", "observations_schema", "receipt_identity_contract", "receipt_identity_schema")
+MANIFEST_V2_FIELDS = frozenset({
+    "schema", "bundle_id", "project_key", "project_identity", "observed_at", "previous_bundle_id",
+    "comparison_status", "supersedes_bundle_id", "artifact_contract_version", "bundle_identity_contract",
+    "vitals_contract_version", "observation_contract_version", "ci_unit_contract_version", "gauge_contract",
+    "demand_contract", "policy_version", "config_version", "renderer_version", "canonical_serialization_version",
+    "effective_config_contract", "effective_config_authority_contract", "effective_config_digest", "semantic_config",
+    "canonical_member_profile", "adapters", "receipt_identity", "identity_preimage", "manifest_schema",
+    "observations_schema", "receipt_identity_contract", "receipt_identity_schema", "members",
+})
 
 # The stored lineages verification dispatches on, keyed by the preimage's
 # ``artifact_contract_version`` as an exact token
@@ -141,6 +159,10 @@ LINEAGES: dict[str, dict[str, Any]] = {
         "preimage_fields": frozenset(_PREIMAGE_V2),
         "renderers": ("devostasis.render.v3", "devostasis.render.v4"),
     },
+    "devostasis.bundle.v3": {
+        "preimage_fields": frozenset(_PREIMAGE_V3),
+        "renderers": ("devostasis.render.v5",),
+    },
 }
 
 
@@ -151,6 +173,7 @@ class Bundle:
     observed_at: str
     manifest: dict[str, Any]
     members: dict[str, bytes] = field(default_factory=dict)
+    execution_receipt: dict[str, Any] | None = None
 
     def _json(self, name: str) -> dict[str, Any]:
         return canonical.loads(self.members[name].decode("utf-8"))
@@ -202,8 +225,9 @@ def build_bundle(
     effective_config = project.effective_bundle_config()
     effective_bytes = canonical.canonical_bytes(effective_config)
     effective_digest = canonical.digest_bytes(effective_bytes)
-    receipt_dict = obs.receipt.to_dict()
+    receipt_dict = obs.receipt_identity()
     identity = project_identity(obs, project)
+    canonical_key = identity["forge_instance"] + "/" + identity["display_locator"]
     member_profile = member_profile_from_config(effective_config)
     if (activity is None) != (member_profile["activity_json"] == "DISABLED"):
         raise BundleError("activity member presence disagrees with the effective configuration")
@@ -221,6 +245,10 @@ def build_bundle(
     receipt_digest = canonical.digest(receipt_dict)
 
     preimage = {
+        "manifest_schema": MANIFEST_SCHEMA,
+        "observations_schema": OBSERVATIONS_SCHEMA,
+        "receipt_identity_contract": RECEIPT_IDENTITY_CONTRACT,
+        "receipt_identity_schema": RECEIPT_IDENTITY_SCHEMA,
         "bundle_identity_contract": BUNDLE_IDENTITY_CONTRACT,
         "artifact_contract_version": ARTIFACT_CONTRACT_VERSION,
         "vitals_contract_version": VITALS_CONTRACT_VERSION,
@@ -249,9 +277,13 @@ def build_bundle(
     bundle_id = canonical.sha256_hex(canonical.canonical_bytes(preimage))
 
     manifest_core = {
+        "manifest_schema": MANIFEST_SCHEMA,
+        "observations_schema": OBSERVATIONS_SCHEMA,
+        "receipt_identity_contract": RECEIPT_IDENTITY_CONTRACT,
+        "receipt_identity_schema": RECEIPT_IDENTITY_SCHEMA,
         "schema": MANIFEST_SCHEMA,
         "bundle_id": bundle_id,
-        "project_key": project.project_key,
+        "project_key": canonical_key,
         "project_identity": identity,
         "observed_at": obs.observed_at,
         "previous_bundle_id": previous_bundle_id,
@@ -274,7 +306,7 @@ def build_bundle(
         "semantic_config": project.semantic_config(),
         "canonical_member_profile": member_profile,
         "adapters": [{"provider": "github", "adapter_version": obs.receipt.collector_version}],
-        "receipt": receipt_dict,
+        "receipt_identity": receipt_dict,
         "identity_preimage": preimage,
     }
 
@@ -307,9 +339,10 @@ def build_bundle(
         manifest["members"]["activity.json"] = activity_digest
     if project.observations_member:
         manifest["members"]["observations.json"] = observations_digest
-    manifest["run_meta"] = dict(run_meta or {}, tool={"name": "devostasis", "version": __version__})
     members["manifest.json"] = canonical.pretty_json(manifest).encode("utf-8")
-    return Bundle(bundle_id=bundle_id, project_key=project.project_key, observed_at=obs.observed_at, manifest=manifest, members=members)
+    execution = obs.receipt.execution(bundle_id, dict(run_meta or {}, tool={"name": "devostasis", "version": __version__}), receipt_dict)
+    return Bundle(bundle_id=bundle_id, project_key=canonical_key, observed_at=obs.observed_at,
+                  manifest=manifest, members=members, execution_receipt=execution)
 
 
 def load_bundle_dir(directory: str | Path) -> dict[str, bytes]:
@@ -413,7 +446,7 @@ def _check_adapters(manifest: dict[str, Any]) -> list[str]:
     collected under.
     """
     identity = manifest.get("project_identity")
-    receipt = manifest.get("receipt")
+    receipt = manifest.get("receipt_identity") if manifest.get("schema") == MANIFEST_SCHEMA else manifest.get("receipt")
     expected = [
         {
             "provider": identity.get("provider") if isinstance(identity, dict) else None,
@@ -428,7 +461,14 @@ def _check_adapters(manifest: dict[str, Any]) -> list[str]:
 def _check_evidence_binding(members: dict[str, bytes], manifest: dict[str, Any], preimage: dict[str, Any]) -> list[str]:
     """The receipt and the evidence the manifest names must be the ones the identity hashes."""
     problems: list[str] = []
-    receipt = manifest.get("receipt")
+    successor = manifest.get("schema") == MANIFEST_SCHEMA
+    receipt_key = "receipt_identity" if successor else "receipt"
+    receipt = manifest.get(receipt_key)
+    if successor:
+        try:
+            validate_receipt_identity(receipt)
+        except (ValueError, TypeError) as exc:
+            problems.append(f"RECEIPT_IDENTITY_INVALID: {exc}")
     if "source_receipts_digest" in preimage:
         try:
             actual = canonical.digest(receipt)
@@ -442,8 +482,12 @@ def _check_evidence_binding(members: dict[str, bytes], manifest: dict[str, Any],
             observations = canonical.loads(members["observations.json"].decode("utf-8"))
         except Exception:  # noqa: BLE001
             observations = None
-        if isinstance(observations, dict) and observations.get("receipt") != receipt:
+        if isinstance(observations, dict) and observations.get(receipt_key) != receipt:
             problems.append(f"{RECEIPT_COPY_MISMATCH}: the receipt in observations.json differs from the manifest receipt")
+        expected_schema = OBSERVATIONS_SCHEMA if successor else "devostasis.observations.v1"
+        if not isinstance(observations, dict) or observations.get("schema") != expected_schema or (
+                "receipt" if successor else "receipt_identity") in observations:
+            problems.append("LINEAGE_MISMATCH: observations receipt schema")
     if "snapshot.json" in members and "observations.json" in (manifest.get("members") or {}):
         try:
             snapshot = canonical.loads(members["snapshot.json"].decode("utf-8"))
@@ -452,6 +496,48 @@ def _check_evidence_binding(members: dict[str, bytes], manifest: dict[str, Any],
         declared = manifest["members"]["observations.json"]
         if isinstance(snapshot, dict) and snapshot.get("observations_digest") != declared:
             problems.append(f"{OBSERVATIONS_DIGEST_MISMATCH}: snapshot.json was evaluated over {snapshot.get('observations_digest')}, the bundle carries {declared}")
+    problems.extend(_check_history_source(members, manifest, observations))
+    return problems
+
+
+def _history_source_named(snapshot: Any) -> tuple[str | None, str | None]:
+    """The status and bundle of the durable history source the Integrity result names, if it names one."""
+    if not isinstance(snapshot, dict):
+        return None, None
+    for vital in snapshot.get("vitals") or []:
+        if isinstance(vital, dict) and vital.get("vital_id") == "integrity":
+            history = (vital.get("derived") or {}).get("revision_history") if isinstance(vital.get("derived"), dict) else None
+            source = history.get("source") if isinstance(history, dict) else None
+            if isinstance(source, dict):
+                return source.get("status"), source.get("bundle_id")
+    return None, None
+
+
+def _check_history_source(members: dict[str, bytes], manifest: dict[str, Any], observations: Any) -> list[str]:
+    """PV-HIST-002 section C: the carried history came from the bundle this one follows, and says so.
+
+    The selection of the source is auditable only if the bundle names it; a
+    bundle whose carried history names another bundle than the one its
+    manifest says it follows consumed history from outside its own chain.
+    Bundles older than the carrier name nothing and are not checked.
+    """
+    problems: list[str] = []
+    previous = manifest.get("previous_bundle_id")
+    try:
+        snapshot = canonical.loads(members["snapshot.json"].decode("utf-8")) if "snapshot.json" in members else None
+    except Exception:  # noqa: BLE001
+        snapshot = None
+    status, source = _history_source_named(snapshot)
+    if status == "CARRIED" and source != previous:
+        problems.append(f"{HISTORY_SOURCE_MISMATCH}: the Integrity history was carried from {source}, the manifest follows {previous}")
+    if isinstance(observations, dict):
+        for item in observations.get("observations") or []:
+            if not isinstance(item, dict) or item.get("observation_id") != "ci.revision_history_carried":
+                continue
+            value = item.get("value")
+            named = value.get("source_bundle_id") if isinstance(value, dict) else None
+            if named is not None and named != previous:
+                problems.append(f"{HISTORY_SOURCE_MISMATCH}: observations.json carries history from {named}, the manifest follows {previous}")
     return problems
 
 
@@ -508,6 +594,41 @@ def verify_members(members: dict[str, bytes]) -> list[str]:
             problems.append(f"manifest {key} is not an object but {type(manifest[key]).__name__}")
     if problems:
         return problems
+
+    from .lineages import validate_bundle_lineage
+    problems.extend(validate_bundle_lineage(manifest, members))
+
+    successor = manifest.get("artifact_contract_version") == "devostasis.bundle.v3"
+    if successor:
+        expected = {"schema": MANIFEST_SCHEMA, "manifest_schema": MANIFEST_SCHEMA,
+                    "bundle_identity_contract": BUNDLE_IDENTITY_CONTRACT,
+                    "receipt_identity_contract": RECEIPT_IDENTITY_CONTRACT,
+                    "receipt_identity_schema": RECEIPT_IDENTITY_SCHEMA,
+                    "observations_schema": OBSERVATIONS_SCHEMA}
+        if any(manifest.get(k) != v for k, v in expected.items()) or "receipt" in manifest or "run_meta" in manifest:
+            problems.append("LINEAGE_MISMATCH: successor manifest/receipt contract")
+        if set(manifest) != MANIFEST_V2_FIELDS:
+            problems.append("MANIFEST_SCHEMA_INVALID: missing or unknown successor fields")
+        if manifest.get("supersedes_bundle_id") is not None or manifest.get("effective_config_authority_contract") != EFFECTIVE_CONFIG_AUTHORITY_CONTRACT:
+            problems.append("MANIFEST_SCHEMA_INVALID: unsupported authority or supersession")
+        project_ref = manifest.get("project_identity")
+        if not isinstance(project_ref, dict) or manifest.get("project_key") != (
+                str(project_ref.get("forge_instance")) + "/" + str(project_ref.get("display_locator"))):
+            problems.append("MANIFEST_SCHEMA_INVALID: project key differs from bound identity")
+        for name, data in members.items():
+            if name.endswith(".json"):
+                try:
+                    value = canonical.loads(data.decode("utf-8"))
+                    expected_bytes = canonical.canonical_bytes(value) if name == "effective-config.json" else canonical.pretty_json(value).encode("utf-8")
+                    if data != expected_bytes:
+                        problems.append("CANONICAL_BYTES_MISMATCH: " + name)
+                except (ValueError, TypeError, UnicodeError):
+                    problems.append("CANONICAL_BYTES_MISMATCH: " + name)
+        if not set(manifest.get("members") or {}) <= set(MEMBER_NAMES) - {"manifest.json"}:
+            problems.append("CANONICAL_MEMBER_PROFILE_MISMATCH: unsupported successor member")
+    elif manifest.get("schema") != "devostasis.manifest.v1" or manifest.get("bundle_identity_contract") not in (
+            "PV-BUNDLE-ID-001", "PV-BUNDLE-ID-002") or "receipt_identity" in manifest:
+        problems.append("LINEAGE_MISMATCH: historical manifest/receipt contract")
 
     declared = manifest.get("members") or {}
     for name, digest in sorted(declared.items()):
@@ -582,7 +703,7 @@ def verify_members(members: dict[str, bytes]) -> list[str]:
     if "report.md" in members:
         if not authority_ok:
             problems.append("report.md replay skipped: the stored effective config is not a valid authority (ART-24)")
-        elif "snapshot.json" in members and "delta.json" in members and manifest.get("renderer_version") == RENDERER_VERSION:
+        elif "snapshot.json" in members and "delta.json" in members and manifest.get("renderer_version") in ("devostasis.render.v4", "devostasis.render.v5"):
             try:
                 snapshot = canonical.loads(members["snapshot.json"].decode("utf-8"))
                 delta = canonical.loads(members["delta.json"].decode("utf-8"))

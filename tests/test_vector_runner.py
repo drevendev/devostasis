@@ -162,7 +162,11 @@ def test_the_published_vector_schema_and_the_runner_agree_on_the_shape():
     vital_expect = schema["$defs"]["vital_expect"]
     assert vital["expect"] == {"$ref": "#/$defs/vital_expect"}
     assert set(vital_expect["properties"]) == vectors.VITAL_EXPECT_KEYS
-    assert set(vital_expect["required"]) == vectors.REQUIRED_VITAL_EXPECT_KEYS
+    result_shape, refusal_shape = vital_expect["oneOf"]
+    assert set(result_shape["required"]) == vectors.REQUIRED_VITAL_EXPECT_KEYS and result_shape["not"] == {"required": ["rejected"]}
+    assert refusal_shape == {"required": ["rejected"], "maxProperties": 1}, "a refusal is the whole expectation"
+    assert set(vital["given"]["properties"]["derive"]["properties"]) == vectors.DERIVE_KEYS
+    assert set(vital["given"]["properties"]["derive"]["properties"]["planning_source"]["enum"]) == set(vectors.PLANNING_SOURCES)
     assert set(ci["given"]["properties"]) == vectors.CI_GIVEN_KEYS
     assert set(ci["given"]["properties"]["variants"]["items"]["properties"]) == vectors.CI_VARIANT_KEYS
     assert set(ci["given"]["properties"]["provider"]["enum"]) == set(vectors.CI_PROVIDERS)
@@ -303,3 +307,48 @@ def test_an_exactly_empty_metric_delta_is_still_a_statement():
     }
     vector = parse(kind="delta", given=comparison, expect={"vitals": {"clutter": {"transition_class": "UNCHANGED", "metric_deltas": []}}})
     assert vector.kind == "delta"
+
+
+# --------------------------------------------------------------------------- derive and rejected (0.2.0)
+
+HORIZON_COUNTS = [
+    {"observation_id": "planning.explicit_targets.capability", "value_type": "enum", "value": "SUPPORTED"},
+    {"observation_id": "planning.explicit_targets.open_count", "value": 1},
+    {"observation_id": "planning.explicit_targets.open_with_future_boundary_count", "value": 1},
+    {"observation_id": "planning.explicit_targets.open_beyond_28d_count", "value": 2},
+]
+
+
+def test_derive_runs_the_derivation_before_the_vital_is_evaluated():
+    """A case about an inventory is executed over the derivation, not over counts somebody pre-derived."""
+    inventory = [{
+        "observation_id": "planning.explicit_targets.inventory",
+        "value_type": "series",
+        "value": [{"target_id": "1", "state": "OPEN", "due_at": None}],
+        "coverage": {"complete": True, "source": "milestones"},
+    }]
+    given = {"vital": "horizon", "observations": inventory, "derive": {"planning_source": "milestones", "debt_mapping": None}}
+    assert vectors.run(parse(given=given, expect={"band": "DECLARED", "evaluation_status": "AVAILABLE", "derived": {"open_count": 1}})).ok
+    without = vectors.run(parse(given={"vital": "horizon", "observations": inventory}, expect={"band": "DECLARED", "evaluation_status": "AVAILABLE"}))
+    assert not without.ok, "without derive the inventory alone is not Horizon's input"
+
+
+def test_derive_names_only_the_settings_the_derivation_reads():
+    for derive in ({"planning_source": "jira"}, {"debt_mapping": None}, {"planning_source": "none", "extra": 1}, {"planning_source": "none", "debt_mapping": ["debt"]}):
+        with pytest.raises(vectors.VectorError):
+            parse(given={"vital": "horizon", "observations": HORIZON_COUNTS, "derive": derive})
+
+
+def test_a_rejected_case_passes_only_when_the_evidence_is_refused_with_that_code():
+    given = {"vital": "horizon", "observations": HORIZON_COUNTS}
+    assert vectors.run(parse(given=given, expect={"rejected": "HORIZON_COUNTS_INCONSISTENT"})).ok
+    wrong_code = vectors.run(parse(given=given, expect={"rejected": "DIRECTION_LINKAGE_COUNTS_INCONSISTENT"}))
+    assert not wrong_code.ok and "HORIZON_COUNTS_INCONSISTENT" in wrong_code.failures[0]
+    admissible = vectors.run(parse(expect={"rejected": "HORIZON_COUNTS_INCONSISTENT"}))
+    assert not admissible.ok and "it evaluated to LIGHT / AVAILABLE" in admissible.failures[0]
+
+
+def test_rejected_is_the_whole_expectation_and_names_a_code():
+    for expect in ({"rejected": "X", "band": None}, {"rejected": ""}, {"rejected": 3}):
+        with pytest.raises(vectors.VectorError):
+            parse(given={"vital": "horizon", "observations": HORIZON_COUNTS}, expect=expect)

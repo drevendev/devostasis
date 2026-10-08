@@ -1,0 +1,1330 @@
+{
+  "schema": "devostasis.vectors.v1",
+  "notes": "Cases HOR-PARTIAL-01..16 of PV-HORIZON-PARTIAL-001 (accepted by PV-REV-HORIZON-PARTIAL-001), transcribed from the contract's required fixtures and adopted in 0.2.0 as horizon.bands.v2. Target evidence is stated as the provider-neutral target inventory and derived (given.derive), so the counts, their observed-subset proof and the capability a returned target proves are executed where they are made. observed_at is 2026-09-07T12:00:00Z; the 28-day frame ends at 2026-10-05T12:00:00Z, which is not beyond it. HOR-PARTIAL-15 states the contradictory counts directly: the derivation cannot produce them, and the contract makes them a validation failure, which a vector states with expect.rejected.",
+  "vectors": [
+    {
+      "case": "HOR-PARTIAL-01",
+      "title": "capability present, complete and fresh, zero open targets: exactly UNDECLARED (the positive-zero control)",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "CLOSED",
+                "due_at": "2026-08-01T00:00:00Z"
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "UNDECLARED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 0,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0
+        }
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-02",
+      "title": "complete and fresh, one open target with no future boundary: exactly DECLARED",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "DECLARED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 1,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0
+        }
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-03",
+      "title": "complete and fresh, an open target exactly 28 days out and none later: exactly VISIBLE; the frame is unchanged",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": "2026-10-05T12:00:00Z"
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "VISIBLE",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 1,
+          "open_with_future_boundary_count": 1,
+          "open_beyond_28d_count": 0,
+          "nearest_future_boundary_days": 28
+        }
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-04",
+      "title": "complete and fresh, an open target strictly beyond 28 days: exactly EXTENDED",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": "2026-10-05T12:00:01Z"
+              }
+            ],
+            "coverage": {
+              "complete": true,
+              "source": "milestones"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "EXTENDED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 1,
+          "open_with_future_boundary_count": 1,
+          "open_beyond_28d_count": 1
+        }
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-05",
+      "title": "explicit targets positively unsupported and no planning register configured: exactly UNDECLARED, a descriptive state, not missing evidence",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "none",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "status": "UNAVAILABLE",
+            "reason_code": "PLANNING_SOURCE_NONE"
+          }
+        ]
+      },
+      "expect": {
+        "band": "UNDECLARED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "UNSUPPORTED"
+        },
+        "diagnostics": [
+          "PLANNING_CAPABILITY:UNSUPPORTED"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-06",
+      "title": "capability unknown, forbidden, errored, stale, unavailable or an unresolved partial: UNKNOWN, never UNDECLARED by default",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "targets UNKNOWN",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "status": "UNKNOWN",
+                "reason_code": "CONNECTOR_AMBIGUOUS"
+              }
+            ]
+          },
+          {
+            "title": "targets FORBIDDEN",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "status": "FORBIDDEN",
+                "reason_code": "FORBIDDEN"
+              }
+            ]
+          },
+          {
+            "title": "targets ERROR",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "status": "ERROR",
+                "reason_code": "UNEXPECTED_PAYLOAD"
+              }
+            ]
+          },
+          {
+            "title": "targets UNAVAILABLE",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "status": "UNAVAILABLE",
+                "reason_code": "REGISTER_NOT_FOUND"
+              }
+            ]
+          },
+          {
+            "title": "targets STALE",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:01Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": true,
+                  "source": "milestones"
+                },
+                "freshness": "STALE"
+              }
+            ]
+          },
+          {
+            "title": "partial with no returned target",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "diagnostics": [
+          "MISSING_REQUIRED:planning.explicit_targets.capability"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-07",
+      "title": "PH0: a partial enumeration returned no open target, so every band is reachable: UNKNOWN, never UNDECLARED",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "CLOSED",
+                "due_at": "2026-08-01T00:00:00Z"
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 0,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "UNDECLARED",
+            "DECLARED",
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-08",
+      "title": "PH1: returned open targets without a future boundary reach DECLARED, VISIBLE and EXTENDED: UNKNOWN, DECLARED is never a representative",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": null
+              },
+              {
+                "target_id": "2",
+                "title": "target 2",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 2,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "DECLARED",
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-09",
+      "title": "PH2: a returned open target within or exactly at 28 days reaches VISIBLE and EXTENDED: UNKNOWN, VISIBLE is never a bound",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "within the frame",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "exactly at 28 days",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 1,
+          "open_with_future_boundary_count": 1,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-10",
+      "title": "PH3: a returned open target strictly beyond 28 days forces EXTENDED in every completion: DEGRADED / EXTENDED / EXACT",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "OPEN",
+                "due_at": "2026-10-05T12:00:01Z"
+              },
+              {
+                "target_id": "2",
+                "title": "target 2",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": "EXTENDED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "EXTENDED"
+        ],
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 2,
+          "open_with_future_boundary_count": 1,
+          "open_beyond_28d_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "EXTENDED"
+          ],
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-11",
+      "title": "a returned closed target beyond 28 days and an open target without a boundary: the closed one forces nothing, PH1, UNKNOWN",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "CLOSED",
+                "due_at": "2026-12-01T00:00:00Z"
+              },
+              {
+                "target_id": "2",
+                "title": "target 2",
+                "state": "OPEN",
+                "due_at": null
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 1,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "DECLARED",
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-12",
+      "title": "only closed returned targets, one beyond 28 days: PH0, UNKNOWN, never UNDECLARED or EXTENDED",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "observations": [
+          {
+            "observation_id": "planning.explicit_targets.inventory",
+            "value_type": "series",
+            "value": [
+              {
+                "target_id": "1",
+                "title": "target 1",
+                "state": "CLOSED",
+                "due_at": "2026-12-01T00:00:00Z"
+              },
+              {
+                "target_id": "2",
+                "title": "target 2",
+                "state": "CLOSED",
+                "due_at": "2026-08-01T00:00:00Z"
+              }
+            ],
+            "coverage": {
+              "complete": false,
+              "source": "milestones"
+            },
+            "status": "PARTIAL",
+            "reason_code": "PAGINATION_CAPPED"
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 0,
+          "open_with_future_boundary_count": 0,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "UNDECLARED",
+            "DECLARED",
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-13",
+      "title": "the same PH3 evidence in reversed order, other page boundaries and an equivalent provider-neutral record shape: identical DEGRADED / EXTENDED / EXACT",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "provider order",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:01Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  },
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-08-01T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "reversed, a different cap",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-08-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  },
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:01Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "REQUEST_BUDGET_EXHAUSTED"
+              }
+            ]
+          },
+          {
+            "title": "register-shaped records with provider extras",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "T-3",
+                    "title": "target T-3",
+                    "state": "CLOSED",
+                    "due_at": "2026-08-01T00:00:00Z",
+                    "url": "https://example.invalid/t3"
+                  },
+                  {
+                    "target_id": "T-1",
+                    "title": "target T-1",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:01Z",
+                    "open_items": 4,
+                    "closed_items": 1
+                  },
+                  {
+                    "target_id": "T-2",
+                    "title": "target T-2",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z",
+                    "url": "https://example.invalid/t2"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "file"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "EXTENDED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "EXTENDED"
+        ],
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 2,
+          "open_with_future_boundary_count": 2,
+          "open_beyond_28d_count": 1,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "EXTENDED"
+          ],
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_AMBIGUOUS"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-14",
+      "title": "the same PH2 subset under record and page permutations: identical UNKNOWN, pagination order cannot manufacture exactness",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "provider order",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "reversed",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "interleaved, another cap",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": null
+                  },
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "REQUEST_BUDGET_EXHAUSTED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "capability": "SUPPORTED",
+          "open_count": 2,
+          "open_with_future_boundary_count": 1,
+          "open_beyond_28d_count": 0,
+          "open_count_semantics": "LOWER_BOUND",
+          "open_with_future_boundary_count_semantics": "LOWER_BOUND",
+          "open_beyond_28d_count_semantics": "LOWER_BOUND",
+          "reachable_bands": [
+            "VISIBLE",
+            "EXTENDED"
+          ]
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_AMBIGUOUS",
+          "PARTIAL_ENUMERATION:planning.explicit_targets.open_count"
+        ],
+        "diagnostics_absent": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-15",
+      "title": "a derived tuple no target population can produce (beyond above future, future above open) fails validation before evaluation, never UNKNOWN or DEGRADED compensation",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "variants": [
+          {
+            "title": "partial, beyond above future",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "value": "SUPPORTED"
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_count",
+                "value": 2,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_with_future_boundary_count",
+                "value": 1,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_beyond_28d_count",
+                "value": 2,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "partial, future above open",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "value": "SUPPORTED"
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_count",
+                "value": 1,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_with_future_boundary_count",
+                "value": 2,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_beyond_28d_count",
+                "value": 0,
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED",
+                "coverage": {
+                  "complete": false,
+                  "value_semantics": "OBSERVED_SUBSET_COUNT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "complete, beyond above future",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.capability",
+                "value_type": "enum",
+                "value": "SUPPORTED"
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_count",
+                "value": 3
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_with_future_boundary_count",
+                "value": 0
+              },
+              {
+                "observation_id": "planning.explicit_targets.open_beyond_28d_count",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "rejected": "HORIZON_COUNTS_INCONSISTENT"
+      }
+    },
+    {
+      "case": "HOR-PARTIAL-16",
+      "title": "PH3 is the direct proof: whatever else the returned subset holds, and whatever the omitted records are, the observed open target beyond 28 days keeps every completion EXTENDED",
+      "kind": "vital",
+      "source_unit": "PV-HORIZON-PARTIAL-001",
+      "given": {
+        "vital": "horizon",
+        "observed_at": "2026-09-07T12:00:00Z",
+        "derive": {
+          "planning_source": "milestones",
+          "debt_mapping": null
+        },
+        "variants": [
+          {
+            "title": "beside closed targets",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "CLOSED",
+                    "due_at": "2026-08-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "3",
+                    "title": "target 3",
+                    "state": "CLOSED",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "beside an open target without a boundary",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": null
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "beside an open target within the frame",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": "2026-09-20T00:00:00Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          },
+          {
+            "title": "beside another open target beyond the frame",
+            "observations": [
+              {
+                "observation_id": "planning.explicit_targets.inventory",
+                "value_type": "series",
+                "value": [
+                  {
+                    "target_id": "1",
+                    "title": "target 1",
+                    "state": "OPEN",
+                    "due_at": "2026-12-01T00:00:00Z"
+                  },
+                  {
+                    "target_id": "2",
+                    "title": "target 2",
+                    "state": "OPEN",
+                    "due_at": "2026-10-05T12:00:01Z"
+                  }
+                ],
+                "coverage": {
+                  "complete": false,
+                  "source": "milestones"
+                },
+                "status": "PARTIAL",
+                "reason_code": "PAGINATION_CAPPED"
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "EXTENDED",
+        "evaluation_status": "DEGRADED",
+        "band_semantics": "EXACT",
+        "possible_bands": [
+          "EXTENDED"
+        ],
+        "rule_id": "horizon.bands.v2",
+        "derived": {
+          "reachable_bands": [
+            "EXTENDED"
+          ],
+          "possible_bands_semantics": "NON_AUTHORITATIVE_CONSERVATIVE_SUPERSET"
+        },
+        "diagnostics": [
+          "HORIZON_PARTIAL_BAND_INVARIANT"
+        ]
+      },
+      "notes": "The omitted records of a partial enumeration are not observable, so no vector can list them; each variant is a different returned subset, and the contract's argument is that none of them, nor anything added to them, removes the observed beyond-28-day open target."
+    }
+  ]
+}

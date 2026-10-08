@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/Devostasis/schemas/code-manifest.schema.json",
+  "description": "Shape constraints; executable admission additionally enforces canonical bytes, source proofs, unique sorted paths, cross-field limits and exact replay.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "engine",
+    "subject",
+    "members",
+    "bundle_id"
+  ],
+  "properties": {
+    "contract": {
+      "const": "devostasis.code-analysis.v1"
+    },
+    "engine": {
+      "const": "devostasis.code-engine.v1"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "object_format",
+        "roots",
+        "repository_id",
+        "revision",
+        "tree"
+      ],
+      "properties": {
+        "kind": {
+          "const": "LOCAL_GIT"
+        },
+        "object_format": {
+          "enum": [
+            "sha1",
+            "sha256"
+          ]
+        },
+        "roots": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+          }
+        },
+        "repository_id": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+        }
+      }
+    },
+    "members": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs.json",
+        "policy.json",
+        "analysis.json",
+        "findings.sarif",
+        "report.md"
+      ],
+      "properties": {
+        "inputs.json": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "policy.json": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "analysis.json": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "findings.sarif": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "report.md": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,3969 @@
+{
+  "schema": "devostasis.vectors.v1",
+  "notes": "The reconciliation cases of PV-HIST-002 (accepted by PV-REV-HIST-002), transcribed from its permanent conformance cases and adopted in 0.2.0 under integrity.bands.v1+ci-unit-004+hist-002. Each states the carried history as the observation a build adds from its immediate predecessor (ci.revision_history_carried, lineage devostasis.ci-history.v2 unless the case is about another lineage) and the current revision records in the adapter's shape. The chain cases, HIST-08, -12, -17, -18 and -20, and the store replay of HIST-13 need a history store and are tests (tests/test_revision_history.py). HIST-14 needs an accepted migration, and none exists. observed_at is 2026-09-10T12:00:00Z, so the window starts at 2026-08-27T12:00:00Z.",
+  "vectors": [
+    {
+      "case": "HIST-01",
+      "title": "a revision a prior bundle proved failing stays FAILURE_OBSERVED when the provider now shows the same revision passing; the current verdict is PASS",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "p1",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:901",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "r",
+                "committed_at": "2026-09-06T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_checks:check_suite:41",
+                    "kind": "github_check_suite",
+                    "name": "ci-app",
+                    "event": null,
+                    "current_attempt": null,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": null,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": false,
+                    "history_state": "UNKNOWN_HISTORY",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "UNKNOWN_HISTORY",
+                "historical_contribution": null,
+                "history_provenance": "PARENT_LEVEL_ONLY",
+                "history_complete": false
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-06T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_check_suite",
+                      "latest_attempt": null,
+                      "attempts": [
+                        {
+                          "attempt": null,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_checks:check_suite:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1,
+          "current_revision": {
+            "revision": "r",
+            "committed_at": "2026-09-06T10:00:00Z",
+            "current_verdict": "VERIFY_PASS",
+            "history_state": "FAILURE_OBSERVED"
+          }
+        },
+        "diagnostics": [
+          "HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:1"
+        ]
+      },
+      "notes": "A re-requested check suite keeps its id and shows only its latest outcome; the failure the previous bundle observed is what keeps the revision failing (R54's rule across bundles)."
+    },
+    {
+      "case": "HIST-02",
+      "title": "a revision the prior bundle recorded PASS_ONLY_OBSERVED becomes FAILURE_OBSERVED when a failure of it is newly observed, and stays there",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "r",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:42",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_FAIL",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_FAIL"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "FAILURE_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_FAIL",
+                "history_state": "FAILURE_OBSERVED",
+                "historical_contribution": "VERIFY_FAIL",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p5",
+                "committed_at": "2026-09-05T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:905",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-01T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_PASS"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1
+        }
+      },
+      "notes": "The run the previous bundle saw pass (41) is no longer listed; the new run 42 failed on the same revision."
+    },
+    {
+      "case": "HIST-03",
+      "title": "a prior failure plus any number of same-revision retries that passed is one failed contribution, whatever the number or order of the retries",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "one retry",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 2,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 1,
+                          "attempts": [
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "five retries",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 6,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 3,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 4,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 5,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 6,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 1,
+                          "attempts": [
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "five retries listed newest first",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 6,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 6,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 5,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 4,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 3,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 6,
+                          "attempts": [
+                            {
+                              "attempt": 6,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 5,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 4,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 3,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 2,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "SPARSE_MIXED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 1,
+          "failed_count_14d": 1,
+          "revisions_with_history": 1
+        }
+      }
+    },
+    {
+      "case": "HIST-04",
+      "title": "a failed revision and a newer passing revision are two samples while both are in the window",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "r",
+                "committed_at": "2026-09-06T10:00:00Z",
+                "parents": [],
+                "current_verdict": null,
+                "history_state": "NO_DECISIVE_OBSERVED",
+                "historical_contribution": null,
+                "history_provenance": null,
+                "history_complete": true
+              },
+              {
+                "revision": "r2",
+                "committed_at": "2026-09-07T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:43",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-06T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "SPARSE_MIXED",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 2,
+          "failed_count_14d": 1,
+          "revisions_with_history": 2,
+          "revisions_with_verification": 1
+        }
+      }
+    },
+    {
+      "case": "HIST-05",
+      "title": "a failure the provider no longer exposes stays historical evidence while its revision is in the window",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "p1",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:901",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "r",
+                "committed_at": "2026-09-06T10:00:00Z",
+                "parents": [],
+                "current_verdict": null,
+                "history_state": "NO_DECISIVE_OBSERVED",
+                "historical_contribution": null,
+                "history_provenance": null,
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-06T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1,
+          "revisions_with_history": 5,
+          "revisions_with_verification": 4
+        }
+      }
+    },
+    {
+      "case": "HIST-06",
+      "title": "without durable history a parent-level pass cannot prove the earlier attempts: UNKNOWN_HISTORY, no favorable PASS_ONLY reconstruction",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "a first bundle",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_checks:check_suite:41",
+                        "kind": "github_check_suite",
+                        "name": "ci-app",
+                        "event": null,
+                        "current_attempt": null,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": null,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "PARENT_LEVEL_ONLY",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "status": "UNAVAILABLE",
+                "reason_code": "NO_PREVIOUS_BUNDLE"
+              }
+            ]
+          },
+          {
+            "title": "no carried history stated",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_checks:check_suite:41",
+                        "kind": "github_check_suite",
+                        "name": "ci-app",
+                        "event": null,
+                        "current_attempt": null,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": null,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "PARENT_LEVEL_ONLY",
+                    "history_complete": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "diagnostics": [
+          "REVISION_HISTORY_UNKNOWN:r",
+          "HISTORY_PROVENANCE_PARENT_LEVEL_ONLY:1"
+        ],
+        "derived": {
+          "unknown_history_count_14d": 1,
+          "decisive_count_14d": 4
+        }
+      }
+    },
+    {
+      "case": "HIST-07",
+      "title": "complete attempt-level current evidence with no unresolved prior gap proves PASS_ONLY_OBSERVED",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "a first bundle",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 2,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "status": "UNAVAILABLE",
+                "reason_code": "NO_PREVIOUS_BUNDLE"
+              }
+            ]
+          },
+          {
+            "title": "carried history without this revision",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 2,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          },
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "p1",
+                      "committed_at": "2026-09-01T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 1,
+                          "attempts": [
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_PASS"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:901"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "CLEAN",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 0,
+          "unknown_history_count_14d": 0
+        }
+      }
+    },
+    {
+      "case": "HIST-09",
+      "title": "the same failure in durable history and in the current enumeration is one failed contribution, never two",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "r",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:41",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_FAIL",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_FAIL"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "FAILURE_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_FAIL",
+                "history_state": "FAILURE_OBSERVED",
+                "historical_contribution": "VERIFY_FAIL",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p5",
+                "committed_at": "2026-09-05T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:905",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-01T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1
+        }
+      }
+    },
+    {
+      "case": "HIST-10",
+      "title": "a revision whose durable failure has aged beyond the 14-day window no longer contributes",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "p1",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:901",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "old",
+                  "committed_at": "2026-08-20T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:40"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "CLEAN",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 4,
+          "failed_count_14d": 0,
+          "revisions_with_history": 4
+        }
+      },
+      "notes": "The aged revision is also absent from the durable output of this bundle; the bundle that proved it keeps it."
+    },
+    {
+      "case": "HIST-11",
+      "title": "equivalent failure histories on the Actions and the check-suite surfaces, in any enumeration order, give the identical record and result",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "Actions, attempts oldest first",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 2,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 1,
+                          "attempts": [
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Actions, records and attempts reversed",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 2,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 2,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 2,
+                          "attempts": [
+                            {
+                              "attempt": 2,
+                              "state": "VERIFY_PASS"
+                            },
+                            {
+                              "attempt": 1,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "check suite",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_checks:check_suite:41",
+                        "kind": "github_check_suite",
+                        "name": "ci-app",
+                        "event": null,
+                        "current_attempt": null,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": null,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "PARENT_LEVEL_ONLY",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_check_suite",
+                          "latest_attempt": null,
+                          "attempts": [
+                            {
+                              "attempt": null,
+                              "state": "VERIFY_FAIL"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_checks:check_suite:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1
+        }
+      },
+      "notes": "GitLab-equivalent evidence (the third surface the case names) needs a GitLab adapter this version does not have."
+    },
+    {
+      "case": "HIST-13",
+      "title": "carried history of the older lineage is replayed from the attempts it kept, never copied from the state it derived: its failure stays, its parent-level pass is unknown",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "r1",
+                "committed_at": "2026-09-05T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:51",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 2,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 2,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": false,
+                    "history_state": "UNKNOWN_HISTORY",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "UNKNOWN_HISTORY",
+                "historical_contribution": null,
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": false
+              },
+              {
+                "revision": "r2",
+                "committed_at": "2026-09-06T10:00:00Z",
+                "parents": [],
+                "current_verdict": null,
+                "history_state": "NO_DECISIVE_OBSERVED",
+                "historical_contribution": null,
+                "history_provenance": null,
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v1",
+              "records": [
+                {
+                  "revision": "r1",
+                  "committed_at": "2026-09-05T10:00:00Z",
+                  "history_state": "FAILURE_OBSERVED",
+                  "historical_contribution": "VERIFY_FAIL",
+                  "parents": [
+                    {
+                      "parent_id": "github_actions:workflow_run:51",
+                      "kind": "github_actions_workflow_run",
+                      "name": "ci",
+                      "event": "push",
+                      "current_attempt": 2,
+                      "current_state": "VERIFY_PASS",
+                      "attempts_observed": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        },
+                        {
+                          "attempt": 2,
+                          "state": "VERIFY_PASS"
+                        }
+                      ],
+                      "attempts_complete": true,
+                      "history_state": "FAILURE_OBSERVED",
+                      "url": null
+                    }
+                  ]
+                },
+                {
+                  "revision": "r2",
+                  "committed_at": "2026-09-06T10:00:00Z",
+                  "history_state": "PASS_ONLY_OBSERVED",
+                  "historical_contribution": "VERIFY_PASS",
+                  "parents": [
+                    {
+                      "parent_id": "github_checks:check_suite:52",
+                      "kind": "github_check_suite",
+                      "name": "ci-app",
+                      "event": null,
+                      "current_attempt": null,
+                      "current_state": "VERIFY_PASS",
+                      "attempts_observed": [
+                        {
+                          "attempt": null,
+                          "state": "VERIFY_PASS"
+                        }
+                      ],
+                      "attempts_complete": false,
+                      "history_state": "UNKNOWN_HISTORY",
+                      "url": null
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "diagnostics": [
+          "REVISION_HISTORY_UNKNOWN:r2"
+        ],
+        "derived": {
+          "failed_count_14d": 1,
+          "unknown_history_count_14d": 1
+        }
+      },
+      "notes": "devostasis.ci-history.v1 is the revision record 0.1.x bundles carry in ci.revision_verdicts_14d: its attempts are canonical, so the union is rebuilt from them under the current lineage. The 0.1.x record called r2 PASS_ONLY_OBSERVED from a check suite; R52 does not, and replay applies it."
+    },
+    {
+      "case": "HIST-15",
+      "title": "carried history of a lineage with neither replay nor an accepted migration leaves the revisions it names unknown, until complete current evidence repairs them",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "no current verification",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [],
+                    "current_verdict": null,
+                    "history_state": "NO_DECISIVE_OBSERVED",
+                    "historical_contribution": null,
+                    "history_provenance": null,
+                    "history_complete": true
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v9",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": []
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "a parent-level pass now",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_checks:check_suite:41",
+                        "kind": "github_check_suite",
+                        "name": "ci-app",
+                        "event": null,
+                        "current_attempt": null,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": null,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "PARENT_LEVEL_ONLY",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v9",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": []
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "diagnostics": [
+          "REVISION_HISTORY_UNKNOWN:r"
+        ],
+        "derived": {
+          "unknown_history_count_14d": 1
+        }
+      }
+    },
+    {
+      "case": "HIST-16",
+      "title": "a prior bundle's current verdict is never inherited: the revision the provider no longer shows keeps its history and speaks for nothing current",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "observations": [
+          {
+            "observation_id": "ci.configured",
+            "value_type": "boolean",
+            "value": true
+          },
+          {
+            "observation_id": "ci.revision_verdicts_14d",
+            "value_type": "series",
+            "value": [
+              {
+                "revision": "p1",
+                "committed_at": "2026-09-01T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:901",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p2",
+                "committed_at": "2026-09-02T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:902",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p3",
+                "committed_at": "2026-09-03T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:903",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "p4",
+                "committed_at": "2026-09-04T10:00:00Z",
+                "parents": [
+                  {
+                    "parent_id": "github_actions:workflow_run:904",
+                    "kind": "github_actions_workflow_run",
+                    "name": "ci",
+                    "event": "push",
+                    "current_attempt": 1,
+                    "current_state": "VERIFY_PASS",
+                    "attempts_observed": [
+                      {
+                        "attempt": 1,
+                        "state": "VERIFY_PASS"
+                      }
+                    ],
+                    "attempts_complete": true,
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "url": null
+                  }
+                ],
+                "current_verdict": "VERIFY_PASS",
+                "history_state": "PASS_ONLY_OBSERVED",
+                "historical_contribution": "VERIFY_PASS",
+                "history_provenance": "ATTEMPT_LEVEL",
+                "history_complete": true
+              },
+              {
+                "revision": "r",
+                "committed_at": "2026-09-09T10:00:00Z",
+                "parents": [],
+                "current_verdict": null,
+                "history_state": "NO_DECISIVE_OBSERVED",
+                "historical_contribution": null,
+                "history_provenance": null,
+                "history_complete": true
+              }
+            ]
+          },
+          {
+            "observation_id": "ci.revision_history_carried",
+            "value_type": "record",
+            "value": {
+              "lineage": "devostasis.ci-history.v2",
+              "records": [
+                {
+                  "revision": "r",
+                  "committed_at": "2026-09-09T10:00:00Z",
+                  "parent_groups": [
+                    {
+                      "kind": "github_actions_workflow_run",
+                      "latest_attempt": 1,
+                      "attempts": [
+                        {
+                          "attempt": 1,
+                          "state": "VERIFY_FAIL"
+                        }
+                      ],
+                      "parent_ids": [
+                        "github_actions:workflow_run:41"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "source_observed_at": "2026-09-09T12:00:00Z",
+              "basis": "SNAPSHOT"
+            }
+          }
+        ]
+      },
+      "expect": {
+        "band": "FLAKY",
+        "evaluation_status": "AVAILABLE",
+        "band_semantics": "EXACT",
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "derived": {
+          "decisive_count_14d": 5,
+          "failed_count_14d": 1,
+          "current_revision": {
+            "revision": "p4",
+            "committed_at": "2026-09-04T10:00:00Z",
+            "current_verdict": "VERIFY_PASS",
+            "history_state": "PASS_ONLY_OBSERVED"
+          }
+        }
+      },
+      "notes": "r is the newest revision and failed in the previous bundle; with no current verification it contributes its failure and is not the current reference."
+    },
+    {
+      "case": "HIST-19",
+      "title": "a prior UNKNOWN_HISTORY does not heal because the provider now shows a pass that is complete only for what is visible",
+      "kind": "vital",
+      "source_unit": "PV-HIST-002",
+      "given": {
+        "vital": "integrity",
+        "observed_at": "2026-09-10T12:00:00Z",
+        "variants": [
+          {
+            "title": "attempts 1 and 2 still unseen",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:41",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 3,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 3,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_actions_workflow_run",
+                          "latest_attempt": 3,
+                          "attempts": [
+                            {
+                              "attempt": 3,
+                              "state": "VERIFY_PASS"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_actions:workflow_run:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "a check suite that passes now",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_checks:check_suite:41",
+                        "kind": "github_check_suite",
+                        "name": "ci-app",
+                        "event": null,
+                        "current_attempt": null,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": null,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": false,
+                        "history_state": "UNKNOWN_HISTORY",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "UNKNOWN_HISTORY",
+                    "historical_contribution": null,
+                    "history_provenance": "PARENT_LEVEL_ONLY",
+                    "history_complete": false
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [
+                        {
+                          "kind": "github_check_suite",
+                          "latest_attempt": null,
+                          "attempts": [
+                            {
+                              "attempt": null,
+                              "state": "VERIFY_UNRESOLVED"
+                            }
+                          ],
+                          "parent_ids": [
+                            "github_checks:check_suite:41"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          },
+          {
+            "title": "an unresolved gap marker",
+            "observations": [
+              {
+                "observation_id": "ci.configured",
+                "value_type": "boolean",
+                "value": true
+              },
+              {
+                "observation_id": "ci.revision_verdicts_14d",
+                "value_type": "series",
+                "value": [
+                  {
+                    "revision": "p1",
+                    "committed_at": "2026-09-01T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:901",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p2",
+                    "committed_at": "2026-09-02T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:902",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p3",
+                    "committed_at": "2026-09-03T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:903",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "p4",
+                    "committed_at": "2026-09-04T10:00:00Z",
+                    "parents": [
+                      {
+                        "parent_id": "github_actions:workflow_run:904",
+                        "kind": "github_actions_workflow_run",
+                        "name": "ci",
+                        "event": "push",
+                        "current_attempt": 1,
+                        "current_state": "VERIFY_PASS",
+                        "attempts_observed": [
+                          {
+                            "attempt": 1,
+                            "state": "VERIFY_PASS"
+                          }
+                        ],
+                        "attempts_complete": true,
+                        "history_state": "PASS_ONLY_OBSERVED",
+                        "url": null
+                      }
+                    ],
+                    "current_verdict": "VERIFY_PASS",
+                    "history_state": "PASS_ONLY_OBSERVED",
+                    "historical_contribution": "VERIFY_PASS",
+                    "history_provenance": "ATTEMPT_LEVEL",
+                    "history_complete": true
+                  },
+                  {
+                    "revision": "r",
+                    "committed_at": "2026-09-06T10:00:00Z",
+                    "parents": [],
+                    "current_verdict": null,
+                    "history_state": "NO_DECISIVE_OBSERVED",
+                    "historical_contribution": null,
+                    "history_provenance": null,
+                    "history_complete": true
+                  }
+                ]
+              },
+              {
+                "observation_id": "ci.revision_history_carried",
+                "value_type": "record",
+                "value": {
+                  "lineage": "devostasis.ci-history.v2",
+                  "records": [
+                    {
+                      "revision": "r",
+                      "committed_at": "2026-09-06T10:00:00Z",
+                      "parent_groups": [],
+                      "unresolved": [
+                        "LINEAGE_INCOMPATIBLE:devostasis.ci-history.v9"
+                      ]
+                    }
+                  ],
+                  "source_bundle_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "source_observed_at": "2026-09-09T12:00:00Z",
+                  "basis": "SNAPSHOT"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "band": null,
+        "evaluation_status": "UNKNOWN",
+        "band_semantics": null,
+        "possible_bands": null,
+        "rule_id": "integrity.bands.v1+ci-unit-004+hist-002",
+        "diagnostics": [
+          "REVISION_HISTORY_UNKNOWN:r"
+        ],
+        "derived": {
+          "unknown_history_count_14d": 1,
+          "decisive_count_14d": 4
+        }
+      },
+      "notes": "The nearby repair, complete canonical evidence of every attempt making the history PASS_ONLY_OBSERVED, is test_hist_19_complete_evidence_repairs_an_unknown_history."
+    }
+  ]
+}

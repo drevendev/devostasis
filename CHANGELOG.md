@@ -3,6 +3,279 @@
 All notable changes to this project are documented here. Semantic changes to a
 contract or a policy always come with a version bump of that contract.
 
+## 0.6.0 (unreleased)
+
+Offline Repository Analysis, target E4, issue #72.
+
+- New stdlib-only `code` companion: immutable local Git snapshot, Python 3.12
+  AST structure, six scoped findings, declared-module import cycles and bounded
+  recent non-merge change hotspots. No source execution or forge dependency.
+- Canonical source-proof bundles bind admitted blobs and the entire tree to a
+  pinned SHA-1/SHA-256 commit, then replay JSON, SARIF and escaped Markdown
+  byte for byte offline. Unsupported/excluded/malformed/capped inputs and shallow
+  history retain explicit states; no absence or health claim is inferred.
+- Conservative revision comparison, stable finding IDs and bounded exact-source
+  packets with offline verification. Native SARIF feeds existing analyze_code
+  queues only through an admitted same-revision forge inventory, preserving
+  partial coverage and original observation age.
+- Public contract, manifest/policy/packet schemas, fully synthetic analysis and
+  work examples, regeneration script and Python 3.12/3.13/3.14 CI checks.
+- Reject contradictory GitLab page/total headers and malformed or changing
+  GitHub totals while preserving observed partial rows (#70).
+- Isolate inherited Git context and unrelated credential environment variables
+  from local analysis subprocesses and synthetic diagnostics (#74).
+- Independent ancestry/count proof remains documented debt (#73); external
+  scheduling/adoption is deferred (#71). Existing Vitals, core/work replay,
+  B1/B7 and upstream release/review gates retain their contracts.
+
+## 0.5.0 (unreleased)
+
+Consumer Operations, target E3.
+
+- Run the CI matrix on contributor `zendreven/release-*` pushes and reconcile
+  the eight pending PRs, release sequence and next external-adoption milestone.
+- Explicit project/actor/policy digest/engine version/selection/budget binding,
+  disabled by default; immutable COMPLETE/PARTIAL/FAILED/DISABLED invocation
+  receipts outside canonical bundles. Wrong binding stops before network;
+  immutable project identity is checked before dependent collection.
+- Parallel change reads (1..8 workers) share locked request/deadline limits;
+  per-thread HTTP openers, one GitLab train inventory per generation,
+  deterministic material receipt ordering and preserved per-object head checks.
+  Transport failures retain source paths for bounded recovery.
+- Packet-bound caller results with exact original acceptance and append-only
+  evidence references. REPORTED_COMPLETE stays a caller assertion, not an
+  independent review, merge/deploy permission or automatic healing of evidence.
+- Verified private history audit and deterministic bounded ZIP_STORED export,
+  offline admission and idempotent restore. Includes generations and operational
+  receipts/results; never extracts paths, rejects foreign/linked/duplicate/
+  changed members, preserves candidates and monotonic latest.
+- Protected GitHub/GitLab caller recipes, synthetic disabled binding, public
+  schemas and CI end-to-end archive restore checks. Existing core/work canonical
+  lineages and historical replay remain unchanged; no runtime dependency added.
+- Existing glab authentication can be reused by the bound caller. Detailed
+  external qualification evidence belongs in the adopter's private history.
+  Full bridge collection (#62), production scheduling and B7's sustained
+  calibration remain deployment gates.
+- Reject password-only endpoint userinfo before network reads (#66).
+- Reject substituted native PR/MR/issue identities during selected collection
+  and final change rechecks (#68); verify returned selected refs during history
+  admission and refuse nonzero network telemetry for disabled receipts.
+
+## 0.4.0 (unreleased)
+
+Reproducible consumer handoff, target E2.
+
+- Adopt accepted cumulative receipt identity repair PV-RECEIPT-IDENTITY-003:
+  PV-BUNDLE-ID-003, bundle v3, manifest v2, observations v2 and receipt-identity v1.
+  Same evidence/identity metadata produces byte-identical complete canonical
+  bundles despite different invocation times, counters, retries or tool builds.
+  Genuine observation time remains identity-bearing. Execution receipts are
+  returned separately and CLI audit files live outside immutable bundles.
+- Persist the complete receipt projection in every successor manifest, including
+  observations-disabled profiles. Preserve historical verification, mixed-lineage
+  failure and the unchanged exact-byte HistoryStore collision rule.
+- Adopt exact-token compatibility and complete bundle lineage admission;
+  operation-scoped local edges, immutable finite dispatch policies, pinned replay
+  and ambiguity failure. Declare no production nonidentity edge or migration.
+- Work scope v2 records named canonical/candidate branch and PR/MR sources,
+  including fork project identity. Candidate collection validates commit
+  existence; moved, deleted or inaccessible sources invalidate handoff. V1
+  generations retain their original offline replay engine.
+- `work handoff` refreshes selected work, reads only declared regular blobs at
+  pinned revisions, enforces file/byte/request/page/time budgets, validates blob
+  digests and rechecks the source. `work verify-handoff` verifies packets offline
+  against the original scope. Consumer execution procedures retain authority.
+- Reuse an existing host-specific glab login without extracting credentials;
+  resolve namespaced GitLab projects; support explicitly selected/registered
+  change inventories. Credential-partitioned caching requires token-env mode.
+- External GitLab shadow path supports declared research tasks, immutable scope,
+  offline packet verification and deleted-ref controls. Keep detailed adopter
+  qualification evidence private. Sustained private CI and production activation
+  remain separate qualifications. Large-project throughput is #62; exact-head
+  GitLab approvals remain UNKNOWN under #58.
+
+## 0.3.0 (unreleased)
+
+Release-readiness review, 2026-10-06:
+
+- GitHub/GitLab work issue collectors reject unknown lifecycle states instead
+  of treating them as CLOSED and silently completing a consumer criterion.
+- A mix of available and missing selected issues remains PARTIAL regardless
+  of read order. Previously a missing issue read first left an UNAVAILABLE
+  collection containing later readable records and failed the entire scope.
+  Readable work and bounded evidence recovery now survive together.
+- README and roadmap distinguish the published 0.1.9 engine, the pending
+  0.2.0/0.3.0 releases and the proposed external-adoption increment.
+
+Evidence to Action, target E1: a separate deterministic consumer companion
+(`devostasis.work.v1`, replay engine `devostasis.work-engine.v1`).
+
+- Five typed queues: review, finish_merge, implement_issue, research and
+  analyze_code. Explicit consumer priorities, exact revisions, independent
+  reviewer/owner roles, dependencies, acceptance and bounded read sets.
+- Read-only GitHub and GitLab work collectors with request/time/page/byte
+  budgets, capability receipts, conditional cache partitioning and explicit
+  completeness. GitHub collects exact-head review verdicts, checks/statuses,
+  threads and merge-queue state. GitLab approval SHA uncertainty stays UNKNOWN
+  and is tracked in #58; no aggregate approval is fabricated as an exact-head
+  verdict. This companion does not claim the core Phase C adapter/carrier work.
+- Optional revision-bound SARIF, JUnit, Cobertura and measured-performance
+  profiles, with raw source digests, path admission, scoped dispositions,
+  malformed/missing/stale evidence recovery and offline replay.
+- Immutable work bundles, verified latest pointers, process-locked atomic
+  publication, candidate isolation and backfill protection. Bounded role
+  slices have scope-bound cursors, overflow and explicit exclusion reasons.
+- `devostasis work policy/import/collect/build/run/verify/replay/slice/explain/recheck`.
+  Recheck binds consumer policy and refreshes only selected sources before
+  returning eligibility; candidate content tasks without a mutable ref require
+  a fresh attested inventory (follow-up #60). No command claims or executes work.
+- GitHub reusable read-only workflow with optional protected durable history
+  runner, GitLab canonical/candidate CI recipes, adopter guide, public frozen
+  example and implementation-owned regression cases. The public GitHub live
+  pilot is distinct from the outstanding external calibration target B7.
+
+Seven Vitals, their thresholds, bands, gauges and demand ordering retain their
+contracts. This branch includes the still-pending 0.2.0 adoption/readiness
+work below; neither version is represented as already tagged or released.
+
+## 0.2.0 (unreleased)
+
+Release-readiness review, 2026-10-02:
+
+- A saved carried-history observation is admitted only when its canonical
+  content and provenance match what the verified immediate predecessor
+  supplies. Previously the correct source bundle id and acquisition status
+  were enough to admit edited records, including removal of a prior failure.
+  The build now refuses those inputs with `HISTORY_CONTENT_MISMATCH`.
+- A duplicate carried revision id fails closed with
+  `REVISION_HISTORY_CARRY_MALFORMED`, in both the current carrier and replay
+  from 0.1.x. Previously the last duplicate could overwrite an observed
+  failure. These are admission repairs under the existing accepted history
+  contract; valid evidence, contract ids, thresholds and windows are unchanged.
+- Pending maintenance from #36, #37 and #50 is integrated into the release:
+  weekly Dependabot updates, cancellation of superseded CI runs, and the
+  Hungry Crab configuration and ledger. The two attribution receipts are
+  retained together rather than losing one to their add/add conflict.
+- The roadmap distinguishes the tagged 0.1.9 release from the pending 0.2.0
+  adoption branch and names the next consumer-facing development sequence.
+
+The adoption release. Every accepted research contract about the Vitals and
+their history that this repository had not adopted, and that needs no owner
+decision, is adopted: the repairs of Direction, Horizon and Debt that issue
+#33 listed, the final T9 reconciliation, and target B3, durable Integrity
+revision history (`PV-HIST-002`, #34). The owner asked for a large next
+release on 2026-09-30 (#47); the candidate specification written for that
+request (`PV-RELEASE-020-001`, "Evidence Observatory") has not been accepted
+yet, so 0.2.0 is the part of that ambition that rests on accepted contracts.
+No threshold, window, gauge constant or demand mapping changed. Four rule ids
+moved, each with the judgement that moved it, so the first 0.2.0 bundle of
+every project compares `INCOMPARABLE` (`RULE_VERSION_BOUNDARY`) on Horizon,
+Direction, Integrity and Debt and stays comparable on the rest.
+
+- **Direction `direction.bands.v2`: state-neutral linkage, and incomplete
+  linkage without failing the project.** `PV-REV-DIRECTION-CLOSED-TARGET-001`
+  (cases `DIR-CLOSED-01..09`): an active change request linked to a declared
+  target stays linked when the target closes. Calibration finding 9 is
+  repaired: closing a delivered target used to un-link the work that
+  delivered it, so never closing targets kept the band higher than finishing
+  them. Measured on a copy of the fleet store: this repository reads `MIXED`,
+  9 of 18 active change requests traced to a declared target, where the
+  open-target count said 4 of 18, `SCATTERED`. That count is still derived,
+  for presentation only. `PV-DIRECTION-INCOMPLETE-001` (accepted by
+  `PV-REV-DIRECTION-INCOMPLETE-001`, cases `DIR-INCOMPLETE-01..16`): every
+  active change request is `LINKED`, `UNLINKED` or `UNRESOLVED`. A reference
+  the complete register lacks is a broken reference, unlinked and diagnosed
+  `DIRECTION_TARGET_REFERENCE_MISSING`; a reference nobody could resolve, or a
+  title, body or milestone of the wrong type, is unresolved. Over
+  `L + U + R = N` the completions `k = L..L+R` go through the unchanged
+  predicates: one reachable band is `DEGRADED / <band> / EXACT`, several are
+  `UNKNOWN` with the reachable set in `derived`. Unreadable linkage evidence no
+  longer fails the whole project: `LinkageEvidenceError` is gone, and a change
+  request names what it could not read in `linkage_unresolved`. A partial
+  target list no longer blocks Direction when every referenced target resolves
+  on its own, as a milestone embedded in the change request does.
+- **Target markers are standalone tokens** (`PV-AUDIT-TARGET-MARKER-SYNTAX-001`).
+  `SubTarget: B1`, `NotTarget: B1` and `PreTarget:B1` linked their change
+  request to B1, because the configured marker was matched as a substring.
+  The marker now starts the text or follows a character that cannot continue
+  a word, and a marker ending in a letter needs a boundary after it too. The
+  audit's regressions `LINK-MARKER-01..08` reached this repository only as
+  categories; the tests cover each category and say so.
+- **Horizon `horizon.bands.v2`: partial target enumeration**
+  (`PV-HORIZON-PARTIAL-001`, accepted by `PV-REV-HORIZON-PARTIAL-001`, cases
+  `HOR-PARTIAL-01..16`). A partial enumeration that returned a target proves
+  the capability; its counts are observed-subset lower bounds with the proof
+  #39 asked for; only an open target already beyond the frame forces a band,
+  `DEGRADED / EXTENDED / EXACT`. Every other partial shape stays `UNKNOWN`,
+  because Horizon declares no order to pick a representative by, and a
+  partial zero is never `UNDECLARED`.
+- **Debt `debt.bands.v2`: partial register** (`PV-DEBT-PARTIAL-001`, accepted
+  by `PV-REV-DEBT-PARTIAL-001`, cases `DEBT-PARTIAL-01..16`). A confirmed open
+  item under a partial enumeration is `DEGRADED / PRESENT / EXACT`, the band
+  exact and the count a lower bound, none confirmed is `UNKNOWN`, and a
+  `PARTIAL` count is read as a lower bound only with its
+  `OBSERVED_SUBSET_COUNT` proof (the Debt part of #39). Before, a partial
+  positive count was `CONSERVATIVE_LOWER_BOUND` on its status alone, so an
+  estimate could prove `PRESENT`.
+- **Integrity `integrity.bands.v1+ci-unit-004+hist-002`: durable revision
+  history** (`PV-HIST-002`, accepted by `PV-REV-HIST-002`, target B3). History
+  was reconstructed from whatever the provider still showed, so a failure
+  hidden behind a passing re-request of a check suite, or dropped by
+  retention, vanished from the counts. The union of every attempt observed per
+  parent per revision is now carried from bundle to bundle: a build adds its
+  immediate predecessor's union as `ci.revision_history_carried`, Integrity
+  merges it with what the provider shows now and emits the result as
+  `derived.revision_history`, on every path, so history also crosses a bundle
+  whose verification evidence could not be read. A missing, unverifiable,
+  foreign or later predecessor is an explicit gap (`REVISION_HISTORY_GAP`);
+  nothing older is ever carried in its place, and `verify` checks that the
+  source a bundle names is the bundle its manifest follows
+  (`HISTORY_SOURCE_MISMATCH`). Favorable evidence proves `PASS_ONLY_OBSERVED`
+  only when every attempt of every parent is observed, so a check-suite pass,
+  or a run whose earlier attempts are not all known, is `UNKNOWN_HISTORY`
+  (R52), and unknown history makes the Vital `UNKNOWN`: T9 puts it above every
+  conservative branch. On the stored corpus every active revision is
+  attempt-complete, so no fleet project loses its band to that rule. The first
+  0.2.0 bundle of a project replays the revision records of its 0.1.9
+  predecessor (lineage `devostasis.ci-history.v1`) instead of starting empty.
+  The band table and every 0.1.9 judgement are unchanged. Cases `HIST-01..07`,
+  `09..11`, `13`, `15`, `16` and `19` are vectors, `08`, `12`, `17`, `18` and
+  `20` store tests; `HIST-14` has no accepted migration to execute.
+- **T9 is adopted** (`PV-TEST-004`, generator `PV-T9-GEN-003`, accepted by
+  `PV-REV-TEST-004`). With the repairs above, every obligation T9 consumes is
+  implemented; a finite generator of about 1,270 cells over the nine former
+  gap families holds each cell to the accepted table. The T9v2 cell-key
+  vectors are still the research process's to deliver.
+- **Contradictory counts are refused as input.** Counts no population can
+  produce (`L + U + R != N`, a beyond-28-day count above the future-boundary
+  count) are `InadmissibleEvidence` before classification, as both totality
+  contracts require, and `evaluate` and `build` report an input error (exit
+  status 2) instead of a band.
+- **The vector format learned two things.** `given.derive` runs the derivation
+  over stated inventories, so a case about how a change request becomes
+  linked, or how a partial target list is counted, is executed where that
+  happens; `expect.rejected` states a refusal (`HOR-PARTIAL-15`). Seventy-one
+  new vectors: `DIR-CLOSED`, `DIR-INCOMPLETE`, `HOR-PARTIAL`, `DEBT-PARTIAL`,
+  `HIST`.
+
+Upgrading: the first 0.2.0 bundle of every project carries four
+`RULE_VERSION_BOUNDARY` rows. Durable history starts from the predecessor's
+in-window records; after the fleet's pause since 2026-09-10 (#32) none are
+left, so the first carried history is effectively empty, and a project whose
+predecessor kept no observations member starts with one explained gap. A
+saved 0.1.x observation set under file planning recorded a reference outside
+the register as `UNKNOWN`; replayed, that change request is unresolved rather
+than unlinked, and a fresh observation tells the two apart. The change-request
+record gains `linkage_unresolved` and the reference state `MISSING`; the
+revision record gains `history_complete`. The snapshot carries the durable
+history, stored grouped by parent shape: 91 KB for the busiest project of the
+fleet, whose 834 dispatched workflow runs in two weeks #40 already asks about.
+
+Not in this release: the fifth identity move (#19, the owner's decision), the
+Phase C contracts of #34 (after B7 and the compatibility policy), the Pulse
+part of #39 (a question for the research side), and the "Evidence
+Observatory" candidate of #47, which awaits its review.
+
 ## 0.1.9 (2026-09-30)
 
 Four things in one release. First, the adoption of the research judgements

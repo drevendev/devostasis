@@ -17,8 +17,9 @@ from .bundle import BundleError, load_bundle_dir, report_renderer, verify_dir
 from .contracts import RENDERER_VERSION
 from .config import ConfigError, load_config, single_project
 from .history import FilesystemHistoryStore, HistoryStoreError
-from .observations import ObservationSet
+from .observations import ObservationSet, failed_execution
 from .runner import FleetSurfaceError, build_from_observations, evaluate, observe, run_all, write_fleet_index
+from .vitals.common import InadmissibleEvidence
 
 TOKEN_ENVS = ("DEVOSTASIS_GITHUB_TOKEN", "GITHUB_TOKEN", "GH_TOKEN")
 
@@ -116,12 +117,19 @@ def cmd_observe(args: argparse.Namespace) -> int:
     project = single_project(args.repo, **_project_overrides(args))
     client = GitHubClient(UrllibTransport(token), budget=args.request_budget, cache=_cache_for(args))
     print(f"token: {source}", file=sys.stderr)
+    started_at = timeutil.format_ts(timeutil.now_utc())
     try:
         obs = observe(project, client, _now(args.now))
     except CollectionError as exc:
+        at = timeutil.format_ts(timeutil.now_utc())
+        canonical.write_pretty(str(args.out) + ".execution-receipt.json",
+                               failed_execution(project.locator, started_at, at, str(exc), {"requests": client.request_count}))
         print(f"error: {exc}", file=sys.stderr)
         return 1
     obs.save(args.out)
+    canonical.write_pretty(str(args.out) + ".execution-receipt.json", obs.receipt.execution(run_meta={
+        "requests": client.request_count, "billed_requests": client.billed_count,
+        "conditional_hits": client.conditional_hits, "retries": client.retries}, receipt_identity=obs.receipt_identity()))
     print(f"observations: {args.out} ({len(obs)} keys, {_requests_line(client)})")
     if client.cache is not None:
         try:
@@ -193,6 +201,11 @@ def cmd_run(args: argparse.Namespace) -> int:
         return 1
     failed = 0
     for outcome in outcomes:
+        if outcome.execution_receipt is not None:
+            receipts = store.root / "executions"
+            receipts.mkdir(parents=True, exist_ok=True)
+            from uuid import uuid4
+            canonical.write_pretty(receipts / (uuid4().hex + ".json"), outcome.execution_receipt)
         if outcome.ok:
             cached = f", {outcome.conditional_hits} unchanged" if outcome.conditional_hits else ""
             print(f"[ok] {outcome.locator}: {outcome.comparison_status} bundle {outcome.bundle_id[:12]} ({outcome.requests} requests{cached})")
@@ -224,6 +237,13 @@ def cmd_build(args: argparse.Namespace) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     print(f"bundle {bundle.bundle_id[:12]} ({bundle.manifest['comparison_status']}) written to {path}")
+    from uuid import uuid4
+    from datetime import datetime, timezone
+    execution = bundle.execution_receipt
+    if not execution["run_id"]:
+        execution = dict(execution, run_id=uuid4().hex, started_at=datetime.now(timezone.utc).isoformat(),
+                         ended_at=datetime.now(timezone.utc).isoformat())
+    canonical.write_pretty(store.root / "executions" / (uuid4().hex + ".json"), execution)
     print(_bands_line(bundle.bands()))
     try:
         write_fleet_index(store)
@@ -241,7 +261,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
             print(f"FAIL {problem}")
         return 1
     renderer = report_renderer(args.bundle)
-    if renderer == RENDERER_VERSION:
+    if renderer in ("devostasis.render.v4", "devostasis.render.v5"):
         print("verified: digests, identity preimage, persisted effective config and report reproducibility all match")
     else:
         # A historical renderer is not carried: the report is bound by its
@@ -499,6 +519,10 @@ def build_parser() -> argparse.ArgumentParser:
     summary_p = sub.add_parser("actions-summary", help="write a GitHub Actions job summary and step outputs (attention, levels, bands, gauges) for a bundle")
     summary_p.add_argument("--bundle", required=True, help="bundle directory")
     summary_p.set_defaults(func=cmd_actions_summary)
+    from .workscope.cli import add_parser
+    add_parser(sub)
+    from .codeanalysis.cli import add_parser as add_code_parser
+    add_code_parser(sub)
     return parser
 
 
@@ -524,6 +548,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except InputError as exc:
         print(f"input error: {exc}", file=sys.stderr)
+        return 2
+    except InadmissibleEvidence as exc:
+        # Counts that cannot all be true are refused before classification
+        # (PV-DIRECTION-INCOMPLETE-001, PV-HORIZON-PARTIAL-001): the saved
+        # observation set is invalid input, not a Vital without a band.
+        print(f"input error: the observations contradict themselves: {exc}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
         return 130

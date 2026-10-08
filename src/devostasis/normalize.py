@@ -12,7 +12,7 @@ from typing import Any, Callable
 
 from . import canonical, timeutil
 from .config import ResolvedProject
-from .observations import AVAILABLE, OBSERVED_SUBSET_COUNT, PARTIAL, UNAVAILABLE, VALUE_BEARING, VALUE_SEMANTICS, Observation, ObservationSet
+from .observations import AVAILABLE, FRESH, OBSERVED_SUBSET_COUNT, PARTIAL, UNAVAILABLE, VALUE_BEARING, VALUE_SEMANTICS, Observation, ObservationSet
 from .policy import CLUTTER, FLOW, PLANNING, PULSE
 
 INV_REPO = "forge.repository.metadata"
@@ -33,6 +33,16 @@ INVENTORY_IDS = [INV_REPO, INV_COMMITS, INV_CRS, INV_ISSUES, INV_BRANCHES, INV_T
 MEDIAN_SECONDS = "forge.change_requests.median_time_to_merge_seconds_28d"
 MEDIAN_HOURS = "forge.change_requests.median_time_to_merge_hours_28d"
 MEDIAN_HOURS_NOTE = "whole-hour projection of median_time_to_merge_seconds_28d for presentation; never a classifier input"
+
+# Direction's classifier reads state-neutral linkage (direction.bands.v2). The
+# open-target count it read before is kept for presentation only, as the
+# accepted judgement allows (PV-REV-DIRECTION-CLOSED-TARGET-001).
+LINKAGE_LINKED = "planning.linkage.active_change_requests_linked_count_28d"
+LINKAGE_UNLINKED = "planning.linkage.active_change_requests_unlinked_count_28d"
+LINKAGE_UNRESOLVED = "planning.linkage.active_change_requests_unresolved_count_28d"
+LINKAGE_UNRESOLVED_ITEMS = "planning.linkage.unresolved_change_requests_28d"
+LINKAGE_MISSING_REFS = "planning.linkage.missing_target_reference_count_28d"
+LINKED_TO_OPEN_NOTE = "active change requests linked to a target that is open now; presentation only since direction.bands.v2, never a classifier input"
 
 
 def _derived(
@@ -116,6 +126,40 @@ def target_refs(item: dict[str, Any]) -> list[dict[str, Any]]:
     return []
 
 
+# Direction linkage evidence per active change request (PV-DIRECTION-INCOMPLETE-001,
+# section 3). A reference resolves when its declared target does, open or closed
+# alike (PV-REV-DIRECTION-CLOSED-TARGET-001); MISSING is a complete register
+# positively lacking the id, a broken reference and therefore unlinked; every
+# other state, an unreadable title, body or milestone, or a reference of an
+# older record shape without a state, is evidence nobody could resolve.
+LINKED = "LINKED"
+UNLINKED = "UNLINKED"
+UNRESOLVED = "UNRESOLVED"
+RESOLVED_TARGET_STATES = ("OPEN", "CLOSED")
+MISSING_TARGET = "MISSING"
+
+
+def linkage_state(item: dict[str, Any]) -> str:
+    """LINKED, UNLINKED or UNRESOLVED for one active change request."""
+    refs = target_refs(item)
+    if any(ref.get("state") in RESOLVED_TARGET_STATES for ref in refs):
+        return LINKED
+    if item.get("linkage_unresolved") or any(ref.get("state") != MISSING_TARGET for ref in refs):
+        return UNRESOLVED
+    return UNLINKED
+
+
+def unresolved_linkage_reasons(item: dict[str, Any]) -> list[str]:
+    """Why an UNRESOLVED change request is unresolved, in a stable order."""
+    reasons = [f"TARGET_UNRESOLVED:{ref['target_id']}:{ref.get('state')}" for ref in target_refs(item) if ref.get("state") not in RESOLVED_TARGET_STATES + (MISSING_TARGET,)]
+    unreadable = item.get("linkage_unresolved")
+    if isinstance(unreadable, list):
+        reasons.extend(f"LINKAGE_UNREADABLE:{reason}" for reason in unreadable)
+    elif unreadable:
+        reasons.append(f"LINKAGE_UNREADABLE:{unreadable}")
+    return sorted(set(reasons))
+
+
 def derive(obs: ObservationSet, project: ResolvedProject) -> ObservationSet:
     observed_at = timeutil.parse_ts(obs.observed_at)
     since_pulse = timeutil.minus_days(observed_at, PULSE["window_days"])
@@ -182,26 +226,40 @@ def derive(obs: ObservationSet, project: ResolvedProject) -> ObservationSet:
         def _active(items):
             return [item for item in items if item.get("updated_at") and timeutil.parse_ts(item["updated_at"]) >= since_planning]
 
-        def _open_refs(item):
-            return [ref for ref in target_refs(item) if ref.get("state") == "OPEN"]
+        def _in_state(items, state):
+            return [item for item in _active(items) if linkage_state(item) == state]
 
-        def _linked(items):
-            return [item for item in _active(items) if _open_refs(item)]
+        def _linked_to_open(items):
+            return [item for item in _active(items) if any(ref.get("state") == "OPEN" for ref in target_refs(item))]
 
         def _links_per_target(items):
+            # State-neutral: a closed target still carries the links of the work
+            # declared against it (PV-REV-DIRECTION-CLOSED-TARGET-001, DIR-CLOSED-08).
             counts: dict[str, int] = {}
             for item in _active(items):
-                for ref in _open_refs(item):
-                    counts[str(ref["target_id"])] = counts.get(str(ref["target_id"]), 0) + 1
+                for ref in target_refs(item):
+                    if ref.get("state") in RESOLVED_TARGET_STATES:
+                        counts[str(ref["target_id"])] = counts.get(str(ref["target_id"]), 0) + 1
             return dict(sorted(counts.items()))
 
-        def _unknown_refs(items):
-            return len([ref for item in _active(items) for ref in target_refs(item) if ref.get("state") == "UNKNOWN"])
+        def _refs_in_state(items, state):
+            return len([ref for item in _active(items) for ref in target_refs(item) if ref.get("state") == state])
+
+        def _unresolved_items(items):
+            return {str(item.get("number")): unresolved_linkage_reasons(item) for item in _in_state(items, UNRESOLVED)}
 
         _derived(obs, "planning.linkage.active_change_requests_count_28d", "count", crs, lambda items: len(_active(items)), complete=window_ok, subset_count=True)
-        _derived(obs, "planning.linkage.active_change_requests_linked_to_open_target_count_28d", "count", crs, lambda items: len(_linked(items)), complete=window_ok, subset_count=True)
+        _derived(obs, LINKAGE_LINKED, "count", crs, lambda items: len(_in_state(items, LINKED)), complete=window_ok, subset_count=True)
+        _derived(obs, LINKAGE_UNLINKED, "count", crs, lambda items: len(_in_state(items, UNLINKED)), complete=window_ok, subset_count=True)
+        _derived(obs, LINKAGE_UNRESOLVED, "count", crs, lambda items: len(_in_state(items, UNRESOLVED)), complete=window_ok, subset_count=True)
+        _derived(obs, LINKAGE_UNRESOLVED_ITEMS, "record", crs, _unresolved_items, complete=window_ok)
+        _derived(
+            obs, "planning.linkage.active_change_requests_linked_to_open_target_count_28d", "count", crs,
+            lambda items: len(_linked_to_open(items)), complete=window_ok, subset_count=True, notes=LINKED_TO_OPEN_NOTE,
+        )
         _derived(obs, "planning.linkage.links_per_target_28d", "record", crs, _links_per_target, complete=window_ok)
-        _derived(obs, "planning.linkage.unknown_target_reference_count_28d", "count", crs, _unknown_refs, complete=window_ok, subset_count=True)
+        _derived(obs, "planning.linkage.unknown_target_reference_count_28d", "count", crs, lambda items: _refs_in_state(items, "UNKNOWN"), complete=window_ok, subset_count=True)
+        _derived(obs, LINKAGE_MISSING_REFS, "count", crs, lambda items: _refs_in_state(items, MISSING_TARGET), complete=window_ok, subset_count=True)
 
     issues = obs.get(INV_ISSUES)
     if issues is not None:
@@ -315,13 +373,17 @@ def _derive_planning(obs: ObservationSet, project: ResolvedProject, observed_at)
     if targets is None:
         obs.add(Observation(observation_id="planning.explicit_targets.capability", status="UNKNOWN", value_type="enum", reason_code="TARGETS_NOT_COLLECTED", **base))
         return
-    if not targets.good:
+    # A fresh incomplete enumeration that returned a target proves support: more
+    # records can only add targets (PV-HORIZON-PARTIAL-001, section 3). One that
+    # returned none proves neither support nor its absence.
+    proven_subset = targets.status == PARTIAL and targets.freshness == FRESH and isinstance(targets.value, list) and bool(targets.value)
+    if not targets.good and not proven_subset:
         obs.add(
             Observation(
                 observation_id="planning.explicit_targets.capability",
                 status=targets.status if targets.status not in VALUE_BEARING else PARTIAL,
                 value_type="enum",
-                value="SUPPORTED" if targets.status == PARTIAL else None,
+                value="SUPPORTED" if (targets.status == PARTIAL and targets.value) else None,
                 reason_code=targets.reason_code or "TARGETS_INCOMPLETE",
                 provider=targets.provider, collected_at=targets.collected_at,
                 source_ref=f"derived:{INV_TARGETS}", adapter_version=targets.adapter_version, freshness=targets.freshness,
@@ -335,14 +397,18 @@ def _derive_planning(obs: ObservationSet, project: ResolvedProject, observed_at)
             observation_id="planning.explicit_targets.capability", status=AVAILABLE, value_type="enum", value=capability,
             provider=targets.provider, collected_at=targets.collected_at, source_ref=f"derived:{INV_TARGETS}",
             adapter_version=targets.adapter_version, freshness=targets.freshness, evidence_ref={"derived_from": [INV_TARGETS]},
+            coverage=None if targets.good else {"complete": True, "basis": "RETURNED_TARGET_RECORD", "source_coverage": targets.coverage},
+            notes=None if targets.good else "support is proved by a returned target record; the target enumeration itself is incomplete",
         )
     )
     open_items = [i for i in items if i.get("state") == "OPEN"]
     future = [i for i in open_items if i.get("due_at") and timeutil.parse_ts(i["due_at"]) > observed_at]
     beyond = [i for i in future if timeutil.parse_ts(i["due_at"]) > horizon_edge]
-    _derived(obs, "planning.explicit_targets.open_count", "count", targets, lambda _: len(open_items))
-    _derived(obs, "planning.explicit_targets.open_with_future_boundary_count", "count", targets, lambda _: len(future))
-    _derived(obs, "planning.explicit_targets.open_beyond_28d_count", "count", targets, lambda _: len(beyond))
+    # Counts over the returned targets; over an incomplete enumeration each is an
+    # observed-subset lower bound and says so (PV-REV-PR-031-003, issue #39).
+    _derived(obs, "planning.explicit_targets.open_count", "count", targets, lambda _: len(open_items), subset_count=True)
+    _derived(obs, "planning.explicit_targets.open_with_future_boundary_count", "count", targets, lambda _: len(future), subset_count=True)
+    _derived(obs, "planning.explicit_targets.open_beyond_28d_count", "count", targets, lambda _: len(beyond), subset_count=True)
     if future:
         nearest = min(int((timeutil.parse_ts(i["due_at"]) - observed_at).total_seconds() // 86400) for i in future)
         _derived(obs, "planning.explicit_targets.nearest_future_boundary_days", "duration", targets, lambda _: nearest)

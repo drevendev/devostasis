@@ -26,9 +26,14 @@ PINNED_FILES = (
     Path(".github/workflows/observe-self.yml"),
     Path("README.md"),
     Path("docs/deployment.md"),
+    Path(".github/workflows/work-observe.yml"),
+    Path("examples/work/github-observe.yml"),
+    Path("examples/work/gitlab-observe.yml"),
+    Path(".github/workflows/work-operations.yml"),
+    Path("examples/work/gitlab-operations.yml"),
 )
 
-WORKFLOW_REF = re.compile(r"observe-self\.yml@(v[0-9][^\s\"']*)")
+WORKFLOW_REF = re.compile(r"(?:observe-self|work-observe|work-operations)\.yml@(v[0-9][^\s\"']*)")
 # Case-insensitive and with the optional .git: GitHub resolves both spellings,
 # so a pin written either way is a pin that must resolve.
 INSTALL_REF = re.compile(r"github\.com/drevendev/devostasis(?:\.git)?@([^\s\"']+)", re.IGNORECASE)
@@ -40,9 +45,10 @@ def test_the_package_version_and_the_module_agree():
     assert declared == __version__, "pyproject.toml and devostasis.__version__ disagree"
 
 
-def test_the_reusable_workflow_installs_the_version_it_ships_with():
+@pytest.mark.parametrize("workflow_path", (".github/workflows/observe-self.yml", ".github/workflows/work-observe.yml", ".github/workflows/work-operations.yml"))
+def test_the_reusable_workflow_installs_the_version_it_ships_with(workflow_path):
     """A caller pinning the workflow at this tag and passing no ref gets this engine."""
-    workflow = (ROOT / ".github/workflows/observe-self.yml").read_text(encoding="utf-8")
+    workflow = (ROOT / workflow_path).read_text(encoding="utf-8")
     match = DEFAULT_REF.search(workflow)
     assert match, "observe-self.yml no longer declares a default devostasis-ref"
     assert match.group(1) == TAG, f"default devostasis-ref is {match.group(1)}, expected {TAG}"
@@ -57,6 +63,12 @@ def test_documented_pins_name_the_current_tag(relative: Path):
             if found.startswith("${"):
                 continue
             assert found == TAG, f"{relative}: {what} {found} should be {TAG}"
+
+
+@pytest.mark.parametrize("path", ("examples/work/gitlab-observe.yml", "examples/work/gitlab-operations.yml"))
+def test_gitlab_install_default_names_the_current_tag(path):
+    match = re.search(r'DEVOSTASIS_REF:\s*"([^"]+)"', (ROOT / path).read_text())
+    assert match and match.group(1) == TAG
 
 
 def test_the_changelog_has_a_section_for_this_version():

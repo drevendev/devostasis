@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "devostasis"
-version = "0.1.9"
-description = "Deterministic, model-free vital signs for software repositories."
+version = "0.6.0"
+description = "Deterministic repository vital signs, work scopes and offline code analysis."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]

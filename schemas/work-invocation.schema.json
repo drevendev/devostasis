@@ -1,0 +1,110 @@
+{
+  "type": "object",
+  "required": [
+    "contract",
+    "run_id",
+    "binding",
+    "binding_digest",
+    "started_at",
+    "finished_at",
+    "status",
+    "bundle_id",
+    "manifest_digest",
+    "reasons",
+    "telemetry"
+  ],
+  "properties": {
+    "contract": {
+      "const": "devostasis.work-invocation.v1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "binding": {
+      "$ref": "work-adoption.schema.json"
+    },
+    "binding_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "FAILED",
+        "DISABLED"
+      ]
+    },
+    "bundle_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "manifest_digest": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 8192,
+        "pattern": "^[^\\u0000-\\u001f]+$"
+      },
+      "maxItems": 10000
+    },
+    "telemetry": {
+      "type": "object",
+      "required": [
+        "requests",
+        "response_bytes",
+        "workers"
+      ],
+      "properties": {
+        "requests": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "response_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 41943040000
+        },
+        "workers": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/drevendev/devostasis/schemas/work-invocation.schema.json",
+  "title": "Noncanonical immutable observer invocation receipt"
+}

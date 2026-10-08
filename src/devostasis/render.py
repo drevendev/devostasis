@@ -204,7 +204,7 @@ def render_report(
     if "observability" in sections:
         lines.append("## Observability")
         lines.append("")
-        receipt = manifest.get("receipt") or {}
+        receipt = manifest.get("receipt_identity") or manifest.get("receipt") or {}
         non_available = [
             (key, meta) for key, meta in sorted((receipt.get("per_key") or {}).items())
             if meta.get("status") != "AVAILABLE" or meta.get("freshness") != "FRESH"

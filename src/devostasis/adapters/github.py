@@ -71,18 +71,6 @@ class CollectionError(Exception):
     """The subject could not be identified; no observation set can be produced."""
 
 
-class LinkageEvidenceError(CollectionError):
-    """A change request or issue carries linkage evidence that cannot be read.
-
-    Title, body and milestone are where a target link lives. Provider payload of
-    the wrong type there is not an absent link: reading it as one would report a
-    project as unlinked on evidence nobody could parse, which is the silent
-    absence the register and Direction contracts both forbid. It is a
-    ``CollectionError`` so the project fails explicitly, keeping its reason,
-    while every other project in the fleet is still observed.
-    """
-
-
 @dataclass
 class ApiFailure(Exception):
     status_code: int
@@ -554,27 +542,43 @@ def _register_title(where: str, value: Any) -> str:
     return _title(value)
 
 
-def _linkage_text(where: str, item: dict[str, Any], fields: tuple[str, ...]) -> str:
-    """Join the free-text fields a target marker can live in, or refuse to guess."""
-    parts = []
+def _linkage_text(item: dict[str, Any], fields: tuple[str, ...]) -> tuple[str, list[str]]:
+    """The readable free-text fields a target marker can live in, and the ones that cannot be read.
+
+    Payload of the wrong type in a title or body is not an absent link: read as
+    one it would report the change request unlinked on evidence nobody could
+    parse. It is not a reason to fail the project either. Since
+    ``PV-DIRECTION-INCOMPLETE-001`` the change request keeps what could be read
+    and names what could not, and Direction treats its linkage as unresolved
+    unless a readable reference already links it.
+    """
+    parts: list[str] = []
+    unreadable: list[str] = []
     for field in fields:
         value = item.get(field)
         if value is None or value == "":
             continue
         if not isinstance(value, str):
-            raise LinkageEvidenceError(f"{where}: {field} is {type(value).__name__}, not text, so a target marker cannot be read from it")
+            unreadable.append(f"{field}:{type(value).__name__}")
+            continue
         parts.append(value)
-    return "\n".join(parts)
+    return "\n".join(parts), unreadable
 
 
-def _milestone_ref(where: str, milestone: Any) -> dict[str, str] | None:
-    """A milestone is a target link. Absent is a fact; unreadable is not."""
+def _milestone_ref(milestone: Any) -> tuple[dict[str, str] | None, str | None]:
+    """A milestone is a target link: ``(reference, None)``, ``(None, None)`` when absent, ``(None, reason)`` when unreadable.
+
+    The provider embeds the milestone it links, state included, so the
+    reference is resolved by the change request's own payload: a closed
+    milestone is still the milestone the work was declared against
+    (``PV-REV-DIRECTION-CLOSED-TARGET-001``).
+    """
     if not milestone:
-        return None
-    if not isinstance(milestone, dict) or milestone.get("number") is None:
-        raise LinkageEvidenceError(f"{where}: milestone {milestone!r} carries no number, so the target it links to cannot be named")
+        return None, None
+    if not isinstance(milestone, dict) or milestone.get("number") is None or isinstance(milestone.get("number"), bool):
+        return None, "milestone:NO_NUMBER"
     state = "CLOSED" if str(milestone.get("state") or "").lower() == "closed" else "OPEN"
-    return {"target_id": str(milestone["number"]), "state": state}
+    return {"target_id": str(milestone["number"]), "state": state}, None
 
 
 def _normalize_date(value: Any) -> str | None:
@@ -593,10 +597,20 @@ def _normalize_date(value: Any) -> str | None:
 
 
 def marker_target_ids(text: str | None, marker: str) -> list[str]:
-    """Explicit target references: every ``<marker> <id>`` occurrence, in order, without duplicates."""
+    """Explicit target references: every standalone ``<marker> <id>`` occurrence, in order, without duplicates.
+
+    The configured marker is a token of its own, never text inside a larger one
+    (``PV-AUDIT-TARGET-MARKER-SYNTAX-001``): it starts the text or follows a
+    character that cannot continue a word, and a marker that ends in a word
+    character is not followed by another. ``SubTarget: B1``, ``NotTarget: B1``
+    and ``PreTarget:B1`` therefore link nothing under ``Target:``, while
+    ``Target: B1`` at the start of a line, after a space or inside
+    ``(Target: B1)`` does. The marker is matched exactly, case included.
+    """
     if not text or not marker:
         return []
-    pattern = re.compile(re.escape(marker) + r"[ \t]*([A-Za-z0-9][A-Za-z0-9._/-]*)")
+    tail = r"(?!\w)" if (marker[-1].isalnum() or marker[-1] == "_") else ""
+    pattern = re.compile(r"(?<!\w)" + re.escape(marker) + tail + r"[ \t]*([A-Za-z0-9][A-Za-z0-9._/-]*)")
     seen: list[str] = []
     for match in pattern.finditer(text):
         target_id = match.group(1).rstrip(".,;:")
@@ -891,18 +905,28 @@ class GitHubAdapter:
             raise _payload_failure(path, f"commit {sha} carries no committer or author date")
         return {"sha": sha, "committed_at": committed, "title": _title(info.get("message"))}
 
-    def _target_refs(self, pull: dict[str, Any], project: ResolvedProject, target_states: dict[str, str] | None) -> list[dict[str, str]]:
+    def _target_refs(self, pull: dict[str, Any], project: ResolvedProject, target_states: dict[str, str] | None) -> tuple[list[dict[str, str]], list[str]]:
+        """The explicit target references of a change request and what of its linkage evidence could not be read.
+
+        Each reference carries the state its resolution established:
+        ``OPEN`` or ``CLOSED`` when the declared target resolves (state-neutral
+        linkage, ``PV-REV-DIRECTION-CLOSED-TARGET-001``), ``MISSING`` when the
+        complete register positively lacks the id (a broken reference, not
+        missing evidence), ``UNKNOWN`` when the register could not be read, so
+        nothing about the id is known (``PV-DIRECTION-INCOMPLETE-001``).
+        """
         source = project.planning["source"]
-        where = f"change request #{pull.get('number')}"
         if source == "milestones":
-            ref = _milestone_ref(where, pull.get("milestone") or None)
-            return [ref] if ref else []
+            ref, problem = _milestone_ref(pull.get("milestone") or None)
+            return ([ref] if ref else []), ([problem] if problem else [])
         if source == "file":
             marker = project.planning.get("link_marker") or "Target:"
-            text = _linkage_text(where, pull, ("title", "body"))
-            states = target_states or {}
-            return [{"target_id": tid, "state": states.get(tid, "UNKNOWN")} for tid in marker_target_ids(text, marker)]
-        return []
+            text, unreadable = _linkage_text(pull, ("title", "body"))
+            ids = marker_target_ids(text, marker)
+            if target_states is None:
+                return [{"target_id": tid, "state": "UNKNOWN"} for tid in ids], unreadable
+            return [{"target_id": tid, "state": target_states.get(tid, "MISSING")} for tid in ids], unreadable
+        return [], []
 
     def _collect_change_requests(self, obs: ObservationSet, base: str, project: ResolvedProject, target_states: dict[str, str] | None) -> None:
         since = timeutil.minus_days(self.now, FLOW["window_days"])
@@ -958,7 +982,7 @@ class GitHubAdapter:
             state = "OPEN"
         user = pull.get("user")
         author = None if user is None else _optional_text(path, _object(path, user, f"{where} user").get("login"), f"{where} user.login")
-        refs = self._target_refs(pull, project, target_states)
+        refs, linkage_unresolved = self._target_refs(pull, project, target_states)
         return {
             "number": number,
             "id": _optional_integer(path, pull.get("id"), f"{where} id"),
@@ -972,6 +996,7 @@ class GitHubAdapter:
             "target_id": refs[0]["target_id"] if refs else None,
             "target_state": refs[0]["state"] if refs else None,
             "target_refs": refs,
+            "linkage_unresolved": sorted(linkage_unresolved),
             "author": author,
             "url": _optional_text(path, pull.get("html_url"), f"{where} html_url"),
         }
@@ -989,7 +1014,7 @@ class GitHubAdapter:
             names.append(_text(path, label.get("name"), f"{where} labels[{position}].name"))
         user = issue.get("user")
         author = None if user is None else _optional_text(path, _object(path, user, f"{where} user").get("login"), f"{where} user.login")
-        milestone = _milestone_ref(where, issue.get("milestone") or None)
+        milestone, milestone_problem = _milestone_ref(issue.get("milestone") or None)
         state_text = _optional_text(path, issue.get("state"), f"{where} state")
         return {
             "number": number,
@@ -1001,6 +1026,7 @@ class GitHubAdapter:
             "closed_at": _optional_timestamp(path, issue.get("closed_at"), f"{where} closed_at"),
             "labels": sorted(names),
             "target_id": milestone["target_id"] if milestone else None,
+            "linkage_unresolved": [milestone_problem] if milestone_problem else [],
             "author": author,
             "url": _optional_text(path, issue.get("html_url"), f"{where} html_url"),
         }

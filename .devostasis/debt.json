@@ -3,12 +3,53 @@
   "notes": "Registered maintenance obligations of this repository, read by Devostasis when debt.source = file. An item belongs here when the current code carries a cost, not when a feature is missing: planned work lives in targets.json and ROADMAP.md. 'opened' is the date the obligation started being carried, 'updated' the last time it changed; an open item untouched for 30 days is stale.",
   "items": [
     {
+      "id": "D-10",
+      "title": "Native change hotspots and local roots rely on recorded acquisition rather than complete ancestry proofs",
+      "state": "open",
+      "opened": "2026-10-08",
+      "updated": "2026-10-08",
+      "cost": "0.6 source proofs bind pinned commit/tree and admitted blob bytes, but replay of recorded history counts/root traversal is not independent admission of their complete ancestry. A rehashed recorded history can alter hotspots. Counts remain descriptive and separately covered, with no health or acceptance authority. Bounded historic object/parent proof and preserved v1 replay are issue #73."
+    },
+    {
+      "id": "D-7",
+      "title": "Live candidate content recheck needs an explicit mutable source-ref binding",
+      "state": "closed",
+      "opened": "2026-10-02",
+      "updated": "2026-10-07",
+      "closed": "2026-10-07",
+      "cost": "Closed in the pending 0.4/0.5 implementation by named branch/PR/MR bindings with immutable source-project ids, commit membership and before/after handoff live resolution (issue #60). Historic v1 offline replay is preserved; legacy scopes need a freshly bound generation for automatic source handoff. Deployment and upstream release remain separate gates."
+    },
+    {
+      "id": "D-8",
+      "title": "Large-project full GitLab collection still has incomplete bridge responses",
+      "state": "open",
+      "opened": "2026-10-06",
+      "updated": "2026-10-07",
+      "cost": "Bounded shared-budget concurrency and one per-generation train inventory improve throughput. Bridge/native response qualification and complete repeated generations remain issue #62; selected inventory must not be called the complete backlog. Detailed adopter qualification evidence stays private."
+    },
+    {
+      "id": "D-9",
+      "title": "Whole-project private history transfer needs incremental ranges at long-term scale",
+      "state": "open",
+      "opened": "2026-10-07",
+      "updated": "2026-10-07",
+      "cost": "0.5 exports/verifies a bounded whole-project archive (64 MiB default, up to 512 MiB, 2000 records/category). A long-lived busy store will exceed that cap; incremental/sharded exact-bound transfer with preserved references and resumable completeness is issue #67. Current behavior is an explicit cap failure, never silent pruning or a partial backup presented as full."
+    },
+    {
+      "id": "D-6",
+      "title": "GitLab work scopes cannot certify exact-head approvals from the aggregate approvals API",
+      "state": "open",
+      "opened": "2026-10-02",
+      "updated": "2026-10-02",
+      "cost": "The 0.3.0 companion reads approval capability but the standard GitLab response supplies users/times, not the reviewed commit. It therefore keeps exact-head approval UNKNOWN and cannot admit automatic merges. A revision-bound read-only profile and adopter integration validation are tracked in https://github.com/drevendev/Devostasis/issues/58; this debt does not block independent review, issue, research or analysis work."
+    },
+    {
       "id": "D-1",
       "title": "Conformance cases named in the specification have no executable fixture",
       "state": "open",
       "opened": "2026-09-05",
-      "updated": "2026-09-30",
-      "cost": "docs/spec/conformance.md named T2-T9, R1-R53, ART-05, ART-08-ART-11, ART-15 and RPT-4-RPT-9 with no test behind them, so the public coverage claim is larger than the proof. The vector format and runner exist since 0.1.8, and 0.1.9 transcribed the accepted exact vectors the research process delivered (T2, R1, R2, R3, R4, T4, T5, T7) together with whole accepted families (INT-UNKNOWN, INT-TOTAL, CLU-INCOMPLETE, ACT-COV); sixty-three of the seventy named cases still have no evidence, and several (T3, T6, T8, the bundle and store cases) need a conformance surface this format does not yet carry (issues #20, #23)."
+      "updated": "2026-10-02",
+      "cost": "docs/spec/conformance.md named T2-T9, R1-R53, ART-05, ART-08-ART-11, ART-15 and RPT-4-RPT-9 with no test behind them, so the public coverage claim is larger than the proof. The vector format and runner exist since 0.1.8, and 0.1.9 transcribed the accepted exact vectors the research process delivered (T2, R1, R2, R3, R4, T4, T5, T7) together with whole accepted families (INT-UNKNOWN, INT-TOTAL, CLU-INCOMPLETE, ACT-COV). The pending 0.2.0 branch holds T9 to its accepted table with a generator, leaving sixty-two named cases without executable proof. Several (T3, T6, T8, the bundle and store cases) need further conformance capabilities or accepted vectors (issues #20, #23)."
     },
     {
       "id": "D-2",

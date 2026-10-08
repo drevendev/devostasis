@@ -21,7 +21,13 @@ and a vector is::
 
 * **vital** evaluates one Vital over an observation set built from raw
   observation envelopes (``RAW_OBSERVATION_CONTRACT_V0``), so a vector states
-  evidence exactly as a collector would emit it.
+  evidence exactly as a collector would emit it. With ``derive`` the
+  provider-neutral derivation runs first, so a case about how inventories
+  become aggregates (a change request linked to a closed target, a partial
+  target enumeration) is executed at that boundary rather than over counts
+  somebody pre-derived. ``expect.rejected`` states that the evidence must be
+  refused before classification (``InadmissibleEvidence``), the outcome the
+  totality contracts give contradictory normalized input.
 * **delta** compares two snapshots given as partial Vital rows and checks the
   transition classes and reason codes. An accepted case often names more than
   one pair — "``GRIDLOCKED -> CONGESTED -> MOVING`` follows WORSENED/IMPROVED
@@ -70,8 +76,10 @@ from .activity import build_activity
 from .adapters import github_ci
 from .contracts import CORE_VITAL_IDS, VECTOR_SCHEMA
 from .delta import BASELINE, COMPARABLE, HISTORY_GAP, INCOMPARABLE, compare
+from .normalize import derive as derive_aggregates
 from .observations import AVAILABLE, PARTIAL, STATUSES, Observation, ObservationSet
 from .vitals import EVALUATORS
+from .vitals.common import InadmissibleEvidence
 
 KINDS = ("vital", "delta", "ci", "activity")
 COMPARISON_STATUSES = (BASELINE, COMPARABLE, HISTORY_GAP, INCOMPARABLE)
@@ -84,8 +92,12 @@ VECTOR_KEYS = {"case", "title", "kind", "source_unit", "notes", "given", "expect
 # vector, so the kind validators require it rather than this set.
 REQUIRED_VECTOR_KEYS = {"case", "title", "kind", "given"}
 
-VITAL_GIVEN_KEYS = {"vital", "observations", "observed_at", "subject", "variants"}
+VITAL_GIVEN_KEYS = {"vital", "observations", "observed_at", "subject", "variants", "derive"}
 VITAL_VARIANT_KEYS = {"title", "observations"}
+# The configuration the derivation reads: where planning targets come from and
+# the explicit debt mapping, the two project settings normalize.derive consults.
+DERIVE_KEYS = {"planning_source", "debt_mapping"}
+PLANNING_SOURCES = ("none", "milestones", "file")
 VITAL_EXPECT_KEYS = {
     "band",
     "evaluation_status",
@@ -99,6 +111,7 @@ VITAL_EXPECT_KEYS = {
     "explanation_contains",
     "shared_signal_groups",
     "dependency_group_ids",
+    "rejected",
 }
 REQUIRED_VITAL_EXPECT_KEYS = {"band", "evaluation_status"}
 
@@ -231,14 +244,33 @@ def _require_statement(where: str, holder: dict[str, Any], keys: tuple[str, ...]
 def _validate_vital_expect(where: str, expect: Any) -> None:
     if expect is None:
         raise VectorError(f"{where}: missing keys ['expect']")
+    if isinstance(expect, dict) and "rejected" in expect:
+        # A refused evaluation has no band, status or metrics to check: the
+        # rejection code is the whole expectation.
+        if set(expect) != {"rejected"}:
+            raise VectorError(f"{where} expect: rejected is the whole expectation of a refused evaluation, not combined with {sorted(set(expect) - {'rejected'})}")
+        if not isinstance(expect["rejected"], str) or not expect["rejected"]:
+            raise VectorError(f"{where} expect: rejected must name the rejection code (an empty prefix matches everything)")
+        return
     _require_keys(f"{where} expect", expect, VITAL_EXPECT_KEYS, REQUIRED_VITAL_EXPECT_KEYS)
     _require_statement(f"{where} expect", expect, ("derived",) + CODE_LIST_KEYS)
+
+
+def _validate_derive(where: str, derive: Any) -> None:
+    _require_keys(f"{where} given.derive", derive, DERIVE_KEYS, {"planning_source"})
+    if derive["planning_source"] not in PLANNING_SOURCES:
+        raise VectorError(f"{where} given.derive: planning_source {derive['planning_source']!r} is not one of {list(PLANNING_SOURCES)}")
+    mapping = derive.get("debt_mapping")
+    if mapping is not None and not isinstance(mapping, dict):
+        raise VectorError(f"{where} given.derive: debt_mapping is an object or null")
 
 
 def _validate_vital(where: str, given: dict[str, Any], expect: Any) -> None:
     _require_keys(f"{where} given", given, VITAL_GIVEN_KEYS, {"vital"})
     if given["vital"] not in EVALUATORS:
         raise VectorError(f"{where} given: unknown vital {given['vital']!r}")
+    if "derive" in given:
+        _validate_derive(where, given["derive"])
     if "variants" in given:
         _require_variants(where, given, {"observations"}, VITAL_VARIANT_KEYS, {"observations"})
         for index, variant in enumerate(given["variants"]):
@@ -500,14 +532,38 @@ def _vital_shapes(given: dict[str, Any]) -> list[tuple[str, list[dict[str, Any]]
     return [("", given["observations"])]
 
 
+@dataclass(frozen=True)
+class _DeriveScope:
+    """The two project settings the derivation reads, stated by a vector instead of a configuration file."""
+
+    planning_source: str
+    debt_mapping: dict[str, Any] | None
+
+
 def _run_vital(vector: Vector) -> list[str]:
     """One case, every evidence shape it names. A case passes only when all of them do."""
     failures: list[str] = []
+    derive = vector.given.get("derive")
     for where, observations in _vital_shapes(vector.given):
         obs = _observation_set(vector.given, vector.case, observations)
-        result = EVALUATORS[vector.given["vital"]](obs).to_dict()
-        _check_vital_result(result, vector.expect, failures, where)
+        if derive is not None:
+            derive_aggregates(obs, _DeriveScope(derive["planning_source"], derive.get("debt_mapping")))
+        _evaluate_and_check(EVALUATORS[vector.given["vital"]], obs, vector.expect, failures, where)
     return failures
+
+
+def _evaluate_and_check(evaluator: Any, obs: ObservationSet, expect: dict[str, Any], failures: list[str], where: str) -> None:
+    """Evaluate one Vital and check the result, or check that the evidence is refused when the case says it must be."""
+    if "rejected" not in expect:
+        _check_vital_result(evaluator(obs).to_dict(), expect, failures, where)
+        return
+    try:
+        result = evaluator(obs).to_dict()
+    except InadmissibleEvidence as exc:
+        if not _matches(expect["rejected"], [exc.code]):
+            failures.append(f"{where}rejected: expected {expect['rejected']!r}, the evidence was refused with {exc.code!r}")
+        return
+    failures.append(f"{where}rejected: expected the evidence to be refused with {expect['rejected']!r}, it evaluated to {result['band']} / {result['evaluation_status']}")
 
 
 def _delta_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -639,8 +695,7 @@ def _run_ci(vector: Vector) -> list[str]:
                 **common,
             )
         )
-        result = EVALUATORS["integrity"](obs).to_dict()
-        _check_vital_result(result, vector.expect["integrity"], failures, f"{where}integrity.")
+        _evaluate_and_check(EVALUATORS["integrity"], obs, vector.expect["integrity"], failures, f"{where}integrity.")
     return failures
 
 
